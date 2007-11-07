@@ -1,0 +1,13 @@
+label {
+	display:inline;
+	padding-right: 3em;
+}
+
+#schedule-assignments {float:right; width: 48%;}
+#courseinfo {float:left; width: 48%;}
+	#courseinfo ul {list-style:none; margin:0; padding:0;}
+#schedule-assignments ul {list-style:none;margin-left:0; padding-left:0;}
+#schedule-assignments .vevent {border-bottom:1px solid #ccc; margin:0 0 1em 0; padding:0 0 1em 0;}
+#schedule-assignments div.date {margin-bottom:0; font-size:92%;}
+#schedule-assignments div.date abbr {border:none; font-style:normal;}
+#schedule-assignments h4 {margin:0;}
