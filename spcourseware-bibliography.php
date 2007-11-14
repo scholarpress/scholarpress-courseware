@@ -402,116 +402,116 @@ function bib_specific($id, $full="small")
 // Print all bibliography entries onto a page, sorted by type
 function bib_page($data,$headings='h4')
 {
-global $wpdb, $table_prefix;
-$table_name = $table_prefix . "bibliography";
-$start = strpos($data, SP_BIBLIOGRAPHY_PAGE);
-if ( $start != false )
+	global $wpdb, $table_prefix;
+	$table_name = $table_prefix . "bibliography";
+	$start = strpos($data, SP_BIBLIOGRAPHY_PAGE);
+	if ( $start != false )
 	{
-	ob_start();
-	global $wpdb;
-	$sql_monograph = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='monograph')");
-	if (count($sql_monograph) > 0 )
-		{
-		echo "<".$headings.">Monographs</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='monograph') ORDER BY 'entryID' DESC");
-		if ( !empty($published) )
-		{
-			foreach ( $published as $row )
-			{
-				bib_printfull($row);
-			}
-		}
-	}
+		ob_start();
+		global $wpdb;
 
-	$sql_unpublished = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='unpublished')");
-	if (count($sql_unpublished) > 0 )
+			$sql_monograph = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='monograph')");
+		if (count($sql_monograph) > 0 )
 		{
-		echo "<".$headings.">Unpublished</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='unpublished') ORDER BY 'entryID' DESC");
-		if ( !empty($published) )
-		{
-			foreach ( $published as $row )
+			echo "<".$headings.">Monographs</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='monograph') ORDER BY 'entryID' DESC");
+			if ( !empty($published) )
 			{
-				bib_printfull($row);
+				foreach ( $published as $row )
+				{
+					bib_printfull($row);
+				}
 			}
 		}
-	}
-	
-	$sql_article = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='article')");
-	if (count($sql_article) > 0 )
-		{
-		echo "<".$headings.">Articles</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='article') ORDER BY 'entryID' DESC");
-		if (!empty($published))
-		{
-			foreach ( $published as $row )
-			{ 
-  			bib_printfull($row);
-			}
-		}
-	}
 
-	$sql_website = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='website')");
-	if (count($sql_website) > 0)
+		$sql_unpublished = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='unpublished')");
+		if (count($sql_unpublished) > 0 )
 		{
-		echo "<".$headings.">Websites</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='website') ORDER BY 'entryID' DESC");
-		if (!empty($published))
-		{
-			foreach ( $published as $row )
+			echo "<".$headings.">Unpublished</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='unpublished') ORDER BY 'entryID' DESC");
+			if ( !empty($published) )
 			{
-				bib_printfull($row);
+				foreach ( $published as $row )
+				{
+					bib_printfull($row);
+				}
 			}
 		}
-	}
-	
-	$sql_webpages = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='webpage')");
-	if (count($sql_webpages) > 0)
-		{
-		echo "<".$headings.">Webpages</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='webpage') ORDER BY 'entryID' DESC");
-		if (!empty($published))
-		{
-			foreach ( $published as $row )
-			{
-				bib_printfull($row);
-			}
-		}
-	}
-	
-	$sql_videos = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='video')");
-	if (count($sql_videos) > 0)
-		{
-		echo "<".$headings.">Video</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='video') ORDER BY 'entryID' DESC");
-		if (!empty($published))
-		{
-			foreach ( $published as $row )
-			{
-				bib_printfull($row);
-			}
-		}
-	}
 
-	$sql_audios = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='audio')");
-	if (count($sql_audios) > 0)
+		$sql_article = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='article')");
+		if (count($sql_article) > 0 )
 		{
-		echo "<".$headings.">Audio</".$headings.">";
-		$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='audio') ORDER BY 'entryID' DESC");
-		if (!empty($published))
-		{
-			foreach ( $published as $row )
+			echo "<".$headings.">Articles</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='article') ORDER BY 'entryID' DESC");
+			if (!empty($published))
 			{
-				bib_printfull($row);
+				foreach ( $published as $row )
+				{ 
+	  			bib_printfull($row);
+				}
 			}
 		}
-	}
 
-	$contents = ob_get_contents();
-	ob_end_clean();
-	$data = substr_replace($data, $contents, $start, strlen(SP_BIBLIOGRAPHY_PAGE));
+		$sql_website = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='website')");
+		if (count($sql_website) > 0)
+		{
+			echo "<".$headings.">Websites</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='website') ORDER BY 'entryID' DESC");
+			if (!empty($published))
+			{
+				foreach ( $published as $row )
+				{
+					bib_printfull($row);
+				}
+			}
+		}
+
+		$sql_webpages = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='webpage')");
+		if (count($sql_webpages) > 0)
+		{
+			echo "<".$headings.">Webpages</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='webpage') ORDER BY 'entryID' DESC");
+			if (!empty($published))
+			{
+				foreach ( $published as $row )
+				{
+					bib_printfull($row);
+				}
+			}
+		}
+
+		$sql_videos = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='video')");
+		if (count($sql_videos) > 0)
+		{
+			echo "<".$headings.">Video</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='video') ORDER BY 'entryID' DESC");
+			if (!empty($published))
+			{
+				foreach ( $published as $row )
+				{
+					bib_printfull($row);
+				}
+			}
+		}
+
+		$sql_audios = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='audio')");
+		if (count($sql_audios) > 0)
+		{
+			echo "<".$headings.">Audio</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='audio') ORDER BY 'entryID' DESC");
+			if (!empty($published))
+			{
+				foreach ( $published as $row )
+				{
+					bib_printfull($row);
+				}
+			}
+		}	
+
+		$contents = ob_get_contents();
+		ob_end_clean();
+		$data = substr_replace($data, $contents, $start, strlen(SP_BIBLIOGRAPHY_PAGE));
 	}
-	return $data;	
+	return $data;
 }
-
 ?>

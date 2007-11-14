@@ -238,15 +238,15 @@ function courseware_install () {
 	{
 
 		$bibliography_title = "Bibliography";
-		$bibliograpy_content = "<div id=\'spbibliography\'><spbibliography /></div>";
+		$bibliography_content = "<div id=\"spbibliography\"><spbibliography /></div>";
 		$bibliography_excerpt = "";
 		$bibliography_status = "publish";
 		$bibliography_name = "bibliography";
 
-		setAdminOptions(1, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		//setAdminOptions(1, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		wp_insert_post(array(
 		'post_author'		=> '1',
-		'post_date'		=> $post_dt,
+		'post_date'			=> $post_dt,
 		'post_date_gmt'		=> $post_dt,
 		'post_modified'		=> $post_modified_gmt,
 		'post_modified_gmt'	=> $post_modified_gmt,
@@ -254,15 +254,15 @@ function courseware_install () {
 		'post_content'		=> $bibliography_content,
 		'post_excerpt'		=> $bibliography_excerpt,
 		'post_status'		=> $bibliography_status,
-		'post_name'		=> $bibliography_name,
-		'post_type' => 'page')			
+		'post_name'			=> $bibliography_name,
+		'post_type' 		=> 'page')			
 		);
 	}
 	
 	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='Schedule'", OBJECT)) 
 	{
 		$schedule_title = "Schedule";
-		$schedule_content = "<div id=\'spschedule\'><spschedule /></div>";
+		$schedule_content = "<div id=\"spschedule\"><spschedule /></div>";
 		$schedule_excerpt = "";
 		$schedule_status = "publish";
 		$schedule_name = "schedule";

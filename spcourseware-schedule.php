@@ -19,11 +19,11 @@ function schedule_printsmall($scheduleID,$title="h3")
 	<li class="vevent">
 		<div class="date">
 			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
-				<span class="day"><?php echo date('F d, Y', $startTime); ?></span>
-				<span class="timeStart"><?php echo date('g:i a', $startTime); ?></span>
-			</abbr>-
+				<?php echo date('F d, Y, g:i a', $startTime); ?>
+			</abbr>
+			&ndash;
 			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
-				<span class="timeEnd"><?php echo date('g:i a', $endTime); ?></span>
+				<?php echo date('g:i a', $endTime); ?>
 			</abbr>
 		</div>
 <<?php echo $title; ?> class="summary"><?php echo nl2br($result->schedule_title); ?></<?php echo $title; ?>>	
@@ -73,11 +73,11 @@ function schedule_printfull($scheduleID, $full='full',$date_first=true)
 		<?php if($date_first==true): ?>
 		<div class="date">
 			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
-				<span class="day"><?php echo date('F d, Y', $startTime); ?></span>
-				<span class="timeStart"><?php echo date('g:i a', $startTime); ?></span>
-			</abbr>-
+				<?php echo date('F d, Y, g:i a', $startTime); ?>
+			</abbr>
+			&ndash;
 			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
-				<span class="timeEnd"><?php echo date('g:i a', $endTime); ?></span>
+				<?php echo date('g:i a', $endTime); ?>
 			</abbr>
 		</div>
 		<?php endif; ?>
@@ -85,11 +85,11 @@ function schedule_printfull($scheduleID, $full='full',$date_first=true)
 		<?php if($date_first==false): ?>
 		<div class="date">
 			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
-				<span class="day"><?php echo date('F d, Y', $startTime); ?></span>
-				<span class="timeStart"><?php echo date('g:i a', $startTime); ?></span>
-			</abbr>-
-			<abbr class="dtend" title="<?php echo date('Y-m-d\TH:i:s\Z', $endTime); ?>">
-				<span class="timeEnd"><?php echo date('g:i a', $endTime); ?></span>
+				<?php echo date('F d, Y, g:i a', $startTime); ?>
+			</abbr>
+			&ndash;
+			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
+				<?php echo date('g:i a', $endTime); ?>
 			</abbr>
 		</div>
 		<?php endif; ?>
@@ -195,10 +195,11 @@ if ( $start !==false )
 	global $wpdb;
 	$sql_schedule = $wpdb->get_results("SELECT scheduleID FROM " . $table_name . " ORDER BY schedule_date, schedule_timestart", ARRAY_A);
 	
-	echo '<p><a href="webcal://feeds.technorati.com/events/http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">Subscribe to vCal file</a></p>';
+
 	
 	if (count($sql_schedule) > 0)
 		{
+				echo '<p><a href="webcal://feeds.technorati.com/events/http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">Subscribe to vCal file</a></p>';
 			?><div id="classes" class="vcalendar"><?php
 		
 			foreach ( $sql_schedule as $scheduleID )
@@ -207,6 +208,9 @@ if ( $start !==false )
 			}
 			?></div><?php
 		}
+	else {
+		echo '<p>You haven&#8217;t entered any schedule entries!</p>';
+	}
 
 	$contents = ob_get_contents();
 	ob_end_clean();
