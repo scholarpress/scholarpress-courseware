@@ -1,6 +1,5 @@
 === SP Courseware ===
 Contributors: davelester, jeremyboggs
-Donate link: http://scholarpress.net
 Tags: education, syllabus, courses, bibliography, assignments
 Tested up to: 2.3.2
 Stable tag: 1.0.2
