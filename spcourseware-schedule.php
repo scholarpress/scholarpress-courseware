@@ -28,30 +28,7 @@ function schedule_printsmall($scheduleID,$title="h3")
 		</div>
 <<?php echo $title; ?> class="summary"><?php echo nl2br($result->schedule_title); ?></<?php echo $title; ?>>	
 
-<?php 
-// Show all assignments due that day
-	// Get assignment types
-	$sql = 'SHOW COLUMNS FROM '.$assignments_table_name.' WHERE field="assignments_type"';
-	$types=$wpdb->get_row($sql, ARRAY_N);
-	foreach(explode("','",substr($types[1],6,-2)) as $type)
-	{
-		// Get assignments of that type from db
-		$sql = "select * from ".$assignments_table_name." LEFT JOIN ".$bib_table_name." ON ".$assignments_table_name.".assignments_bibliographyID = ".$bib_table_name.".entryID where assignments_scheduleID=".$scheduleID." AND assignments_type='".$type."'";
-		$assignments = $wpdb->get_results($sql, ARRAY_A);
 
-		// Echo assignment header
-		if ($assignments) 
-		{
-			echo '<div class="assignment '.$type.'"><h4>'.ucfirst($type).'</h4>';
-		
-		
-			foreach ( $assignments as $assignment ) {
-				assign_printsmall($assignment);
-			}
-
-			echo '</div>';
-		}
-	} ?>
 	</li> <?php
 }
 

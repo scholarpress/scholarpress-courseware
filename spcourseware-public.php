@@ -60,6 +60,21 @@ function courseinfo_printfull() {
 }
 
 // Print full assignment
+function assign_printsmall($assignmentsmall, $full="small")
+{ 
+	echo '<div class="assignment">';
+		//print_r($assignmentfull);
+		if ($assignmentsmall->assignments_type=='reading') {
+			?><?php bib_specific($assignmentfull->assignments_bibliographyID, $full); ?><?php if ( !empty($assignmentsmall->assignments_pages)): ?>, <span class="pages"><?php echo $assignmentsmall->assignments_pages; ?></span>.<?php endif; ?>
+	<?php } else { ?>
+			<div class="assignment-title"><?php echo $assignmentsmall->assignments_title; ?></div>
+	<?php } ?>
+	
+	</div>
+ <?php 
+}
+
+// Print full assignment
 function assign_printfull($assignmentfull, $full="small")
 { 
 	echo '<div class="assignment">';

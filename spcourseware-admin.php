@@ -52,8 +52,10 @@ function getAdminOptions() {
 	return $spcoursewareAdminOptions;
 }
 
-function setAdminOptions($course_title, $course_number, $course_section, $course_timestart, $course_timeend, $course_location, $course_timedays, $instructor_firstname, $instructor_lastname, $instructor_email, $instructor_telephone, $instructor_office, $course_description, $instructor_hours) {
-	$spcoursewareAdminOptions = array('course_title' => $course_title,
+
+function setAdminOptions($course_title, $course_number, $course_section, $course_timestart, $course_timeend, $course_location, $course_timedays, $instructor_firstname, $instructor_lastname, $instructor_email, $instructor_telephone, $instructor_office, $course_description, $instructor_hours) 
+{
+		$spcoursewareAdminOptions = array('course_title' => $course_title,
 		'course_number' => $course_number,
 		'course_section' => $course_section,
 		'course_timestart' => $course_timestart,
@@ -225,8 +227,10 @@ function courseware_install () {
 	}
 	
 	// Add course info stuff to the options table. You know, for course information.
+	$spcoursewareOptions = get_option('SpCoursewareAdminOptions');
+	if(empty($spcoursewareOptions)) {
 	setAdminOptions(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-
+	}
 	/// POPULATE DB WITH BIBLIOGRAPHY, SCHEDULE, PROJECTS, PAGES IF NOT ALREADY CREATED
 	$now = time();
 	$now_gmt = time();
@@ -243,7 +247,6 @@ function courseware_install () {
 		$bibliography_status = "publish";
 		$bibliography_name = "bibliography";
 
-		//setAdminOptions(1, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		wp_insert_post(array(
 		'post_author'		=> '1',
 		'post_date'			=> $post_dt,
