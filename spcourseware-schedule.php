@@ -112,12 +112,14 @@ function schedule_printfull($scheduleID, $full='full',$date_first=true)
 						if ($assignments) 
 						{
 							echo '<div class="assignment '.$type.'"><h4>'.ucfirst($type).'</h4>';
-						
+							echo '<ul>';
 						
 							foreach ( $assignments as $assignment ) {
+								echo '<li>';
 								assign_schedulefull($assignment, $full);
+								echo '</li>';
 							}
-
+							echo '</ul>';
 							echo '</div>';
 						}
 					}	
@@ -218,6 +220,7 @@ if ( $start !==false )
 	}
 	return $data;	
 } 
+
 add_filter('the_content', 'schedule_page', 10);
 
 ?>

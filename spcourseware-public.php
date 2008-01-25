@@ -59,25 +59,13 @@ function courseinfo_printfull() {
 <?php 
 }
 
-// Print small assignment (eg title and link only)
-function assign_printsmall($assignmentsmall, $class='class="assign_small"')
-{ ?>
-	<li "<?php echo $class ?>">
-		<?php if ( !empty($assignmentsmall->url)) { _e('<a href="'); echo ($assignmentsmall->url); _e('" title="'); echo ($assignmentsmall->title); _e('">'); }
-		echo nl2br($assignmentsmall->title); 
-		
-		if ( !empty($assignmentsmall->url)) { _e('</a>'); } ?>
-		<?php if ( !empty($assignmentsmall->assignments_pages)): ?><p class="pages"><?php echo $assignmentsmall->assignments_assignments_pages; ?></p><?php endif; ?>
-		<?php if ( !empty($assignmentsmall->assignments_description)): ?><p class="description"><?php echo $assignmentsmall->assignments_description; ?></p><?php endif; ?>
-	</li> <?php
-}
 // Print full assignment
 function assign_printfull($assignmentfull, $full="small")
 { 
 	echo '<div class="assignment">';
 		//print_r($assignmentfull);
 		if ($assignmentfull->assignments_type=='reading') {
-			?><?php bib_specific($assignmentfull->assignments_bibliographyID, $full); ?><?php if ( !empty($assignmentfull->assignments_pages)): ?>, <span class="pages"><?php echo $assignmentfull->assignments_pages; ?></span><?php endif; ?>
+			?><?php bib_specific($assignmentfull->assignments_bibliographyID, $full); ?><?php if ( !empty($assignmentfull->assignments_pages)): ?>, <span class="pages"><?php echo $assignmentfull->assignments_pages; ?></span>.<?php endif; ?>
 			
 	<?php } else { ?>
 			<div class="assignment-title"><?php echo $assignmentfull->assignments_title; ?></div>
@@ -90,20 +78,19 @@ function assign_printfull($assignmentfull, $full="small")
  <?php 
 }
 
-function assign_schedulefull($assignmentfull, $full="small")
+function assign_schedulefull($assignmentfull)
 { 
 		//print_r($assignmentfull);
-		echo '<div class="assignment">';
+		
 		if ($assignmentfull['assignments_type']=='reading') {
-			?><?php bib_specific($assignmentfull['assignments_bibliographyID'], $full); ?><?php if ( !empty($assignmentfull['assignments_pages'])): ?>, <span class="pages"><?php echo $assignmentfull['assignments_pages']; ?></span><?php endif;
-			if ( !empty($assignmentfull['assignments_description'])): ?><span class="assignment-description"><?php echo $assignmentfull['assignments_description']; ?></span>
+			?><?php bib_specific($assignmentfull['assignments_bibliographyID'], $full, $assignment=true); ?><?php if ( !empty($assignmentfull['assignments_pages'])): ?> <span class="pages"><?php echo $assignmentfull['assignments_pages']; ?></span>.<?php endif;
+			if ( !empty($assignmentfull['assignments_description'])): ?><div class="assignment-description"><?php echo $assignmentfull['assignments_description']; ?></div>
 			<?php endif; ?>
 	<?php }
 		else { ?>
 			<div class="assignment-title"><?php echo $assignmentfull['assignments_title']; ?></div>
 			<div class="assignment-description"><?php echo nls2p($assignmentfull['assignments_description']); ?></div>
 		<?php } 
-		echo '</div>';
 }
 
 // Print specific assignments entry

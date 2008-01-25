@@ -285,11 +285,11 @@ function courseware_install () {
 // Add management pages to the administration panel; sink function for 'admin_menu' hook
 function courseware_admin_menu()
 {
-	add_menu_page('spcourseware','SP Courseware',8,'spcourseware','spcourseware_manage');
-	add_submenu_page('spcourseware','schedule', 'Schedule', 8, 'schedule', 'schedule_manage');
-	add_submenu_page('spcourseware','bibliography', 'Bibliography', 8, 'bibliography', 'bibliography_manage');
-	add_submenu_page('spcourseware','assignments', 'Assignments', 8, 'assignments', 'assignments_manage');
-	add_submenu_page('spcourseware','courseinfo', 'Course Information', 8, 'courseinfo', 'courseinfo_manage');
+	add_menu_page('SP Courseware','SP Courseware',8,'scholarpress-courseware','spcourseware_manage');
+	add_submenu_page('scholarpress-courseware','SP Courseware | Schedule', 'Schedule', 8, 'schedule', 'schedule_manage');
+	add_submenu_page('scholarpress-courseware','SP Courseware | Bibliography', 'Bibliography', 8, 'bibliography', 'bibliography_manage');
+	add_submenu_page('scholarpress-courseware','SP Courseware | Assignments', 'Assignments', 8, 'assignments', 'assignments_manage');
+	add_submenu_page('scholarpress-courseware','SP Courseware | Course Information', 'Course Information', 8, 'courseinfo', 'courseinfo_manage');
 }
 
 
@@ -300,15 +300,20 @@ function courseware_admin_menu()
 function courseware_admin_style() 
 {
     $url = get_settings('siteurl');
-    $url = $url . '/wp-content/plugins/spcourseware/spadmin.css';
+    $url = $url . '/wp-content/plugins/scholarpress-courseware/spadmin.css';
 	echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />';
 }
 
 function courseware_admin_scripts() 
 {
     $url = get_settings('siteurl');
-    $url = $url . '/wp-content/plugins/spcourseware/spcourseware.js';
+    $url = $url . '/wp-content/plugins/scholarpress-courseware/spcourseware.js';
 	echo '<script type="text/javascript" src="' . $url . '"></script>';
+	$datepicker_url = get_settings('siteurl');
+	$datepicker_url = $datepicker_url . '/wp-content/plugins/scholarpress-courseware/datepicker/';
+	echo '<script type="text/javascript" src="'.$datepicker_url.'datepicker.js"></script>';
+	echo '<link rel="stylesheet" type="text/css" href="' . $datepicker_url . 'datepicker.css" />';
+	
 }
 
 add_action('admin_head', 'courseware_admin_style');
@@ -319,7 +324,7 @@ add_action('admin_head', 'courseware_admin_scripts');
 function courseware_public_style() 
 {
     $url = get_settings('siteurl');
-    $url = $url . '/wp-content/plugins/spcourseware/spcourseware.css';
+    $url = $url . '/wp-content/plugins/scholarpress-courseware/spcourseware.css';
 	echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />';
 }
 
@@ -834,6 +839,47 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 	getAdminOptions();
 
 	?>
+	<script type="text/javascript">
+	//<![CDATA[
+
+	function initialiseInputs() {
+
+	        // Add the onchange event handler to the start date input
+	        datePickerController.addEvent(document.getElementById("schedule_date"), "change", setSPDate);
+	}
+
+	var initAttempts = 0;
+
+	function setSPDate(e) {
+	        // Internet Explorer will not have created the datePickers yet so we poll the datePickerController Object using a setTimeout
+	        // until they become available (a maximum of ten times in case something has gone horribly wrong)
+
+	        try {
+				var sd = datePickerController.getDatePicker("schedule_date");
+	        } 
+			catch (err) {
+				if(initAttempts++ < 10) setTimeout("setSPDate()", 50);
+				return;
+	        }
+
+	        // Check the value of the input is a date of the correct format
+	        var dt = datePickerController.dateFormat(this.value, sd.format.charAt(0) == "m");
+
+	        // If the input's value cannot be parsed as a valid date then return
+	        if(dt == 0) return;
+	}
+
+	function removeInputEvents() {
+	        // Remove the onchange event handler set within the function initialiseInputs
+	        datePickerController.removeEvent(document.getElementById("sd"), "change", setSPDate);
+	}
+
+	datePickerController.addEvent(window, 'load', initialiseInputs);
+	datePickerController.addEvent(window, 'unload', removeInputEvents);
+
+	//]]>
+	</script>
+
 	<form name="scheduleform" id="scheduleform" class="wrap" method="post" action="">
 		<input type="hidden" name="updateaction" value="<?php echo $mode?>">
 		<input type="hidden" name="scheduleID" value="<?php echo $scheduleID?>">
@@ -843,24 +889,25 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 
 				<!-- List URL -->
 				<fieldset class="small"><legend><?php _e('Title'); ?></legend>
-					<input type="text" name="schedule_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_title); ?>" />
+					<input type="text" name="schedule_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_title); ?>" />
 				</fieldset>
 
 
 				<fieldset class="small"><legend><?php _e('Date'); ?> (YYYY-MM-DD)</legend>
-					<input type="text" name="schedule_date" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_date); ?>" />
+					<input type="text" name="schedule_date" id="schedule_date" class="format-y-m-d divider-dash split-date input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_date); ?>" />
+					
 				</fieldset>
 
 				<fieldset class="small"><legend><?php _e('TimeStart'); ?> (24:00:00)</legend>
-					<input type="text" name="schedule_timestart" class="input" size=45 value="<?php if ( !empty($data) ) {echo htmlspecialchars($data->schedule_timestart);} else {echo $spcoursewareAdminOptions['course_timestart'];} ?>" />
+					<input type="text" name="schedule_timestart" class="input" size="45" value="<?php if ( !empty($data) ) {echo htmlspecialchars($data->schedule_timestart);} else {echo $spcoursewareAdminOptions['course_timestart'];} ?>" />
 				</fieldset>
 
 				<fieldset class="small"><legend><?php _e('TimeStop'); ?> (24:00:00)</legend>
-					<input type="text" name="schedule_timestop" class="input" size=45 value="<?php if ( !empty($data) ){ echo htmlspecialchars($data->schedule_timestop); } else {echo $spcoursewareAdminOptions['course_timeend'];} ?>" />
+					<input type="text" name="schedule_timestop" class="input" size="45" value="<?php if ( !empty($data) ){ echo htmlspecialchars($data->schedule_timestop); } else {echo $spcoursewareAdminOptions['course_timeend'];} ?>" />
 				</fieldset>
 
 				<fieldset class="small"><legend><?php _e('Description'); ?></legend>
-					<textarea name="schedule_description" class="input" cols=45 rows=7><?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_description); ?></textarea>
+					<textarea name="schedule_description" class="input" cols="45" rows="7"><?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_description); ?></textarea>
 				</fieldset>
 <!-- 
 				<fieldset class="small"><legend><?php _e('Associated Assignments'); ?></legend>

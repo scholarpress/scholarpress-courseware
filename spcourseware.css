@@ -1,3 +1,15 @@
 #spschedule #classes {border-top:1px solid #ccc; padding-top:1em;}
 #spschedule .vevent {border-bottom:1px solid #ccc; margin-bottom:1em; padding-bottom:1em;}
 #spschedule .summary {margin:1em 0;}
+
+.hcite {display:inline;}
+.monograph .title,
+.article .journal,
+.webpage .website-title,
+.website .title,
+.volumechapter .volume-title {font-style:italic;}
+
+#spbibliography .hcite {display:block; text-indent: -2em; margin-left:2em;}
+
+#spschedule .assignment-title {font-weight:bold;display:inline;}
+.assignment-description {text-indent:0;}

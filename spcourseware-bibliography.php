@@ -15,7 +15,7 @@ function bibliography_manage()
 			$entryID = intval($_GET['entryID']);
 			if (empty($entryID))
 			{
-				?><div class="error"><p><strong>Failure:</strong> No Biblio-ID given. I guess I deleted nothing successfully.</p></div><?php
+				?><div class="error"><p><strong>Failure:</strong> No ID given. I guess I deleted nothing successfully.</p></div><?php
 			}
 			else
 			{
@@ -24,11 +24,11 @@ function bibliography_manage()
 				$check = $wpdb->get_results($sql);
 				if ( empty($check) || empty($check[0]->entryID) )
 				{
-					?><div class="updated"><p>Biblio Entry <?php echo $entryID; ?> deleted successfully.</p></div><?php
+					?><div class="updated"><p>Entry <?php echo $entryID; ?> deleted successfully.</p></div><?php
 				}
 				else
 				{
-					?><div class="error"><p><strong>Failure:</strong> Ninjas proved my kung-fu to be too weak to delete that entry.</p></div><?php
+					?><div class="error"><p><strong>Failure:</strong> Could not delete that entry.</p></div><?php
 				}
 			}
 		} // end delete_biblio block
@@ -62,7 +62,7 @@ function bibliography_manage()
 		
 		if ( empty($entryID) )
 		{
-			?><div class="error"><p><strong>Failure:</strong> No biblio-id given. Can't save nothing. Giving up...</p></div><?php
+			?><div class="error"><p><strong>Failure:</strong> No biblio-id given. Can't save.</p></div><?php
 		}
 		else
 		{
@@ -72,7 +72,7 @@ function bibliography_manage()
 			$check = $wpdb->get_results($sql);
 			if ( empty($check) || empty($check[0]->entryID) )
 			{
-				?><div class="error"><p><strong>Failure:</strong> The Evil Monkey Overlord wouldn't let me update your entry. Try again?</p></div><?php
+				?><div class="error"><p><strong>Failure:</strong> Try again?</p></div><?php
 			}
 			else
 			{
@@ -113,7 +113,7 @@ function bibliography_manage()
 		}
 		else
 		{
-			?><div class="updated"><p>Writing up a storm! Biblio id <?php echo $check[0]->entryID;?> added successfully.</p></div><?php
+			?><div class="updated"><p>Bibliography entry no. <?php echo $check[0]->entryID;?> added successfully!</p></div><?php
 		}
 	} // end add_biblio block
 	?>
@@ -209,7 +209,7 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 		// this next line makes me about 200 times cooler than you.
 		if ( intval($entryID) != $entryID )
 		{
-			echo "<div class=\"error\"><p>Bad Monkey! No banana!</p></div>";
+			echo "<div class=\"error\"><p>Error!</p></div>";
 			return;
 		}
 		else
@@ -217,7 +217,7 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 			$data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "bibliography WHERE entryID = '" . $entryID . " LIMIT 1'");
 			if ( empty($data) )
 			{
-				echo "<div class=\"error\"><p>I couldn't find a quote linked up with that identifier. Giving up...</p></div>";
+				echo "<div class=\"error\"><p>Couldn't find it. Giving up...</p></div>";
 				return;
 			}
 			$data = $data[0];
@@ -344,22 +344,26 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 }
 
 // Print small biblio entry (eg title and link only, for use in sidebar)
-function bib_printsmall($bibliosmall, $class='class="bib_small"') { ?>
+function bib_printsmall($bibliosmall) { ?>
 <p class="hcite <?php echo $bibliosmall->type; ?>">
-<?php if(!empty($bibliosmall->author_last)): ?><span class="author"><span class="family-name"><?php echo ($bibliosmall->author_last); ?></span><?php if( !empty($bibliosmall->author_two_last)): ?> and <span class="family-name"><?php echo ($bibliosmall->author_two_last); ?></span><?php endif; ?>, fff<?php endif; ?><?php if(!empty($bibliosmall->url)){?><a href="<?php echo $bibliosmall->url; ?>"><?php } ?><?php if(!empty($bibliosmall->short_title)): ?> Foo<span class="title"><?php echo ($bibliosmall->short_title); ?></span><?php elseif(!empty($bibliosmall->title)): ?> <span class="title"><?php echo ($bibliosmall->title); ?></span><?php endif; ?><?php if(!empty($bibliosmall->url)){?></a><?php } ?>.
+<?php if(!empty($bibliosmall->author_last)) { ?><span class="creator fn"><span class="family-name"><?php echo ($bibliosmall->author_last); ?></span></span><?php if( !empty($bibliosmall->author_two_last)) { ?> and <span class="creator fn"><span class="family-name"><?php echo ($bibliosmall->author_two_last); ?></span></span><?php } ?>, <? } if(!empty($bibliosmall->url)) { ?><a href="<?php echo $bibliosmall->url; ?>"><?php } ?><?php if(!empty($bibliosmall->short_title)){ ?> <span class="title"><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?>&#8220;<?php } ?><?php echo ($bibliosmall->short_title); ?><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?></span>.&#8221;<?php } else{ ?>.<?php } ?><?php } elseif(!empty($bibliosmall->title)){ ?> <span class="title"><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?>&#8220;<?php } ?><?php echo ($bibliosmall->title); ?><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?></span>.&#8221;<?php } else { ?>.<?php } } if(!empty($bibliosmall->url)){?></a><?php } ?>
 </p>
 <?php }
 
 // Print full biblio entry 
-function bib_printfull($bibliofull,$description=false) { ?>
-<div class="hcite <?php echo $bibliofull->type; ?>">
-<p><?php if( !empty($bibliofull->author_last)): ?><span class="creator fn"><span class="family-name"><?php echo ($bibliofull->author_last); ?></span>, <span class="given-name"><?php echo ($bibliofull->author_first); ?></span><?php if( !empty($bibliofull->author_two_last)): ?> and <span class="given-name"><?php echo ($bibliofull->author_two_first); ?></span> <span class="family-name"><?php echo ($bibliofull->author_two_last); ?></span><?php endif; ?>. <?php endif; ?><?php if($bibliofull->type != 'monograph'){ ?>&#8220;<?php } ?><?php if(!empty($bibliofull->url)){ ?><a href="<?php echo($bibliofull->url); ?>"><?php } ?><span class="title"><?php echo nl2br($bibliofull->title); ?></span><?php if ( !empty($bibliofull->url)){ ?></a><?php } ?>.<?php if($bibliofull->type != 'monograph') { ?>&#8221;<?php } ?>
+function bib_printfull($bibliofull,$bibid=false,$description=false) { ?>
+	
+<div class="hcite <?php echo $bibliofull->type; ?>"<?php if($bibid==true){?> id="bib-entry-<?php echo $bibliofull->entryID; ?>"<?php } ?>>
+<p><?php if( !empty($bibliofull->author_last)): ?><span class="creator fn"><span class="family-name"><?php echo ($bibliofull->author_last); ?></span>, <span class="given-name"><?php echo ($bibliofull->author_first); ?></span><?php if( !empty($bibliofull->author_two_last)): ?> and <span class="given-name"><?php echo ($bibliofull->author_two_first); ?></span> <span class="family-name"><?php echo ($bibliofull->author_two_last); ?></span><?php endif; ?>. <?php endif; ?><?php if($bibliofull->type != 'monograph' && $bibliofull->type !='website'){ ?>&#8220;<?php } if(!empty($bibliofull->url)){ ?><a href="<?php echo($bibliofull->url); ?>"><?php } ?><span class="title"><?php echo nl2br($bibliofull->title); ?></span><?php if ( !empty($bibliofull->url)){ ?></a><?php } ?>.<?php if($bibliofull->type != 'monograph' && $bibliofull->type !='website') { ?>&#8221;<?php } ?>
 	
 <?php if ($bibliofull->type == 'monograph'): ?>
 <?php if ( !empty($bibliofull->pub_location)) { ?><span class="location"><?php echo nl2br($bibliofull->pub_location); ?></span>:<?php } ?><?php if (!empty($bibliofull->publisher)) { ?> <span><?php echo nl2br($bibliofull->publisher); ?></span>,<?php } ?> <?php if( !empty($bibliofull->date)) { ?><span class="date"><?php echo ($bibliofull->date); ?></span>.<?php } ?>
 
+<?php elseif ($bibliofull->type == 'volumechapter'): ?>
+<?php if(!empty($bibliofull->volume_title)) { ?><span class="volume-title"><?php echo nl2br($bibliofull->volume_title); ?></span>. <?php } if(!empty($bibliofull->volume_editors)) { ?><span class="volume-editors"><?php echo $bibliofull->volume_editors; ?>, ed.</span> <?php } if ( !empty($bibliofull->pub_location)) { ?><span class="location"><?php echo nl2br($bibliofull->pub_location); ?></span>:<?php } ?><?php if (!empty($bibliofull->publisher)) { ?> <span><?php echo nl2br($bibliofull->publisher); ?></span>,<?php } ?> <?php if( !empty($bibliofull->date)) { ?><span class="date"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>.
+
 <?php elseif ($bibliofull->type == 'article'): ?>
-<span class="journal"><?php echo nl2br($bibliofull->journal); ?></span> <?php if ( !empty($bibliofull->volume) || !empty($bibliofull->issue)) { ?><span class="volume"><?php echo nl2br($bibliofull->volume); ?></span>, no. <span><?php echo nl2br($bibliofull->issue); ?></span><?php } ?> <?php if( !empty($bibliofull->date)) { ?>(<span class="date"><?php echo ($bibliofull->date); ?></span>)<?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>. 
+<span class="journal"><?php echo nl2br($bibliofull->journal); ?></span> <?php if ( !empty($bibliofull->volume) || !empty($bibliofull->issue)) { ?><span class="volume"><?php echo nl2br($bibliofull->volume); ?></span>, no. <span class="issue"><?php echo nl2br($bibliofull->issue); ?></span><?php } ?> <?php if( !empty($bibliofull->date)) { ?>(<span class="date"><?php echo ($bibliofull->date); ?></span>)<?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>. 
 
 <?php elseif ($bibliofull->type == 'website'): ?>
 <?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if( !empty($bibliofull->dateaccessed)) { ?>. (Accessed <span class="date-accesed"><?php echo ($bibliofull->dateaccessed); ?></span>)<?php } if(!empty($bibliofull->date) || !empty($bibliofull->dateaccessed)) { ?>.<?php } ?> 
@@ -382,7 +386,7 @@ function bib_printfull($bibliofull,$description=false) { ?>
 
 
 // Print specific bibliography entry
-function bib_specific($id, $full="small")
+function bib_specific($id, $full="small", $assignment=false)
 {
 	global $wpdb, $table_prefix;
 	$table_name = $table_prefix . "bibliography";
@@ -399,6 +403,19 @@ function bib_specific($id, $full="small")
 	}	
 }
 
+// Print specific bibliography entry
+function bib_assign_specific($id)
+{
+	global $wpdb, $table_prefix;
+	$table_name = $table_prefix . "bibliography";
+	$sql = "select * from " . $table_name . " where entryID='{$id}'";
+	$result = $wpdb->get_results($sql);
+	
+	if ( !empty($result) ) {
+		bib_assign_printsmall($result[0]);	
+	}	
+}
+
 // Print all bibliography entries onto a page, sorted by type
 function bib_page($data,$headings='h4')
 {
@@ -410,7 +427,8 @@ function bib_page($data,$headings='h4')
 		ob_start();
 		global $wpdb;
 
-			$sql_monograph = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='monograph')");
+		// Monographs
+		$sql_monograph = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='monograph')");
 		if (count($sql_monograph) > 0 )
 		{
 			echo "<".$headings.">Monographs</".$headings.">";
@@ -419,25 +437,27 @@ function bib_page($data,$headings='h4')
 			{
 				foreach ( $published as $row )
 				{
-					bib_printfull($row);
+					bib_printfull($row,true);
 				}
 			}
 		}
 
-		$sql_unpublished = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='unpublished')");
-		if (count($sql_unpublished) > 0 )
+		// Volume Chapters
+		$sql_chapters = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='volumechapter')");
+		if (count($sql_chapters) > 0 )
 		{
-			echo "<".$headings.">Unpublished</".$headings.">";
-			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='unpublished') ORDER BY 'entryID' DESC");
+			echo "<".$headings.">Volume Chapters</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='volumechapter') ORDER BY 'entryID' DESC");
 			if ( !empty($published) )
 			{
 				foreach ( $published as $row )
 				{
-					bib_printfull($row);
+					bib_printfull($row,true);
 				}
 			}
 		}
 
+		// Articles
 		$sql_article = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='article')");
 		if (count($sql_article) > 0 )
 		{
@@ -447,11 +467,12 @@ function bib_page($data,$headings='h4')
 			{
 				foreach ( $published as $row )
 				{ 
-	  			bib_printfull($row);
+	  			bib_printfull($row,true);
 				}
 			}
 		}
 
+		// Websites
 		$sql_website = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='website')");
 		if (count($sql_website) > 0)
 		{
@@ -461,11 +482,12 @@ function bib_page($data,$headings='h4')
 			{
 				foreach ( $published as $row )
 				{
-					bib_printfull($row);
+					bib_printfull($row,true);
 				}
 			}
 		}
 
+		// Webpages
 		$sql_webpages = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='webpage')");
 		if (count($sql_webpages) > 0)
 		{
@@ -475,11 +497,12 @@ function bib_page($data,$headings='h4')
 			{
 				foreach ( $published as $row )
 				{
-					bib_printfull($row);
+					bib_printfull($row,true);
 				}
 			}
 		}
 
+		// Videos
 		$sql_videos = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='video')");
 		if (count($sql_videos) > 0)
 		{
@@ -489,11 +512,12 @@ function bib_page($data,$headings='h4')
 			{
 				foreach ( $published as $row )
 				{
-					bib_printfull($row);
+					bib_printfull($row,true);
 				}
 			}
 		}
 
+		// Audios
 		$sql_audios = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='audio')");
 		if (count($sql_audios) > 0)
 		{
@@ -503,11 +527,26 @@ function bib_page($data,$headings='h4')
 			{
 				foreach ( $published as $row )
 				{
-					bib_printfull($row);
+					bib_printfull($row,true);
 				}
 			}
 		}	
 
+		// Unpublished Works
+		$sql_unpublished = $wpdb->get_results("SELECT entryID FROM " . $table_name . " WHERE (type='unpublished')");
+		if (count($sql_unpublished) > 0 )
+		{
+			echo "<".$headings.">Unpublished</".$headings.">";
+			$published = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE (type='unpublished') ORDER BY 'entryID' DESC");
+			if ( !empty($published) )
+			{
+				foreach ( $published as $row )
+				{
+					bib_printfull($row,true);
+				}
+			}
+		}
+		
 		$contents = ob_get_contents();
 		ob_end_clean();
 		$data = substr_replace($data, $contents, $start, strlen(SP_BIBLIOGRAPHY_PAGE));
