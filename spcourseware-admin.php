@@ -3,7 +3,7 @@
 Plugin Name: ScholarPress Courseware
 Plugin URI: http://scholarpress.net/courseware/
 Description: All-in-one course management for WordPress
-Version: 1.0.2
+Version: 1.0.3alpha
 Author: Jeremy Boggs, Josh Greenberg, and Dave Lester
 Author URI: http://scholarpress.net/
 */
@@ -23,6 +23,9 @@ Author URI: http://scholarpress.net/
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+// Plugin Version
+$spcourseware_version = "1.0.3alpha";
 
 // Misc functions
 //Adapted from PHP.net: http://us.php.net/manual/en/function.nl2br.php#73479
@@ -76,20 +79,22 @@ function setAdminOptions($course_title, $course_number, $course_section, $course
 // Install the courseware
 function courseware_install () {
 
-	global $table_prefix, $wpdb, $user_level;
+	global $wpdb, $user_level, $spcourseware_version;
 
 	// Check user-level
 	get_currentuserinfo();
 	if ($user_level < 8) { return; }
 	
+	add_option("spcourseware_version", $spcourseware_version);
+	
 	// table names
-	$assignments_table_name = $table_prefix . "assignments";
-	$bib_table_name = $table_prefix . "bibliography";
-	$schedule_table_name = $table_prefix . "schedule";
-	$projects_table_name = $table_prefix . "projects";
-	$assignment2project_table_name = $table_prefix . "assignment2project";
-	$units_table_name = $table_prefix . "units";
-	$schedule2unit_table_name = $table_prefix . "schedule2unit";
+	$assignments_table_name = $wpdb->prefix . "assignments";
+	$bib_table_name = $wpdb->prefix . "bibliography";
+	$schedule_table_name = $wpdb->prefix . "schedule";
+	$projects_table_name = $wpdb->prefix . "projects";
+	$assignment2project_table_name = $wpdb->prefix . "assignment2project";
+	$units_table_name = $wpdb->prefix . "units";
+	$schedule2unit_table_name = $wpdb->prefix . "schedule2unit";
 	 
 	// First-Run-Only parameters: Check if assignments table exists:
 	if($wpdb->get_var("show tables like '$assignments_table_name'") != $assignments_table_name) 
@@ -107,7 +112,7 @@ function courseware_install () {
 			 PRIMARY KEY (`assignmentID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 		
 	}
@@ -141,7 +146,7 @@ function courseware_install () {
 			 PRIMARY KEY (`entryID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 	}
 	
@@ -159,7 +164,7 @@ function courseware_install () {
 			 PRIMARY KEY (`scheduleID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 	}
 	
@@ -175,7 +180,7 @@ function courseware_install () {
 			 PRIMARY KEY (`projectID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 	}
 	
@@ -191,7 +196,7 @@ function courseware_install () {
 			 PRIMARY KEY (`assignment2projectID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 	}
 	
@@ -206,7 +211,7 @@ function courseware_install () {
 			 PRIMARY KEY (`unitID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 	}
 	
@@ -222,7 +227,7 @@ function courseware_install () {
 			 PRIMARY KEY (`schedule2unitID`)
 			 )"; 
 
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
 	}
 	
@@ -337,7 +342,7 @@ function spcourseware_manage() {
 	?>
 	<div class="wrap">
 	<h2>SP Courseware</h2>
-	
+	<p>You are using Courseware version <?php echo get_option('spcourseware_version'); ?></p>
 	<div id="schedule-assignments">
 	<h3>Upcoming Schedule</h3>
 	<ul>
@@ -358,7 +363,7 @@ function spcourseware_manage() {
 // Handles the assignments management page
 function assignments_manage()
 {
-	global $table_prefix, $wpdb;
+	global $wpdb;
 
 	$updateaction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 	$assignmentID = !empty($_REQUEST['assignmentID']) ? $_REQUEST['assignmentID'] : '';
@@ -373,8 +378,8 @@ function assignments_manage()
 			}
 			else
 			{
-				$wpdb->query("DELETE FROM " . $table_prefix . "assignments WHERE assignmentID = '" . $assignmentID . "'");
-				$sql = "SELECT assignmentID FROM " . $table_prefix . "assignments WHERE assignmentID = '" . $assignmentID . "'";
+				$wpdb->query("DELETE FROM " . $wpdb->prefix . "assignments WHERE assignmentID = '" . $assignmentID . "'");
+				$sql = "SELECT assignmentID FROM " . $wpdb->prefix . "assignments WHERE assignmentID = '" . $assignmentID . "'";
 				$check = $wpdb->get_results($sql);
 				if ( empty($check) || empty($check[0]->assignmentID) )
 				{
@@ -403,9 +408,9 @@ function assignments_manage()
 		}
 		else
 		{
-			$sql = "UPDATE " . $table_prefix . "assignments SET assignments_title = '" . $title . "', assignments_scheduleID = '" . $scheduleID . "',  assignments_bibliographyID = '" . $bibliographyID . "', assignments_type = '" . $type . "', assignments_pages = '" . $pages . "', assignments_description = '" . $description . "' WHERE assignmentID = '" . $assignmentID . "'";
+			$sql = "UPDATE " . $wpdb->prefix . "assignments SET assignments_title = '" . $title . "', assignments_scheduleID = '" . $scheduleID . "',  assignments_bibliographyID = '" . $bibliographyID . "', assignments_type = '" . $type . "', assignments_pages = '" . $pages . "', assignments_description = '" . $description . "' WHERE assignmentID = '" . $assignmentID . "'";
 			$wpdb->get_results($sql);
-			$sql = "SELECT assignmentID FROM " . $table_prefix . "assignments WHERE assignments_title = '" . $title . "' and assignments_scheduleID = '" . $scheduleID . "' and assignments_type = '" . $type . "' and assignments_pages = '" . $pages . "' and assignments_description = '" . $description . "' LIMIT 1";
+			$sql = "SELECT assignmentID FROM " . $wpdb->prefix . "assignments WHERE assignments_title = '" . $title . "' and assignments_scheduleID = '" . $scheduleID . "' and assignments_type = '" . $type . "' and assignments_pages = '" . $pages . "' and assignments_description = '" . $description . "' LIMIT 1";
 			$check = $wpdb->get_results($sql);
 			if ( empty($check) || empty($check[0]->assignmentID) )
 			{
@@ -426,9 +431,9 @@ function assignments_manage()
 		$pages = !empty($_REQUEST['assignment_pages']) ? $_REQUEST['assignment_pages'] : '';
 		$description = !empty($_REQUEST['assignment_description']) ? $_REQUEST['assignment_description'] : '';
 		
-		$sql = "INSERT INTO " . $table_prefix . "assignments SET assignments_title = '" . $title . "', assignments_scheduleID = '" . $scheduleID . "', assignments_bibliographyID = '" . $bibliographyID . "',  assignments_type = '" . $type . "', assignments_pages = '" . $pages . "', assignments_description = '" . $description . "'";
+		$sql = "INSERT INTO " . $wpdb->prefix . "assignments SET assignments_title = '" . $title . "', assignments_scheduleID = '" . $scheduleID . "', assignments_bibliographyID = '" . $bibliographyID . "',  assignments_type = '" . $type . "', assignments_pages = '" . $pages . "', assignments_description = '" . $description . "'";
 		$wpdb->get_results($sql);
-		$sql = "SELECT assignmentID FROM " . $table_prefix . "assignments WHERE assignments_title = '" . $title . "' and assignments_scheduleID = '" . $scheduleID . "' and assignments_type = '" . $type . "' and assignments_pages = '" . $pages . "' and assignments_description = '" . $description . "'";
+		$sql = "SELECT assignmentID FROM " . $wpdb->prefix . "assignments WHERE assignments_title = '" . $title . "' and assignments_scheduleID = '" . $scheduleID . "' and assignments_type = '" . $type . "' and assignments_pages = '" . $pages . "' and assignments_description = '" . $description . "'";
 		$check = $wpdb->get_results($sql);
 		if ( empty($check) || empty($check[0]->assignmentID) )
 		{
@@ -474,9 +479,9 @@ function assignments_manage()
 // Displays the list of assignments entries
 function assignments_displaylist() 
 {
-	global $wpdb, $table_prefix;
+	global $wpdb;
 	
-	$assignments = $wpdb->get_results("SELECT * FROM ".$table_prefix."assignments LEFT JOIN ".$table_prefix."bibliography ON ".$table_prefix."assignments.assignments_bibliographyID = ".$table_prefix."bibliography.entryID LEFT JOIN ".$table_prefix."schedule ON ".$table_prefix."assignments.assignments_scheduleID = ".$table_prefix."schedule.scheduleID ORDER BY assignmentID DESC");
+	$assignments = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."assignments LEFT JOIN ".$wpdb->prefix."bibliography ON ".$wpdb->prefix."assignments.assignments_bibliographyID = ".$wpdb->prefix."bibliography.entryID LEFT JOIN ".$wpdb->prefix."schedule ON ".$wpdb->prefix."assignments.assignments_scheduleID = ".$wpdb->prefix."schedule.scheduleID ORDER BY assignmentID DESC");
 	
 	if ( !empty($assignments) )
 	{
@@ -524,7 +529,7 @@ function assignments_displaylist()
 // Displays the add/edit form
 function assignments_editform($mode='add_assignment', $assignmentID=false)
 {
-	global $wpdb, $table_prefix;
+	global $wpdb;
 	$data = false;
 	
 	if ( $assignmentID !== false )
@@ -537,7 +542,7 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 		}
 		else
 		{
-			$data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "assignments WHERE assignmentID = '" . $assignmentID . " LIMIT 1'");
+			$data = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "assignments WHERE assignmentID = '" . $assignmentID . " LIMIT 1'");
 			if ( empty($data) )
 			{
 				echo "<div class=\"error\"><p>I couldn't find a quote linked up with that identifier. Giving up...</p></div>";
@@ -565,7 +570,7 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 							<option value=""></option>
 							<?php 
 								// Get schedule events from DB
-								$SQL = 'SELECT * from '.$table_prefix.'schedule ORDER BY schedule_date, schedule_timestart';
+								$SQL = 'SELECT * from '.$wpdb->prefix.'schedule ORDER BY schedule_date, schedule_timestart';
 								$dates = $wpdb->get_results($SQL, OBJECT);
 								foreach ($dates as $date) {
 							?>
@@ -578,7 +583,7 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 							<option value=""></option>
 							<?php 
 								// Get schedule events from DB
-								$SQL = 'SELECT * from '.$table_prefix.'schedule ORDER BY schedule_date, schedule_timestart';
+								$SQL = 'SELECT * from '.$wpdb->prefix.'schedule ORDER BY schedule_date, schedule_timestart';
 								$dates = $wpdb->get_results($SQL, OBJECT);
 								foreach ($dates as $date) {
 							?>
@@ -622,7 +627,7 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 						<option value=""></option>
 						<?php 
 							// Get bibliography events from DB
-							$SQL = 'SELECT * from '.$table_prefix.'bibliography ORDER BY author_last, title';
+							$SQL = 'SELECT * from '.$wpdb->prefix.'bibliography ORDER BY author_last, title';
 							$bibs = $wpdb->get_results($SQL, OBJECT);
 							foreach ($bibs as $bib) {
 						?>
@@ -653,7 +658,7 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 // Handles the schedule management page
 function schedule_manage()
 {
-	global $table_prefix, $wpdb;
+	global $wpdb;
 
 	$updateaction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 	$scheduleID = !empty($_REQUEST['scheduleID']) ? $_REQUEST['scheduleID'] : '';
@@ -668,8 +673,8 @@ function schedule_manage()
 			}
 			else
 			{
-				$wpdb->query("DELETE FROM " . $table_prefix . "schedule WHERE scheduleID = '" . $scheduleID . "'");
-				$sql = "SELECT scheduleID FROM " . $table_prefix . "schedule WHERE scheduleID = '" . $scheduleID . "'";
+				$wpdb->query("DELETE FROM " . $wpdb->prefix . "schedule WHERE scheduleID = '" . $scheduleID . "'");
+				$sql = "SELECT scheduleID FROM " . $wpdb->prefix . "schedule WHERE scheduleID = '" . $scheduleID . "'";
 				$check = $wpdb->get_results($sql);
 				if ( empty($check) || empty($check[0]->scheduleID) )
 				{
@@ -697,9 +702,9 @@ function schedule_manage()
 		}
 		else
 		{
-			$sql = "UPDATE " . $table_prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'  WHERE scheduleID = '" . $scheduleID . "'";
+			$sql = "UPDATE " . $wpdb->prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'  WHERE scheduleID = '" . $scheduleID . "'";
 			$wpdb->get_results($sql);
-			$sql = "SELECT scheduleID FROM " . $table_prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'  LIMIT 1";
+			$sql = "SELECT scheduleID FROM " . $wpdb->prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'  LIMIT 1";
 			$check = $wpdb->get_results($sql);
 			if ( empty($check) || empty($check[0]->scheduleID) )
 			{
@@ -719,9 +724,9 @@ function schedule_manage()
 		$timestart = !empty($_REQUEST['schedule_timestart']) ? $_REQUEST['schedule_timestart'] : '';
 		$timestop = !empty($_REQUEST['schedule_timestop']) ? $_REQUEST['schedule_timestop'] : '';
 		
-		$sql = "INSERT INTO " . $table_prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'";
+		$sql = "INSERT INTO " . $wpdb->prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'";
 		$wpdb->get_results($sql);
-		$sqlres = "SELECT scheduleID FROM " . $table_prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'";
+		$sqlres = "SELECT scheduleID FROM " . $wpdb->prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'";
 		$check = $wpdb->get_results($sqlres);
 
 		if ( empty($check) || empty($check[0]->scheduleID) )
@@ -768,9 +773,9 @@ function schedule_manage()
 // Displays the list of schedule entries
 function schedule_displaylist() 
 {
-	global $wpdb, $table_prefix;
+	global $wpdb;
 	
-	$schedule = $wpdb->get_results("SELECT * FROM " . $table_prefix . "schedule ORDER BY scheduleID DESC");
+	$schedule = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "schedule ORDER BY scheduleID DESC");
 	
 	if ( !empty($schedule) )
 	{
@@ -816,7 +821,7 @@ function schedule_displaylist()
 // Displays the add/edit form
 function schedule_editform($mode='add_schedule', $scheduleID=false)
 {
-	global $wpdb, $table_prefix;
+	global $wpdb;
 	$data = false;
 	
 	if ( $scheduleID !== false )
@@ -829,7 +834,7 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 		}
 		else
 		{
-			$data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "schedule WHERE scheduleID = '" . $scheduleID . " LIMIT 1'");
+			$data = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "schedule WHERE scheduleID = '" . $scheduleID . " LIMIT 1'");
 			if ( empty($data) )
 			{
 				echo "<div class=\"error\"><p>I couldn't find a quote linked up with that identifier. Giving up...</p></div>";

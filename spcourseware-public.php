@@ -35,7 +35,6 @@ function courseinfo_printfull() {
 	
 ?>
 	<div class="courseinfo">
-		<?php echo $foobar; ?>
 		<p><?php echo $course_number; ?>: <?php echo $course_title; ?></p>
 		<ul>
 		<li class="location"><?php echo $course_location; ?></li>
@@ -111,8 +110,8 @@ function assign_schedulefull($assignmentfull)
 // Print specific assignments entry
 function assign_specific($id, $full="small")
 {
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "assignments";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "assignments";
 	
 	if ($full=="full")
 	{
@@ -130,8 +129,8 @@ function assign_specific($id, $full="small")
 
 // Print Full Project
 function project_printfull($projectID) {
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "projects";	
+	global $wpdb;
+	$table_name = $wpdb->prefix . "projects";	
 	$sql = "select * from " . $table_name . " where projectID=".$projectID;
 	$result = $wpdb->get_row($sql, OBJECT);
 ?>
@@ -146,8 +145,8 @@ function project_printfull($projectID) {
 // Print all project entries onto a page, sorted by type
 function project_page($data)
 {
-global $wpdb, $table_prefix;
-$table_name = $table_prefix . "projects";
+global $wpdb;
+$table_name = $wpdb->prefix . "projects";
 $start = strpos($data, SP_PROJECTS_PAGE);
 if ( $start !==false )
 	{

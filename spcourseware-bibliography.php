@@ -4,7 +4,7 @@ define('SP_BIBLIOGRAPHY_PAGE', '<spbibliography />');
 // Handles the bibliography management page
 function bibliography_manage()
 {
-	global $table_prefix, $wpdb;
+	global $wpdb;
 
 	$updateaction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 	$entryID = !empty($_REQUEST['entryID']) ? $_REQUEST['entryID'] : '';
@@ -19,8 +19,8 @@ function bibliography_manage()
 			}
 			else
 			{
-				$wpdb->query("DELETE FROM " . $table_prefix . "bibliography WHERE entryID = '" . $entryID . "'");
-				$sql = "SELECT entryID FROM " . $table_prefix . "bibliography WHERE entryID = '" . $entryID . "'";
+				$wpdb->query("DELETE FROM " . $wpdb->prefix . "bibliography WHERE entryID = '" . $entryID . "'");
+				$sql = "SELECT entryID FROM " . $wpdb->prefix . "bibliography WHERE entryID = '" . $entryID . "'";
 				$check = $wpdb->get_results($sql);
 				if ( empty($check) || empty($check[0]->entryID) )
 				{
@@ -66,9 +66,9 @@ function bibliography_manage()
 		}
 		else
 		{
-			$sql = "UPDATE " . $table_prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "', dateaccessed = '" . $dateaccessed . "', url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "' WHERE entryID = '" . $entryID . "'";
+			$sql = "UPDATE " . $wpdb->prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "', dateaccessed = '" . $dateaccessed . "', url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "' WHERE entryID = '" . $entryID . "'";
 			$wpdb->get_results($sql);
-			$sql = "SELECT entryID FROM " . $table_prefix . "bibliography WHERE author_last = '" . $author_last . "' and author_first = '" . $author_first . "' and author_two_last = '" . $author_two_last . "' and author_two_first = '" . $author_two_first . "' and title = '" . $title . "' and short_title = '" . $short_title . "' and journal = '" . $journal . "' and volume_title = '" . $volume_title . "' and volume_editors = '" . $volume_editors . "' and website_title = '" . $website_title . "' and pub_location = '" . $pub_location . "' and publisher = '" . $publisher . "' and date = '" . $date . "' and dateaccessed = '" . $dateaccessed . "' and url = '" . $url . "' and volume = '" . $volume ."' and issue = '" . $issue . "' and pages = '" . $pages . "' and description = '" . $description . "' and type = '" . $type . "' LIMIT 1";
+			$sql = "SELECT entryID FROM " . $wpdb->prefix . "bibliography WHERE author_last = '" . $author_last . "' and author_first = '" . $author_first . "' and author_two_last = '" . $author_two_last . "' and author_two_first = '" . $author_two_first . "' and title = '" . $title . "' and short_title = '" . $short_title . "' and journal = '" . $journal . "' and volume_title = '" . $volume_title . "' and volume_editors = '" . $volume_editors . "' and website_title = '" . $website_title . "' and pub_location = '" . $pub_location . "' and publisher = '" . $publisher . "' and date = '" . $date . "' and dateaccessed = '" . $dateaccessed . "' and url = '" . $url . "' and volume = '" . $volume ."' and issue = '" . $issue . "' and pages = '" . $pages . "' and description = '" . $description . "' and type = '" . $type . "' LIMIT 1";
 			$check = $wpdb->get_results($sql);
 			if ( empty($check) || empty($check[0]->entryID) )
 			{
@@ -103,9 +103,9 @@ function bibliography_manage()
 		$description = !empty($_REQUEST['biblio_description']) ? $_REQUEST['biblio_description'] : '';
 		$type = !empty($_REQUEST['biblio_type']) ? $_REQUEST['biblio_type'] : '';
 		
-		$sql = "INSERT INTO " . $table_prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "',  dateaccessed = '" . $dateaccessed . "',url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "'";
+		$sql = "INSERT INTO " . $wpdb->prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "',  dateaccessed = '" . $dateaccessed . "',url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "'";
 		$wpdb->get_results($sql);
-		$sql = "SELECT entryID FROM " . $table_prefix . "bibliography WHERE author_last = '" . $author_last . "' and author_first = '" . $author_first . "' and author_two_last = '" . $author_two_last . "' and author_two_first = '" . $author_two_first . "' and title = '" . $title . "' and short_title = '" . $short_title . "' and journal = '" . $journal . "' and volume_title = '" . $volume_title . "' and volume_editors = '" . $volume_editors . "' and website_title = '" . $website_title . "' and pub_location = '" . $pub_location . "' and publisher = '" . $publisher . "' and date = '" . $date . "'and dateaccessed = '" . $dateaccessed . "' and url = '" . $url . "' and volume = '" . $volume ."' and issue = '" . $issue . "' and pages = '" . $pages . "' and description = '" . $description . "' and type = '" . $type . "'";
+		$sql = "SELECT entryID FROM " . $wpdb->prefix . "bibliography WHERE author_last = '" . $author_last . "' and author_first = '" . $author_first . "' and author_two_last = '" . $author_two_last . "' and author_two_first = '" . $author_two_first . "' and title = '" . $title . "' and short_title = '" . $short_title . "' and journal = '" . $journal . "' and volume_title = '" . $volume_title . "' and volume_editors = '" . $volume_editors . "' and website_title = '" . $website_title . "' and pub_location = '" . $pub_location . "' and publisher = '" . $publisher . "' and date = '" . $date . "'and dateaccessed = '" . $dateaccessed . "' and url = '" . $url . "' and volume = '" . $volume ."' and issue = '" . $issue . "' and pages = '" . $pages . "' and description = '" . $description . "' and type = '" . $type . "'";
 		$check = $wpdb->get_results($sql);
 		if ( empty($check) || empty($check[0]->entryID) )
 		{
@@ -151,9 +151,9 @@ function bibliography_manage()
 // Displays the list of bibliography entries
 function bibliography_displaylist() 
 {
-	global $wpdb, $table_prefix;
+	global $wpdb;
 	
-	$biblios = $wpdb->get_results("SELECT * FROM " . $table_prefix . "bibliography ORDER BY entryID DESC");
+	$biblios = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "bibliography ORDER BY entryID DESC");
 	
 	if ( !empty($biblios) )
 	{
@@ -201,7 +201,7 @@ function bibliography_displaylist()
 // Displays the add/edit form
 function bibliography_editform($mode='add_biblio', $entryID=false)
 {
-	global $wpdb, $table_prefix;
+	global $wpdb;
 	$data = false;
 	
 	if ( $entryID !== false )
@@ -214,7 +214,7 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 		}
 		else
 		{
-			$data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "bibliography WHERE entryID = '" . $entryID . " LIMIT 1'");
+			$data = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "bibliography WHERE entryID = '" . $entryID . " LIMIT 1'");
 			if ( empty($data) )
 			{
 				echo "<div class=\"error\"><p>Couldn't find it. Giving up...</p></div>";
@@ -388,8 +388,8 @@ function bib_printfull($bibliofull,$bibid=false,$description=false) { ?>
 // Print specific bibliography entry
 function bib_specific($id, $full="small", $assignment=false)
 {
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "bibliography";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "bibliography";
 	$sql = "select * from " . $table_name . " where entryID='{$id}'";
 	$result = $wpdb->get_results($sql);
 	
@@ -406,8 +406,8 @@ function bib_specific($id, $full="small", $assignment=false)
 // Print specific bibliography entry
 function bib_assign_specific($id)
 {
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "bibliography";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "bibliography";
 	$sql = "select * from " . $table_name . " where entryID='{$id}'";
 	$result = $wpdb->get_results($sql);
 	
@@ -419,8 +419,8 @@ function bib_assign_specific($id)
 // Print all bibliography entries onto a page, sorted by type
 function bib_page($data,$headings='h4')
 {
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "bibliography";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "bibliography";
 	$start = strpos($data, SP_BIBLIOGRAPHY_PAGE);
 	if ( $start != false )
 	{

@@ -7,10 +7,10 @@ define('SP_SCHEDULE_PAGE', '<spschedule />');
 // Print small reading entry (eg title and link only, for use in sidebar)
 function schedule_printsmall($scheduleID,$title="h3")
 { 
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "schedule";
-	$assignments_table_name = $table_prefix . "assignments";
-	$bib_table_name = $table_prefix . "bibliography";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "schedule";
+	$assignments_table_name = $wpdb->prefix . "assignments";
+	$bib_table_name = $wpdb->prefix . "bibliography";
 	$sql = "select * from " . $table_name . " where scheduleID=".$scheduleID;
 	$result = $wpdb->get_row($sql, OBJECT);
 	$startTime = strtotime($result->schedule_date.' '.$result->schedule_timestart);
@@ -35,10 +35,10 @@ function schedule_printsmall($scheduleID,$title="h3")
 // Print full reading entry 
 function schedule_printfull($scheduleID, $full='full',$date_first=true)
 { 
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "schedule";
-	$assignments_table_name = $table_prefix . "assignments";
-	$bib_table_name = $table_prefix . "bibliography";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "schedule";
+	$assignments_table_name = $wpdb->prefix . "assignments";
+	$bib_table_name = $wpdb->prefix . "bibliography";
 	$sql = "select * from " . $table_name . " where scheduleID=".$scheduleID;
 	$result = $wpdb->get_row($sql, OBJECT);
 	$startTime = strtotime($result->schedule_date.' '.$result->schedule_timestart);
@@ -132,8 +132,8 @@ function schedule_printfull($scheduleID, $full='full',$date_first=true)
 // Print specific schedule entry
 function schedule_specific($id, $full="small")
 {
-	global $wpdb, $table_prefix;
-	$table_name = $table_prefix . "schedule";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "schedule";
 	
 	if ($full=="full")
 	{
@@ -148,8 +148,8 @@ function schedule_specific($id, $full="small")
 }
 
 function schedule_upcoming($num='4',$title='h4') {
-	global $wpdb,$table_prefix;
-	$table_name = $table_prefix . "schedule";
+	global $wpdb;
+	$table_name = $wpdb->prefix . "schedule";
 	$date = date("Y:m:d");
 	$sql_schedule = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE schedule_date >= '$date' ORDER BY schedule_date, schedule_timestart LIMIT ".$num, ARRAY_A);
 	if (count($sql_schedule) > 0) {
@@ -165,8 +165,8 @@ function schedule_upcoming($num='4',$title='h4') {
 // Print all schedule entries onto a page, sorted by type
 function schedule_page($data)
 {
-global $wpdb, $table_prefix;
-$table_name = $table_prefix . "schedule";
+global $wpdb;
+$table_name = $wpdb->prefix . "schedule";
 $start = strpos($data, SP_SCHEDULE_PAGE);
 if ( $start !==false )
 	{
