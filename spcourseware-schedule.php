@@ -4,15 +4,40 @@ include_once 'spcourseware-bibliography.php';
 
 define('SP_SCHEDULE_PAGE', '<spschedule />');
 
-// Print small reading entry (eg title and link only, for use in sidebar)
-function schedule_printsmall($scheduleID,$title="h3")
-{ 
-	global $wpdb;
-	$table_name = $wpdb->prefix . "schedule";
-	$assignments_table_name = $wpdb->prefix . "assignments";
-	$bib_table_name = $wpdb->prefix . "bibliography";
-	$sql = "select * from " . $table_name . " where scheduleID=".$scheduleID;
+/* == Queries == */
+function sp_courseware_get_schedule_entries()
+{
+    global $wpdb;
+    $schedule_table_name = $wpdb->prefix . "schedule";
+	
+	$results = $wpdb->get_results("SELECT scheduleID FROM " . $schedule_table_name . " ORDER BY schedule_date, schedule_timestart", OBJECT);
+	return $results;
+}
+
+function sp_courseware_get_schedule_by_id($id) 
+{
+    global $wpdb;
+	$schedule_table_name = $wpdb->prefix . "schedule";
+	$sql = "select * from " . $schedule_table_name . " where scheduleID=".$id;
 	$result = $wpdb->get_row($sql, OBJECT);
+	return $result;
+}
+
+function sp_courseware_schedule_get_upcoming_entries($num=4)
+{
+    global $wpdb;
+	$schedule_table_name = $wpdb->prefix . "schedule";
+	$date = date("Y:m:d");
+	$results = $wpdb->get_results("SELECT * FROM " . $schedule_table_name . " WHERE schedule_date >= '$date' ORDER BY schedule_date, schedule_timestart LIMIT ".$num, OBJECT);
+	return $results;
+}
+
+/* == Formatting == */
+
+// Print small reading entry (eg title and link only, for use in sidebar)
+function schedule_printsmall($scheduleID,$title="h4")
+{ 
+    $result = sp_courseware_get_schedule_by_id($scheduleID);
 	$startTime = strtotime($result->schedule_date.' '.$result->schedule_timestart);
 	$endTime = strtotime($result->schedule_date.' '.$result->schedule_timestop);
 	?>
@@ -33,14 +58,12 @@ function schedule_printsmall($scheduleID,$title="h3")
 }
 
 // Print full reading entry 
-function schedule_printfull($scheduleID, $full='full',$date_first=true)
+function schedule_printfull($scheduleID, $title='h3', $full='full',$date_first=true)
 { 
 	global $wpdb;
 	$table_name = $wpdb->prefix . "schedule";
 	$assignments_table_name = $wpdb->prefix . "assignments";
-	$bib_table_name = $wpdb->prefix . "bibliography";
-	$sql = "select * from " . $table_name . " where scheduleID=".$scheduleID;
-	$result = $wpdb->get_row($sql, OBJECT);
+	$bib_table_name = $wpdb->prefix . "bibliography";    $result = sp_courseware_get_schedule_by_id($scheduleID);
 	$startTime = strtotime($result->schedule_date.' '.$result->schedule_timestart);
 	$endTime = strtotime($result->schedule_date.' '.$result->schedule_timestop);
 	?>
@@ -129,32 +152,12 @@ function schedule_printfull($scheduleID, $full='full',$date_first=true)
 				</div>
 <?php 
 }
-// Print specific schedule entry
-function schedule_specific($id, $full="small")
-{
-	global $wpdb;
-	$table_name = $wpdb->prefix . "schedule";
-	
-	if ($full=="full")
-	{
-		$sql = "select * from " . $table_name . " where scheduleID='{$id}'";
-		$result = $wpdb->get_results($sql);
-		if ( !empty($result) ) schedule_printfull($result[0]);
-	} else {
-		$sql = "select author_last, author_first, title from " . $table_name . " where scheduleID='{$id}'";
-		$result = $wpdb->get_results($sql);
-		if ( !empty($result) ) schedule_printsmall($result[0]);
-	}	
-}
 
-function schedule_upcoming($num='4',$title='h4') {
-	global $wpdb;
-	$table_name = $wpdb->prefix . "schedule";
-	$date = date("Y:m:d");
-	$sql_schedule = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE schedule_date >= '$date' ORDER BY schedule_date, schedule_timestart LIMIT ".$num, ARRAY_A);
-	if (count($sql_schedule) > 0) {
-		foreach ($sql_schedule as $schedule) {
-			schedule_printsmall($schedule['scheduleID'],$title);
+function schedule_upcoming($num='4',$title='h3') {
+    $upcoming = sp_courseware_schedule_get_upcoming_entries($num);
+	if (count($upcoming) > 0) {
+		foreach ($upcoming as $schedule) {
+			schedule_printfull($schedule->scheduleID,$title);
 		}
 	}
 	else {
@@ -165,32 +168,25 @@ function schedule_upcoming($num='4',$title='h4') {
 // Print all schedule entries onto a page, sorted by type
 function schedule_page($data)
 {
-global $wpdb;
-$table_name = $wpdb->prefix . "schedule";
 $start = strpos($data, SP_SCHEDULE_PAGE);
-if ( $start !==false )
+if ( $start !== false )
 	{
 	ob_start();
-	global $wpdb;
-	$sql_schedule = $wpdb->get_results("SELECT scheduleID FROM " . $table_name . " ORDER BY schedule_date, schedule_timestart", ARRAY_A);
-	
-
-	
-	if (count($sql_schedule) > 0)
+    $entries = sp_courseware_get_schedule_entries();
+	if (count($entries) > 0)
 		{
 				echo '<p><a href="webcal://feeds.technorati.com/events/http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">Subscribe to vCal file</a></p>';
 			?><div id="classes" class="vcalendar"><?php
 		
-			foreach ( $sql_schedule as $scheduleID )
+			foreach ( $entries as $entry )
 			{
-				schedule_printfull($scheduleID['scheduleID']);
+				schedule_printfull($entry->scheduleID);
 			}
 			?></div><?php
 		}
 	else {
-		echo '<p>You haven&#8217;t entered any schedule entries!</p>';
+		echo '<p>There are no schedule entries!</p>';
 	}
-
 	$contents = ob_get_contents();
 	ob_end_clean();
 	$data = substr_replace($data, $contents, $start, strlen(SP_SCHEDULE_PAGE));

@@ -3,8 +3,8 @@
 Plugin Name: ScholarPress Courseware
 Plugin URI: http://scholarpress.net/courseware/
 Description: All-in-one course management for WordPress
-Version: 1.0.3alpha
-Author: Jeremy Boggs, Josh Greenberg, and Dave Lester
+Version: 1.1alpha
+Author: Jeremy Boggs, Dave Lester, Zac Gordon
 Author URI: http://scholarpress.net/
 */
 
@@ -25,7 +25,7 @@ Author URI: http://scholarpress.net/
 */
 
 // Plugin Version
-$spcourseware_version = "1.0.3alpha";
+$spcourseware_version = "1.1alpha";
 
 // Misc functions
 //Adapted from PHP.net: http://us.php.net/manual/en/function.nl2br.php#73479
@@ -54,7 +54,6 @@ function getAdminOptions() {
 		}
 	return $spcoursewareAdminOptions;
 }
-
 
 function setAdminOptions($course_title, $course_number, $course_section, $course_timestart, $course_timeend, $course_location, $course_timedays, $instructor_firstname, $instructor_lastname, $instructor_email, $instructor_telephone, $instructor_office, $course_description, $instructor_hours) 
 {
@@ -307,21 +306,19 @@ function courseware_admin_menu()
 
 function courseware_admin_style() 
 {
-    $url = get_settings('siteurl');
-    $url = $url . '/wp-content/plugins/scholarpress-courseware/spadmin.css';
+    $url = WP_PLUGIN_URL;
+    $url = $url . '/scholarpress-courseware/spadmin.css';
 	echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />';
 }
 
 function courseware_admin_scripts() 
 {
-    $url = get_settings('siteurl');
-    $url = $url . '/wp-content/plugins/scholarpress-courseware/spcourseware.js';
-	echo '<script type="text/javascript" src="' . $url . '"></script>';
-	$datepicker_url = get_settings('siteurl');
-	$datepicker_url = $datepicker_url . '/wp-content/plugins/scholarpress-courseware/datepicker/';
-	echo '<script type="text/javascript" src="'.$datepicker_url.'datepicker.js"></script>';
-	echo '<link rel="stylesheet" type="text/css" href="' . $datepicker_url . 'datepicker.css" />';
-	
+    $url = WP_PLUGIN_URL;
+    $spcourseware_js = $url . '/scholarpress-courseware/spcourseware.js';
+	$datepicker_url = $url . '/scholarpress-courseware/datepicker/';
+	echo '<script src="'.$datepicker_url.'jquery.ui.all.js" type="text/javascript" charset="utf-8"></script>';
+	echo '<link rel="stylesheet" type="text/css" href="'.$datepicker_url.'base.css" />';
+	echo '<link rel="stylesheet" type="text/css" href="'.$datepicker_url.'datepicker.css" />';
 }
 
 add_action('admin_head', 'courseware_admin_style');
@@ -331,8 +328,8 @@ add_action('admin_head', 'courseware_admin_scripts');
 
 function courseware_public_style() 
 {
-    $url = get_settings('siteurl');
-    $url = $url . '/wp-content/plugins/scholarpress-courseware/spcourseware.css';
+    $url = WP_PLUGIN_URL;
+    $url = $url . '/scholarpress-courseware/spcourseware.css';
 	echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />';
 }
 
@@ -340,23 +337,70 @@ add_action('wp_head', 'courseware_public_style');
 
 function spcourseware_manage() {
 	?>
-	<div class="wrap">
-	<h2>SP Courseware</h2>
-	<p>You are using Courseware version <?php echo get_option('spcourseware_version'); ?></p>
-	<div id="schedule-assignments">
-	<h3>Upcoming Schedule</h3>
-	<ul>
-	<?php schedule_upcoming(); ?>
-	</ul>
-	<a href="?page=schedule">Edit Schedule Entries</a>
-	</div>
 
-	<div id="courseinfo">
-		<h3>Course Information</h3>
-		<?php courseinfo_printfull(); ?>
-	<a href="?page=courseinfo">Edit Course Information</a>
-	</div>
-	<br class="clear" />
+    <div class="wrap">
+        <div id="icon-index" class="icon32"><br /></div>
+        <h2>SP Courseware</h2>
+        <div id="dashboard-widgets-wrap">
+            <div id='dashboard-widgets' class='metabox-holder'>
+                <div id="post-body" class="has-sidebar">
+                    <div id="dashboard-widgets-main-content" class="has-sidebar-content">
+                        <div id="normal-sortables" class="meta-box-sortables">
+                            <div id="dashboard_upcoming_schedule" class="postbox">
+                                <div class='handlediv'><br /></div>
+                                <h3 class='handle'><span>Upcoming Schedule</span></h3>
+                                <div class="inside" style="padding:12px;">
+                                     <?php $entries = sp_courseware_schedule_get_upcoming_entries(1); if(!empty($entries)): ?>
+                                    <p>Your next schedule entry is:</p>
+                                    <?php foreach ($entries as $entry): ?>
+                                        <?php //print_r($entry); ?>
+                                        <?php
+                                        $startTime = strtotime($entry->schedule_date.' '.$entry->schedule_timestart);
+                                    	$endTime = strtotime($entry->schedule_date.' '.$entry->schedule_timestop);
+                                        ?>
+                                        <small>
+                                			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
+                                				<?php echo date('F d, Y, g:i a', $startTime); ?>
+                                			</abbr>
+                                			&ndash;
+                                			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
+                                				<?php echo date('g:i a', $endTime); ?>
+                                			</abbr>
+                                		</small>
+                                        <h4><?php echo $entry->schedule_title; ?></h4>
+
+                                        
+                                        <?php echo nls2p($entry->schedule_description); ?>
+                                    <?php endforeach; else: ?>
+                                    <p>You have no upcoming schedule entries. <a href="?page=schedule">Want to add one?</a></p>
+                                    <?php endif; ?>
+                                    <p><a href="?page=schedule" class="button">Edit Schedule Entries</a></p>
+                                </div> <?php // Closes class="inside" ?>
+                            </div> <?php // Closes class="postbox" ?>
+                        </div> <?php // Closes class="meta-box-sortables" ?>
+                    </div> <?php // Closes doasbhard-widgets-main-content ?>
+                </div>  <?php // Closes post-body with has-sidebar class ?>
+                
+                <?php // Include the side-info-column inside the #dashboard-widgets div ?>
+                <div id='side-info-column' class='inner-sidebar'>
+                    <div id='side-sortables' class='meta-box-sortables'>
+                        <div id="dashboard_course_info" class="postbox with_labels">
+                            <div class='handlediv'><br /></div>
+                            <h3 class='hndle'><span>Course Information</span></h3>
+                            <div class="inside" style="padding:0 12px;">
+                                <ul>
+                                <?php courseinfo_printfull(); ?>
+                                </ul>
+                                <p><a href="?page=courseinfo" class="button">Edit Course Information</a></p>
+                            </div> <?php // Closes class="inside" ?>
+                        </div> <?php // Closes class="postbox" ?>
+                    </div> <?php // Closes #side-sortables ?>
+                </div> <?php // Closes #side-info-column ?>
+            </div> <?php // Closes #dashboard-widgets ?>
+            <div class="clear">
+            </div>
+        </div><!-- dashboard-widgets-wrap -->
+    </div><!-- wrap -->	
 	<?php
 }
 
@@ -451,7 +495,7 @@ function assignments_manage()
 	if ( $_REQUEST['action'] == 'edit_assignment' )
 	{
 		?>
-		<h2><?php _e('Edit reading'); ?></h2>
+		<h2><?php _e('Edit Assignment'); ?></h2>
 		<?php
 		if ( empty($assignmentID) )
 		{
@@ -465,7 +509,7 @@ function assignments_manage()
 	else
 	{
 		?>
-		<h2><?php _e('Add Entry'); ?></h2>
+		<h2><?php _e('Add Assignment'); ?></h2>
 		<?php assignments_editform(); ?>
 	
 		<h2><?php _e('Manage Assignments'); ?></h2>
@@ -486,7 +530,8 @@ function assignments_displaylist()
 	if ( !empty($assignments) )
 	{
 		?>
-			<table width="100%" cellpadding="3" cellspacing="3">
+			<table width="100%" cellpadding="3" cellspacing="3" class="widefat post">
+			<thead>
 			<tr>
 				<th scope="col"><?php _e('ID') ?></th>
 				<th scope="col"><?php _e('Title') ?></th>
@@ -496,8 +541,11 @@ function assignments_displaylist()
 				<th scope="col"><?php _e('Edit') ?></th>
 				<th scope="col"><?php _e('Delete') ?></th>
 			</tr>
+			</thead>
 		<?php
 		$class = '';
+		echo '<tbody>';
+		
 		foreach ( $assignments as $assignment )
 		{
 			$class = ($class == 'alternate') ? '' : 'alternate';
@@ -520,7 +568,7 @@ function assignments_displaylist()
 	else
 	{
 		?>
-		<p><?php _e("You haven't entered any reading entries yet.") ?></p>
+		<p><?php _e("You haven't entered any assignments yet.") ?></p>
 		<?php	
 	}
 }
@@ -553,20 +601,128 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 	}
 	
 	?>
+	<!-- Beginning of Assignment Adding Page -->
+
 	<form name="readingform" id="readingform" class="wrap" method="post" action="">
 		<input type="hidden" name="updateaction" value="<?php echo $mode?>">
 		<input type="hidden" name="assignmentID" value="<?php echo $assignmentID?>">
-	
-		<div id="item_manager">
-			<div style="float: left; width: 98%; clear: both;" class="top">
+		<!-- Start Main Body -->
+		<div id="post-body">
+			<div id="poststuff" class="metabox-holder">
+    			<div id="normal-sortables" class="meta-box-sortables">
 
-			<div style="float: right; " class="top">
-			</div>
-		
-		<!-- List URL -->
+					<div id="titlediv">
+					    <label for="assignment_title"><?php _e('Title'); ?></label>
+						
+						<div id="titlewrap">
+							<input type="text" id="title" name="assignment_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_title); ?>" />
+						</div>
+					</div><!-- End #titlediv -->
+				
+					<div class="postbox" id="bibfield" <?php if (@$data->type!='reading' && @$data) echo ' style="display:none;"';?>>
+						<h3 class='hndle'><span>Assignment Information</span></h3>
+						<div class="inside">
+						<p><label for="assignment_bibliographyID">Select the bibliography for the reading</label></p>
+										<?php
+										// Get bibliography events from DB
+    									$SQL = 'SELECT * from '.$wpdb->prefix.'bibliography ORDER BY author_last, title';
+    									$bibs = $wpdb->get_results($SQL, OBJECT); ?>
+							<select name="assignment_bibliographyID" <?php if(empty($bibs)): ?>disabled="disabled"<?php endif;?>>
+							    <?php 
 					
-				<fieldset class="small"><legend><?php _e('Date Due'); ?></legend>
-						<select name="assignment_scheduleID">
+									if(!empty($bibs)): ?>
+								<option value="">Select a Bibliography Entry</option>
+
+								<?php foreach ($bibs as $bib): ?>
+								<option value="<?php echo $bib->entryID; ?>"<?php if ($bib->entryID==$data->assignments_bibliographyID) echo " selected"; ?>><?php echo $bib->author_last; ?>: <?php echo $bib->title; ?></option>
+								<?php endforeach; else: ?>
+								    <option value="">No Biblography Entries!</option>
+								    <?php endif;?>
+						</select>
+						<p><label for="assignment_pages">Enter in the pages for the assignment:</label></p>
+						
+						<input type="text" name="assignment_pages" class="input" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_pages); ?>" />												
+						</div> <?php // Closes .inside ?>
+					</div> <?php // Closes postbox ?>
+
+
+					<div class="postbox" id="descriptionfield">
+						<h3 class='hndle'><span>Description</span></h3>
+						<div class="inside">
+							<p><label for="assignment_description">Enter in a description of the assignment below.</label></p>
+							<textarea name="assignment_description" class="mceEditor input" rows="10" cols="60"><?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_description); ?></textarea>
+				</fieldset>
+						</div> <?php // closes inside ?>
+					</div> <?php // closes postbox ?>
+
+			</div> <?php // closes normal-sortables ?>
+		</div>	<?php // closes post-body-content ?>
+		</div> <?php // closes post-body ?>
+		
+		<!-- Beginning of side info column -->
+		<div id="poststuff" class="metabox-holder">
+			<div id="side-info-column" class="inner-sidebar">
+			<div id="datetimediv" class="postbox" >
+				<h3 class='hndle'><span>Type of Assignment</span></h3>
+                    <div class="inside withlabels biblio_options">
+                        <p>Select the type of assignment from the list below.</p>							
+                        <p>
+                        <label for="assignment_reading">
+                        <input type="radio" id="assignment_reading" name="assignment_type" class="input" value="reading" 
+                        <?php if ( empty($data) || $data->assignments_type=='reading' ) echo "checked" ?>/>
+                        Reading</label>
+                        </p>
+
+                        <p>
+                        <label for="assignment_writing">
+                        <input id="assignment_writing" type="radio" name="assignment_type" name="assignment_type" class="input" value="writing" 
+                        <?php if ( !empty($data) && $data->assignments_type=='writing' ) echo "checked" ?>/>  
+                        Writing</label>
+                        </p>
+                        
+                        <p>
+                        <label for="assignment_presentation">
+                        <input type="radio" id="assignment_presentation" name="assignment_type" class="input" value="presentation" 
+                        <?php if ( !empty($data) && $data->assignments_type=='presentation' ) echo "checked" ?>/>  
+                        Presentation</label>
+                        </p>
+                        
+                        <p>
+                        <label for="assignment_group">
+                        <input type="radio" id="assignment_group" name="assignment_type" class="input" value="groupwork" 
+                        <?php if ( !empty($data) && $data->assignments_type=='groupwork' ) echo "checked" ?>/> 
+                        Group Work </label>
+                        </p>
+                
+                        <p>
+                        <label for="assignment_research">
+                        <input type="radio" id="assignment_research" name="assignment_type" class="input" value="research" 
+                        <?php if ( !empty($data) && $data->assignments_type=='research' ) echo "checked" ?>/>  
+                        Research</label>
+                        </p>
+
+                        <p>
+                        <label for="assignment_discussion">
+                        <input type="radio" id="assignment_discussion" name="assignment_type" class="input" value="discussion" 
+                        <?php if ( !empty($data) && $data->assignments_type=='discussion' ) echo "checked" ?>/> 
+                        Discussion</label>	
+                        </p>
+                        
+                        <p>
+                        <label for="assignment_creative">
+                        <input type="radio" id="assignment_creative" name="assignment_type" class="input" value="creative" 
+                        <?php if ( !empty($data) && $data->assignments_type=='creative' ) echo "checked" ?>/>  
+                        Creative</label>		
+                        </p>
+					</div>
+			</div>
+            
+    
+    			<div id="datetimediv" class="postbox" >
+				<h3 class='hndle'><span>Due Date</span></h3>
+					<div class="inside">
+						<p><label for="assignment_scheduleID"><?php _e('Date Due'); ?></label></p>
+						<select name="assignment_scheduleID" id="assignment_scheduleID">
 							<option value=""></option>
 							<?php 
 								// Get schedule events from DB
@@ -577,9 +733,8 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 							<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_scheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
 							<?php } ?>
 						</select>
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Date Assigned (optional)'); ?></legend>
-						<select name="assignment_assignedScheduleID">
+						<p><label for="assignment_assignedScheduleID"><?php _e('Date Assigned (optional)'); ?></label></p>
+						<select name="assignment_assignedScheduleID" id="assignment_assignedScheduleID">
 							<option value=""></option>
 							<?php 
 								// Get schedule events from DB
@@ -590,67 +745,17 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 							<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_assignedScheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
 							<?php } ?>
 						</select>
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Type'); ?></legend>
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" class="input" value="reading" 
-					<?php if ( empty($data) || $data->assignments_type=='reading' ) echo "checked" ?>/>
-					<label for="assignment_type">Reading</label>
+					</div>
 
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" name="assignment_type" class="input" value="writing" 
-					<?php if ( !empty($data) && $data->assignments_type=='writing' ) echo "checked" ?>/>  
-					<label for="assignment_type">Writing</label>
-					
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" class="input" value="presentation" 
-					<?php if ( !empty($data) && $data->assignments_type=='presentation' ) echo "checked" ?>/>  
-					<label for="assignment_type">Presentation</label>
-
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" class="input" value="groupwork" 
-					<?php if ( !empty($data) && $data->assignments_type=='groupwork' ) echo "checked" ?>/> 
-					<label for="assignment_type">Group Work </label>
-					
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" class="input" value="research" 
-					<?php if ( !empty($data) && $data->assignments_type=='research' ) echo "checked" ?>/>  
-					<label for="assignment_type">Research</label>
-
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" class="input" value="discussion" 
-					<?php if ( !empty($data) && $data->assignments_type=='discussion' ) echo "checked" ?>/> 
-					<label for="assignment_type">Discussion</label>
-					
-					<input type="radio" onClick="toggleAssignmentType()" name="assignment_type" class="input" value="creative" 
-					<?php if ( !empty($data) && $data->assignments_type=='creative' ) echo "checked" ?>/>  
-					<label for="assignment_type">Creative</label>
-					
-				</fieldset>
-				
-				<fieldset class="small" id="bibfield"<?php if (@$data->type!='reading' && @$data) echo ' style="display:none;"';?>><legend><?php _e('Bibliography'); ?></legend>
-					<select name="assignment_bibliographyID">
-						<option value=""></option>
-						<?php 
-							// Get bibliography events from DB
-							$SQL = 'SELECT * from '.$wpdb->prefix.'bibliography ORDER BY author_last, title';
-							$bibs = $wpdb->get_results($SQL, OBJECT);
-							foreach ($bibs as $bib) {
-						?>
-						<option value="<?php echo $bib->entryID; ?>"<?php if ($bib->entryID==$data->assignments_bibliographyID) echo " selected"; ?>><?php echo $bib->author_last; ?>: <?php echo $bib->title; ?></option>
-						<?php } ?>
-					</select>
-				</fieldset>				
-
-				<fieldset class="small" id="titlefield"<?php if (@$data->type=='reading' || !@$data) echo 's style="display:none;"';?>><legend><?php _e('Title'); ?></legend>
-					<input type="text" name="assignment_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_title); ?>" />
-				</fieldset>
-
-				<fieldset class="small" id="pagesfield"><legend><?php _e('Pages'); ?></legend>
-					<input type="text" name="assignment_pages" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_pages); ?>" />
-				</fieldset>
-
-				<fieldset class="small"><legend><?php _e('Description'); ?></legend>
-					<textarea name="assignment_description" class="input" cols=45 rows=7><?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_description); ?></textarea>
-				</fieldset>
-				<input type="submit" name="save" class="button bold" value="Save &raquo;" />
+				</div>
 			</div>
-			<div style="clear:both; height:1px;">&nbsp;</div>
+		</div><!-- End side info column-->	
+		<div class="clear">				
 		</div>
+		<p class="submit">
+			<input type="submit" name="save" class="button-primary" value="Save Assignment &raquo;" />
+		</p>
+		
 	</form>
 	<?php
 }
@@ -745,7 +850,7 @@ function schedule_manage()
 	if ( $_REQUEST['action'] == 'edit_schedule' )
 	{
 		?>
-		<h2><?php _e('Edit schedule entry'); ?></h2>
+		<h2><?php _e('Edit Schedule Entry'); ?></h2>
 		<?php
 		if ( empty($scheduleID) )
 		{
@@ -762,7 +867,7 @@ function schedule_manage()
 		<h2><?php _e('Add Schedule Entry'); ?></h2>
 		<?php schedule_editform(); ?>
 	
-		<h2><?php _e('Manage schedule'); ?></h2>
+		<h2><?php _e('Manage Schedule'); ?></h2>
 		<?php
 			schedule_displaylist();
 	}
@@ -780,7 +885,8 @@ function schedule_displaylist()
 	if ( !empty($schedule) )
 	{
 		?>
-			<table width="100%" cellpadding="3" cellspacing="3">
+			<table width="100%" cellpadding="3" cellspacing="3" class="widefat post">
+			<thead>
 			<tr>
 				<th scope="col"><?php _e('ID') ?></th>
 				<th scope="col"><?php _e('Title') ?></th>
@@ -789,12 +895,14 @@ function schedule_displaylist()
 				<th scope="col"><?php _e('Edit') ?></th>
 				<th scope="col"><?php _e('Delete') ?></th>
 			</tr>
+			</thead>
 		<?php
 		$class = '';
 		foreach ( $schedule as $schedule )
 		{
 			$class = ($class == 'alternate') ? '' : 'alternate';
 			?>
+			<tbody>
 			<tr class="<?php echo $class; ?>">
 				<th scope="row"><?php echo $schedule->scheduleID; ?></th>
 				<td><?php echo $schedule->schedule_title ?></td>
@@ -803,6 +911,7 @@ function schedule_displaylist()
 				<td><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;action=edit_schedule&amp;scheduleID=<?php echo $schedule->scheduleID;?>" class="edit"><?php echo __('Edit'); ?></a></td>
 				<td><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;action=delete_schedule&amp;scheduleID=<?php echo $schedule->scheduleID;?>" class="delete" onclick="return confirm('Are you sure you want to delete this entry?')"><?php echo __('Delete'); ?></a></td>
 			</tr>
+			</tbody>
 			<?php
 		}
 		?>
@@ -845,101 +954,81 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 	}
 	
 	getAdminOptions();
-
+    
 	?>
-	<script type="text/javascript">
-	//<![CDATA[
 
-	function initialiseInputs() {
-
-	        // Add the onchange event handler to the start date input
-	        datePickerController.addEvent(document.getElementById("schedule_date"), "change", setSPDate);
-	}
-
-	var initAttempts = 0;
-
-	function setSPDate(e) {
-	        // Internet Explorer will not have created the datePickers yet so we poll the datePickerController Object using a setTimeout
-	        // until they become available (a maximum of ten times in case something has gone horribly wrong)
-
-	        try {
-				var sd = datePickerController.getDatePicker("schedule_date");
-	        } 
-			catch (err) {
-				if(initAttempts++ < 10) setTimeout("setSPDate()", 50);
-				return;
-	        }
-
-	        // Check the value of the input is a date of the correct format
-	        var dt = datePickerController.dateFormat(this.value, sd.format.charAt(0) == "m");
-
-	        // If the input's value cannot be parsed as a valid date then return
-	        if(dt == 0) return;
-	}
-
-	function removeInputEvents() {
-	        // Remove the onchange event handler set within the function initialiseInputs
-	        datePickerController.removeEvent(document.getElementById("sd"), "change", setSPDate);
-	}
-
-	datePickerController.addEvent(window, 'load', initialiseInputs);
-	datePickerController.addEvent(window, 'unload', removeInputEvents);
-
-	//]]>
-	</script>
-
+    <!-- Beginning of Add Schedule Entry -->
 	<form name="scheduleform" id="scheduleform" class="wrap" method="post" action="">
+	<div id="poststuff" class="metabox-holder">
+		<div id="side-info-column" class="inner-sidebar">
+			<div id="datetimediv" class="postbox">
+				<h3 class='hndle'><span>Date &amp; Time</span></h3>
+				<div class="inside">
+							<p><label><?php _e('Date'); ?> (YYYY-MM-DD)</label></p>
+							<input type="text" name="schedule_date" id="schedule_date" class="format-y-m-d divider-dash split-date date" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_date); ?>" />			
+							<?php $url = WP_PLUGIN_URL."/scholarpress-courseware/datepicker/images/calendar.gif"; ?>		
+							<script type="text/javascript" charset="utf-8">
+							jQuery("#schedule_date").datepicker({ 
+							    dateFormat: jQuery.datepicker.W3C, 
+								showOn: "button", //change to button once button works 
+							    buttonImage: "<?php echo $url;?>",
+							    buttonImageOnly: true 
+							});
+							</script>							
+
+							<?php $spcoursewareAdminOptions = getAdminOptions(); ?>
+							<p><label for="schedule_timestart"><?php _e('TimeStart'); ?> (24:00:00)</label></p>
+							<input type="text" name="schedule_timestart" class="date"  value="<?php if ( !empty($data) ) {echo htmlspecialchars($data->schedule_timestart);} else {echo $spcoursewareAdminOptions['course_timestart'];} ?>" />
+							<p><label for="schedule_timestop"><?php _e('TimeStop'); ?> (24:00:00)</label></p>
+							<input type="text" name="schedule_timestop" class="date"  value="<?php if ( !empty($data) ){ echo htmlspecialchars($data->schedule_timestop); } else {echo $spcoursewareAdminOptions['course_timeend'];} ?>" />													
+
+				</div>
+			</div>
+		</div><!-- End side info column-->
+
+
 		<input type="hidden" name="updateaction" value="<?php echo $mode?>">
 		<input type="hidden" name="scheduleID" value="<?php echo $scheduleID?>">
-	
-		<div id="item_manager">
-			<div style="float: left; width: 68%; clear: left;" class="top">
 
-				<!-- List URL -->
-				<fieldset class="small"><legend><?php _e('Title'); ?></legend>
-					<input type="text" name="schedule_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_title); ?>" />
-				</fieldset>
+		<!-- Start Main Body -->
+		<div id="post-body" class="has-sidebar">
+			<div id="post-body-content" class="has-sidebar-content">
+				<div id="titlediv">
+						<h3><?php _e('Title'); ?></h3>
+						<div id="titlewrap">
+						<input type="text" id="title" name="schedule_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_title); ?>" />
+					</div>
+				</div><!-- End #titlediv -->
 
+			<div id="normal-sortables" class="meta-box-sortables">
+				<div id="postexcerpt" class="postbox">
+					<h3 class='hndle'><span>Description</span></h3>
+					<div class="inside">
+						<p><label for="description">Enter in a description of what will go on in this class.</label></p>
+						<textarea name="schedule_description" id="description" cols="45" rows="7"><?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_description); ?></textarea>
+					</div>
 
-				<fieldset class="small"><legend><?php _e('Date'); ?> (YYYY-MM-DD)</legend>
-					<input type="text" name="schedule_date" id="schedule_date" class="format-y-m-d divider-dash split-date input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_date); ?>" />
-					
-				</fieldset>
-
-				<fieldset class="small"><legend><?php _e('TimeStart'); ?> (24:00:00)</legend>
-					<input type="text" name="schedule_timestart" class="input" size="45" value="<?php if ( !empty($data) ) {echo htmlspecialchars($data->schedule_timestart);} else {echo $spcoursewareAdminOptions['course_timestart'];} ?>" />
-				</fieldset>
-
-				<fieldset class="small"><legend><?php _e('TimeStop'); ?> (24:00:00)</legend>
-					<input type="text" name="schedule_timestop" class="input" size="45" value="<?php if ( !empty($data) ){ echo htmlspecialchars($data->schedule_timestop); } else {echo $spcoursewareAdminOptions['course_timeend'];} ?>" />
-				</fieldset>
-
-				<fieldset class="small"><legend><?php _e('Description'); ?></legend>
-					<textarea name="schedule_description" class="input" cols="45" rows="7"><?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_description); ?></textarea>
-				</fieldset>
-<!-- 
-				<fieldset class="small"><legend><?php _e('Associated Assignments'); ?></legend>
-				
-				<p class="description">Below are classroom assignments associated with this schedule.</p>
-				<?php assignments_displaylist(); ?>
- -->
-				<input type="submit" name="save" class="button bold" value="Save &raquo;" />
-
-
+				</div>
+    				<p class="submit">
+    					<input type="submit" name="save" class="button-primary" value="Publish Schedule Entry &raquo;" />
+    				</p>
+    				<div class="clear">				
+    				</div>
 			</div>
-			<div style="clear:both; height:1px;">&nbsp;</div>
+
 		</div>
+	</div>
 	</form>
 	<?php
 }
 
-// Displays the course info form
+// Form for the Course Information page.
 function courseinfo_manage()
 {
 	global $wpdb;
 	$data = false;
 
-	if ($_POST['saveInfo']) {
+	if ($_POST['save']) {
 		setAdminOptions($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $_REQUEST['course_timestart'], $_REQUEST['course_timeend'], $_REQUEST['course_location'], $_REQUEST['course_timedays'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'],  $_REQUEST['course_description'], $_REQUEST['instructor_hours']);
 	
 		echo '<div class="updated"><p>Course information saved successfully.</p></div>';
@@ -949,71 +1038,70 @@ function courseinfo_manage()
 	$spcoursewareAdminOptions = getAdminOptions();
 
 	?>
-	<form name="courseinfoform" id="courseinfoform" class="wrap" method="post" action="">
-		<input type="hidden" name="updateinfo" value="<?php echo $mode?>">
+	<h2>Course Information Management</h2>
 	
-		<div id="item_manager">
-			<div style="float: left; width: 98%; clear: both;" class="top">
-				<!-- List URL -->
-				<h2>Course Information Management</h2>
-				<h3>Course Information</h3>
-				<fieldset class="small"><legend><?php _e('Course Title'); ?></legend>
-					<input type="text" name="course_title" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_title']; ?>" />
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Course Number'); ?></legend>
-					<input type="text" name="course_number" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_number']; ?>" />
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Course Section'); ?></legend>
-					<input type="text" name="course_section" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_section']; ?>" />
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Course Days'); ?></legend>
-					<input type="text" name="course_timedays" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_timedays']; ?>" />
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Course Time Start'); ?></legend>
-					<input type="text" name="course_timestart" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_timestart']; ?>" />
-				</fieldset>
-				<fieldset class="small"><legend><?php _e('Course Time End'); ?></legend>
-					<input type="text" name="course_timeend" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_timeend']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Course Location'); ?></legend>
-					<input type="text" name="course_location" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['course_location']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Course Description'); ?></legend>
-					<textarea name="course_description" class="input" cols=45 rows=7><?php echo $spcoursewareAdminOptions['course_description']; ?></textarea>
-				</fieldset>
-				
-				<h3>Instructor Information</h3>
-				<fieldset class="small"><legend><?php _e('Instructor First Name'); ?></legend>
-					<input type="text" name="instructor_firstname" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['instructor_firstname']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Instructor Last Name'); ?></legend>
-					<input type="text" name="instructor_lastname" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['instructor_lastname']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Instructor Email'); ?></legend>
-					<input type="text" name="instructor_email" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['instructor_email']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Instructor Telephone'); ?></legend>
-					<input type="text" name="instructor_telephone" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['instructor_telephone']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Instructor Office Location'); ?></legend>
-					<input type="text" name="instructor_office" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['instructor_office']; ?>" />
-				</fieldset>
-				
-				<fieldset class="small"><legend><?php _e('Instructor Office Hours'); ?></legend>
-					<input type="text" name="instructor_hours" class="input" size=45 value="<?php echo $spcoursewareAdminOptions['instructor_hours']; ?>" />
-				</fieldset>
-				<input type="submit" name="saveInfo" class="button bold" value="Save &raquo;" />
+	<div id="dashb">
+	<form name="courseinfoform" id="courseinfoform" class="wrap" method="post" action="">
 
+		<input type="hidden" name="updateinfo" value="<?php echo $mode?>" />
+		<div id="poststuff" class="metabox-holder">		
+		<!-- Start Main Body -->
+		<div id="post-body" class="has-sidebar">
+			<div id="post-body-content" class="has-sidebar-content">
+			    
+				<div id="courseinformation" class="postbox">
+					<h3 class='hndle'><span>Course Information</span></h3>                    
+					<div class="inside withlabels">
+					    <p><label for="title"><?php _e('Title'); ?></label></p>
+						<input type="text" id="title" name="course_title" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_title']; ?>" />
+						<p><label for="course_number"><?php _e('Course Number'); ?></label></p>
+							<input type="text" name="course_number" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_number']; ?>" />
+						<p><label for="course_section"><?php _e('Course Section'); ?></label></p>
+							<input type="text" name="course_section" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_section']; ?>" />
+						<p><label for="course_timedays"><?php _e('Course Days'); ?></label></p>
+							<input type="text" name="course_timedays" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_timedays']; ?>" />
+						<p><label for="course_timestart"><?php _e('Course Time Start (24:00:00)'); ?></label></p>
+							<input type="text" name="course_timestart" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_timestart']; ?>" />
+						<p><label for="course_timeend"><?php _e('Course Time End (24:00:00)'); ?></label></p>
+							<input type="text" name="course_timeend" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_timeend']; ?>" />
+						<p><label for="course_location"><?php _e('Course Location'); ?></label></p>
+							<input type="text" name="course_location" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_location']; ?>" />
+						<p><label for="course_description"><?php _e('Course Description'); ?></label></p>
+							<textarea name="course_description" class="input" cols="45" rows="7"><?php echo $spcoursewareAdminOptions['course_description']; ?></textarea>
+					</div>
+					
+				</div>
 
 			</div>
-			<div style="clear:both; height:1px;">&nbsp;</div>
 		</div>
+		<div id="side-info-column" class="inner-sidebar">
+			<div id="datetimediv" class="postbox" >
+					<h3 class='hndle'><span>Instructor Information</span></h3>
+					<div class="inside">
+						<p><label for="instructor_firstname"><?php _e('Instructor First Name'); ?></label></p>
+							<input type="text" name="instructor_firstname" class="date" value="<?php echo $spcoursewareAdminOptions['instructor_firstname']; ?>" />						
+
+						<p><label for="instructor_lastname"><?php _e('Instructor Last Name'); ?></label></p>
+							<input type="text" name="instructor_lastname" class="date" value="<?php echo $spcoursewareAdminOptions['instructor_lastname']; ?>" />					
+
+						<p><label for="instructor_email"><?php _e('Instructor Email'); ?></label></p>
+							<input type="text" name="instructor_email" class="date" value="<?php echo $spcoursewareAdminOptions['instructor_email']; ?>" />
+
+						<p><label for="instructor_telephone"><?php _e('Instructor Telephone'); ?></label></p>
+							<input type="text" name="instructor_telephone" class="date" value="<?php echo $spcoursewareAdminOptions['instructor_telephone']; ?>" />
+
+						<p><label for="instructor_office"><?php _e('Instructor Office Location'); ?></label></p>
+							<input type="text" name="instructor_office" class="date" value="<?php echo $spcoursewareAdminOptions['instructor_office']; ?>" />
+
+						<p><label for="instructor_hours"><?php _e('Instructor Office Hours'); ?></label></p>
+							<input type="text" name="instructor_hours" class="date" value="<?php echo $spcoursewareAdminOptions['instructor_hours']; ?>" />
+					</div>	
+
+			</div>
+		</div><!-- End side info column-->
+		<p class="submit clear"><input type="submit" name="save" class="button-primary" value="Save Course Information &raquo;" /></p>
+		</div>
+</div>
 	</form>
 	<?php
 }
@@ -1031,5 +1119,3 @@ add_action('admin_menu', 'courseware_admin_menu');
 
 add_filter('the_content', 'bib_page', 10);
 add_filter('the_content', 'project_page',10);
-
-?>

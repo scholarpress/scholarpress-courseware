@@ -118,7 +118,7 @@ function bibliography_manage()
 	} // end add_biblio block
 	?>
 
-	<div class=wrap>
+	<div class="wrap">
 	<?php
 	if ( $_REQUEST['action'] == 'edit_biblio' )
 	{
@@ -158,7 +158,8 @@ function bibliography_displaylist()
 	if ( !empty($biblios) )
 	{
 		?>
-			<table width="100%" cellpadding="3" cellspacing="3">
+			<table width="100%" cellpadding="3" cellspacing="3" class="widefat post">
+			<thead>
 			<tr>
 				<th scope="col"><?php _e('ID') ?></th>
 				<th scope="col"><?php _e('Last') ?></th>
@@ -168,12 +169,14 @@ function bibliography_displaylist()
 				<th scope="col"><?php _e('Edit') ?></th>
 				<th scope="col"><?php _e('Delete') ?></th>
 			</tr>
+			</thead>
 		<?php
 		$class = '';
 		foreach ( $biblios as $biblio )
 		{
 			$class = ($class == 'alternate') ? '' : 'alternate';
 			?>
+		    <tbody>
 			<tr class="<?php echo $class; ?>">
 				<th scope="row"><?php echo $biblio->entryID; ?></th>
 				<td><?php echo $biblio->author_last ?></td>
@@ -183,6 +186,7 @@ function bibliography_displaylist()
 				<td><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;action=edit_biblio&amp;entryID=<?php echo $biblio->entryID;?>" class="edit"><?php echo __('Edit'); ?></a></td>
 				<td><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;action=delete_biblio&amp;entryID=<?php echo $biblio->entryID;?>" class="delete" onclick="return confirm('Are you sure you want to delete this entry?')"><?php echo __('Delete'); ?></a></td>
 			</tr>
+			<tbody>
 			<?php
 		}
 		?>
@@ -229,116 +233,173 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 	<form name="biblioform" id="biblioform" class="wrap" method="post" action="">
 		<input type="hidden" name="updateaction" value="<?php echo $mode?>">
 		<input type="hidden" name="entryID" value="<?php echo $entryID?>">
-	
-		<div id="item_manager">
-			<div style="float: left; width: 98%; clear: both;" class="top">
 
-				<div style="float: right; width: 200px;" class="top">
-				<fieldset class="small" id="biblio_type_field"><legend><?php _e('Type'); ?></legend>
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="monograph" 
-					<?php if ( empty($data) || $data->type=='monograph' ) echo "checked" ?>/>  Book <br />
+		
+		<!-- Beginning of side info column -->
+		<div id="poststuff" class="metabox-holder">
+			<div id="side-info-column" class="inner-sidebar">
+
+				<div id="datetimediv" class="postbox" >
+				<h3 class='hndle'><span>Type of Source</span></h3>
+					<div class="inside biblio_options">
+						<label for="biblio_type_field" class="no-border"><p>Select the proper source from the list below</p></label>
+                        <p>
+						<label for="biblio_book">
+                        <input type="radio" name="biblio_type" id="biblio_book" class="input"  value="monograph" 
+						<?php if ( empty($data) || $data->type=='monograph' ) echo "checked" ?>/>
+                        Book</label>
+                        </p>
+                        
+                        <p>
+						<label for="biblio_article">
+                        <input type="radio" id="biblio_article" name="biblio_type" class="input" value="article" 
+						<?php if ( !empty($data) && $data->type=='article' ) echo "checked" ?>/>
+                        Article</label>
+                        </p>
+                        
+						<p>
+						<label for="biblio_volume">
+                        <input type="radio" id="biblio_volume" name="biblio_type" class="input" value="volumechapter" 
+						<?php if ( !empty($data) && $data->type=='volumechapter' ) echo "checked" ?>/>
+						Volume Chapter</label>
+                        </p>
+                        
+                        <p>
+						<label for="biblio_unpublished">
+                        <input type="radio" id="biblio_unpublished" name="biblio_type" class="input" value="unpublished" 
+						<?php if ( !empty($data) && $data->type=='unpublished' ) echo "checked" ?>/>
+						Unpublished</label>
+                        </p>
+                        
+                        <p>
+						<label for="biblio_website">
+                        <input type="radio" id="biblio_website" name="biblio_type" class="input" value="website" 
+						<?php if ( !empty($data) && $data->type=='website' ) echo "checked" ?>/> 
+						Website</label>
+                        </p>
+                         
+                        <p>
+						<label for="biblio_webpage">
+                        <input type="radio" id="biblio_webpage" name="biblio_type" class="input" value="webpage" 
+						<?php if ( !empty($data) && $data->type=='webpage' ) echo "checked" ?>/>
+                        Webpage</label>
+                        </p>
 					
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="article" 
-					<?php if ( !empty($data) && $data->type=='article' ) echo "checked" ?>/>  Article 
-					<br />
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="volumechapter" 
-					<?php if ( !empty($data) && $data->type=='volumechapter' ) echo "checked" ?>/>  Volume Chapter 
-					<br />
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="unpublished" 
-					<?php if ( !empty($data) && $data->type=='unpublished' ) echo "checked" ?>/>  Unpublished 
-					<br />
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="website" 
-					<?php if ( !empty($data) && $data->type=='website' ) echo "checked" ?>/>  Website 
-					<br />
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="webpage" 
-					<?php if ( !empty($data) && $data->type=='webpage' ) echo "checked" ?>/>  Webpage 
-					<br />
-					
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="video" 
-					<?php if ( !empty($data) && $data->type=='video' ) echo "checked" ?>/>  Video 
-					<br />
-					<input type="radio" name="biblio_type" onclick="toggleType()" class="input" value="audio" 
-					<?php if ( !empty($data) && $data->type=='audio' ) echo "checked" ?>/>  Audio 
-					
-				</fieldset>
-					
-				</div>
-
-				<!-- List URL -->
-				<fieldset class="small" id="biblio_author_last_field"><legend><?php _e('Author Last Name'); ?></legend>
-					<input type="text" name="biblio_author_last" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_last); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_author_first_field"><legend><?php _e('Author First Name'); ?></legend>
-					<input type="text" name="biblio_author_first" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_first); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_author_two_last_field"><legend><?php _e('Author Two Last Name'); ?></legend>
-					<input type="text" name="biblio_author_two_last" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_two_last); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_author_two_first_field"><legend><?php _e('Author Two First Name'); ?></legend>
-					<input type="text" name="biblio_author_two_first" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_two_first); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_title_field"><legend><?php _e('Title'); ?></legend>
-					<input type="text" name="biblio_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->title); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_short_title_field"><legend><?php _e('Short Title'); ?></legend>
-					<input type="text" name="biblio_short_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->short_title); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_journal_field"><legend><?php _e('Journal'); ?></legend>
-					<input type="text" name="biblio_journal" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->journal); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_volume_title_field"><legend><?php _e('Volume Title'); ?></legend>
-					<input type="text" name="biblio_volume_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume_title); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_volume_editors_field"><legend><?php _e('Volume Editor(s)'); ?></legend>
-					<input type="text" name="biblio_volume_editors" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume_editors); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_pub_location_field"><legend><?php _e('Place of Publication'); ?></legend>
-					<input type="text" name="biblio_pub_location" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->pub_location); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_publisher_field"><legend><?php _e('Publisher'); ?></legend>
-					<input type="text" name="biblio_publisher" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->publisher); ?>" />
-				</fieldset>
-				<fieldset class="small" id="biblio_website_title_field"><legend><?php _e('Website Title'); ?></legend>
-					<input type="text" name="biblio_website_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->website_title); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_date_field"><legend><?php _e('Date Published'); ?></legend>
-					<input type="text" name="biblio_date" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->date); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_dateaccessed_field"><legend><?php _e('Date Accessed'); ?></legend>
-					<input type="text" name="biblio_dateaccessed" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->dateaccessed); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_url_field"><legend><?php _e('URL'); ?></legend>
-					<input type="text" name="biblio_url" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->url); ?>" />
-				</fieldset>
-				
-				<fieldset class="small" id="biblio_volume_field"><legend><?php _e('Volume'); ?></legend>
-					<input type="text" name="biblio_volume" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume); ?>" />
-				</fieldset>
-
-				<fieldset class="small" id="biblio_issue_field"><legend><?php _e('Issue'); ?></legend>
-					<input type="text" name="biblio_issue" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->issue); ?>" />
-				</fieldset>
-
-				<fieldset class="small" id="biblio_pages_field"><legend><?php _e('Pages'); ?></legend>
-					<input type="text" name="biblio_pages" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->pages); ?>" />
-				</fieldset>
-
-				<fieldset class="small" id="biblio_description_field"><legend><?php _e('Description'); ?></legend>
-					<textarea name="biblio_description" class="input" cols=45 rows=7><?php if ( !empty($data) ) echo htmlspecialchars($data->description); ?></textarea>
-				</fieldset>
-
-				<input type="submit" name="save" class="button bold" value="Save &raquo;" />
-
-
+						
+                        <p>
+						<label for="biblio_video">
+                        <input type="radio" id="biblio_video" name="biblio_type" class="input" value="video" 
+						<?php if ( !empty($data) && $data->type=='video' ) echo "checked" ?>/>
+                        Video</label>
+                        </p>
+				            
+                        <p>         
+						<label for="biblio_audio">
+                        <input type="radio" id="biblio_audio" name="biblio_type" class="input input" value="audio" 
+						<?php if ( !empty($data) && $data->type=='audio' ) echo "checked" ?>/> 
+                        Audio</label>
+                        </p>
+                      </div>
 			</div>
-			<div style="clear:both; height:1px;">&nbsp;</div>
+		</div><!-- End side info column-->
+		
+		<!-- Start Main Body -->
+		<div id="post-body" class="has-sidebar">
+			<div id="post-body-content" class="has-sidebar-content">
+				<div id='normal-sortables' class='meta-box-sortables'>
+
+					<div class="postbox">
+						<h3 class='hndle'><span>Author(s)</span></h3>
+						<div class="inside withlabels">
+							<p><label for="biblio_author_last"><?php _e('Author Last Name'); ?></label></p>
+								<input type="text" name="biblio_author_last" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_last); ?>" />
+							<p><label for="biblio_author_first"><?php _e('Author First Name'); ?></label></p>
+								<input type="text" name="biblio_author_first" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_first); ?>" />
+							<p><label for="biblio_author_two_last"><?php _e('Author Two Last Name'); ?></label></p>
+								<input type="text" name="biblio_author_two_last" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_two_last); ?>" />
+							<p><label for="biblio_author_two_first"><?php _e('Author Two First Name'); ?></label></p>
+								<input type="text" name="biblio_author_two_first" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_two_first); ?>" />
+						</div>
+					</div>
+					
+					<div class="postbox">
+						<h3 class='hndle'><span>Publish Information</span></h3>
+						<div class="inside withlabels">
+						<fieldset class="small" id="biblio_title_field">
+							<p><label for="biblio_title"><?php _e('Title'); ?></label></p>
+							<input type="text" name="biblio_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->title); ?>" />
+						</fieldset>
+						<fieldset class="small" id="biblio_short_title_field">
+							<p><label for="biblio_short_title"><?php _e('Short Title'); ?></label></p>
+							<input type="text" name="biblio_short_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->short_title); ?>" />
+						</fieldset>
+						<fieldset class="small" id="biblio_journal_field">
+							<p><label for="biblio_journal"><?php _e('Journal Title'); ?></label></p>
+							<input type="text" name="biblio_journal" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->journal); ?>" />
+						</fieldset>
+				
+						<fieldset class="small" id="biblio_volume_title_field">
+							<p><label for="biblio_volume_title"><?php _e('Volume Title'); ?></label></p>
+							<input type="text" name="biblio_volume_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume_title); ?>" />
+						</fieldset>
+				
+						<fieldset class="small" id="biblio_volume_editors_field">
+							<p><label for="biblio_volume_editors"><?php _e('Volume Editor(s)'); ?></label></p>
+							<input type="text" name="biblio_volume_editors" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume_editors); ?>" />
+						</fieldset>
+				
+						<fieldset class="small" id="biblio_pub_location_field">
+							<p><label for="biblio_pub_location"><?php _e('Place of Publication'); ?></label></p>
+							<input type="text" name="biblio_pub_location" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->pub_location); ?>" />
+						</fieldset>
+						<fieldset class="small" id="biblio_publisher_field">
+							<p><label for="biblio_publisher"><?php _e('Publisher'); ?></label></p>
+							<input type="text" name="biblio_publisher" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->publisher); ?>" />
+						</fieldset>
+						<fieldset class="small" id="biblio_website_title_field">
+							<p><label><?php _e('Website Title'); ?></label></p>
+							<input type="text" name="biblio_website_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->website_title); ?>" />
+						</fieldset>							
+						</div>
+					</div>
+
+					<div class="postbox">
+						<h3 class='hndle'><span>Additional Information</span></h3>
+						<div class="inside withlabels">
+							<fieldset class="small" id="biblio_date_field">
+								<p><label for="biblio_date"><?php _e('Date Published'); ?></label></p>
+								<input type="text" name="biblio_date" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->date); ?>" />
+							</fieldset>				
+							<fieldset class="small" id="biblio_dateaccessed_field">
+								<p><label for="biblio_dateaccessed"><?php _e('Date Accessed'); ?></label></p>
+								<input type="text" name="biblio_dateaccessed" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->dateaccessed); ?>" />
+							</fieldset>				
+							<fieldset class="small" id="biblio_url_field">
+								<p><label for="biblio_url"><?php _e('URL'); ?></label></p>
+								<input type="text" name="biblio_url" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->url); ?>" />
+							</fieldset>			
+							<fieldset class="small" id="biblio_volume_field">
+								<p><label for="biblio_volume"><?php _e('Volume'); ?></label></p>
+								<input type="text" name="biblio_volume" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume); ?>" />
+							</fieldset>
+							<fieldset class="small" id="biblio_issue_field">
+								<p><label for="biblio_issue"><?php _e('Issue'); ?></label></p>
+								<input type="text" name="biblio_issue" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->issue); ?>" />
+							</fieldset>
+							<fieldset class="small" id="biblio_pages_field">
+								<p><label for="biblio_pages"><?php _e('Pages'); ?></label></p>
+								<input type="text" name="biblio_pages" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->pages); ?>" />
+							</fieldset>
+							<fieldset class="small" id="biblio_description_field">
+								<p><label for="biblio_description"><?php _e('Description'); ?></label></p>
+								<textarea name="biblio_description" class="input" cols=45 rows=7><?php if ( !empty($data) ) echo htmlspecialchars($data->description); ?></textarea>
+							</fieldset>
+						</div>
+					</div>					
+			</div>
 		</div>
+</div>
+						<p class="submit clear"><input type="submit" name="save" class="button-primary" value="Save Entry &raquo;" /></p>
 	</form>
 	<?php
 }

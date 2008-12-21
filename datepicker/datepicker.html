@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>untitled</title>
+	<script src="jquery-1.2.6.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="jquery.ui.all.js" type="text/javascript" charset="utf-8"></script>	
+	<link rel="stylesheet" type="text/css" href="base.css" />
+	<link rel="stylesheet" type="text/css" href="flora.datepicker.css" />		
+</head>
+
+<body>
+
+				<div class="inside">
+
+							<legend><?php _e('Date'); ?> (YYYY-MM-DD) <a href="#">Date Picker</a></legend>
+							<input type="text" name="schedule_date" id="schedule_date" class="format-y-m-d divider-dash split-date date" value="" />					
+
+
+							<legend><?php _e('TimeStart'); ?> (24:00:00)</legend>
+							<input type="text" name="schedule_timestart" class="date"  value="" />
+
+							<legend><?php _e('TimeStop'); ?> (24:00:00)</legend>
+							<input type="text" name="schedule_timestop" class="date"  value="" />
+							
+
+				</div>
+				
+<script type="text/javascript" charset="utf-8">
+$("#schedule_date").datepicker({ 
+    dateFormat: $.datepicker.W3C, 
+    showOn: "button", 
+    buttonImage: "file:///Applications/MAMP/htdocs/wp-7-beta/wp-content/plugins/scholarpress-courseware/datepicker/calendar.gif", 
+    buttonImageOnly: true });
+</script>				
+
+</body>
+</html>
