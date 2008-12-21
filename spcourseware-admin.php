@@ -1038,9 +1038,10 @@ function courseinfo_manage()
 	$spcoursewareAdminOptions = getAdminOptions();
 
 	?>
-	<h2>Course Information Management</h2>
 	
-	<div id="dashb">
+	<div id="dashb" class="wrap">
+	    <h2>Course Information Management</h2>
+    	
 	<form name="courseinfoform" id="courseinfoform" class="wrap" method="post" action="">
 
 		<input type="hidden" name="updateinfo" value="<?php echo $mode?>" />
