@@ -1,8 +1,9 @@
 === SP Courseware ===
 Contributors: davelester, jeremyboggs, zgordon
 Tags: education, syllabus, courses, bibliography, course management, assignments
+Requires at least: 2.0.2
 Tested up to: 2.7
-Stable tag: 1.0.3alpha
+Stable tag: 1.0.3
 
 ScholarPress Courseware enables you to manage a class with a WordPress blog. The plugin give you the ability to ad and edit a schedule, create a bibliography bibliography and assignments, and manage general course information. Designed primarily for use in higher ed courses, but could easily be adapted for other uses.
 
@@ -37,12 +38,16 @@ Documentation for use can be found at http://scholarpress.net/courseware/.
 = Version 1.1 =
 * Fix javascript toggle on bibliography form.
 * Clean up HTML formatting for various plugin outputs (schedule, bibliography, assignments).
+* Improve date/time entry
+* Improve admin theme compatibility with WP 2.6 and back.
 
 = Version 1.2 =
 * Add units to group schedule entries together.
 * More options in the admin panel for controlling output of syllabus (whether to use full or short citations for bibliography items, whether to include descriptions in bibliography, various styles for formatting the schedule)
 
-
 = Version 1.3 =
+* Add feature to bibliography to allow importing of bibliographic items from a standard format (XML, RDF, microformats, others?).
+* Add iCal file formatting, to quickly import calendar into schedule table. 
+
+= Version 2.0 =
 * Add a simple grading system, to allow students to write blog posts that the instructor can grade in the interface.
-* Add feature to bibliography to allow importing of bibliographic items from a standard format (XML, RDF, microformats, others?). 
