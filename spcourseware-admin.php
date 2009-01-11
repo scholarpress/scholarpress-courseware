@@ -392,9 +392,7 @@ function spcourseware_manage() {
                             <div class='handlediv'><br /></div>
                             <h3 class='hndle'><span>Course Information</span></h3>
                             <div class="inside" style="padding:0 12px;">
-                                <ul>
                                 <?php courseinfo_printfull(); ?>
-                                </ul>
                                 <p><a href="?page=courseinfo" class="button">Edit Course Information</a></p>
                             </div> <?php // Closes class="inside" ?>
                         </div> <?php // Closes class="postbox" ?>
@@ -1015,14 +1013,12 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 					</div>
 
 				</div>
+				</div>
+    			
     				<p class="submit">
     					<input type="submit" name="save" class="button-primary" value="Publish Schedule Entry &raquo;" />
     				</p>
-    				<div class="clear">				
-    				</div>
-			</div>
 
-		</div>
 	</div>
 	</form>
 	<?php

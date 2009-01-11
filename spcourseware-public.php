@@ -35,16 +35,28 @@ function courseinfo_printfull() {
 	
 ?>
 	<div class="courseinfo">
-		<p><?php echo $course_number; ?>: <?php echo $course_title; ?></p>
-		<ul>
-		<li class="location"><?php echo $course_location; ?></li>
-		<li class="timedays"><span><?php echo $course_timedays; ?></span>, <?php echo date('g:i a',$starttime); ?>&ndash;<?php echo date('g:i a',$endtime); ?></li>
-	</ul>
-		<?php if(!empty($course_description)): ?>
-			<div class="description">
-			<?php echo nls2p($course_description); ?>
-			</div>
+	    
+		<p>
+		<?php if(!empty($course_number)): ?><span class="course-number"><?php echo $course_number; ?></span><?php endif; ?><?php if(!empty($course_title)): ?>: 
+		    <span class="course-title"><?php echo $course_title; ?></span>
+		    <?php endif; ?>
+		</p>
+		<?php if(!empty($course_location)): ?>
+		<div class="location"><?php echo $course_location; ?></div>
 		<?php endif; ?>
+		
+		
+		<div class="timedays">
+		<?php if(!empty($course_timedays)): ?>
+		    <span class="days"><?php echo $course_timedays; ?></span>
+		<?php endif; ?>
+		<?php if(!empty($starttime)): ?>, 
+		    <?php echo date('g:i a',$starttime); ?>
+	        <?php if(!empty($endtime)): ?>
+	            &ndash;<?php echo date('g:i a',$endtime); ?>
+	        <?php endif; ?>
+		<?php endif; ?>
+		</div>
 		
 		<ul class="vcard instructor">
 			<li><span class="fn n"><span class="given-name"><?php echo $instructor_firstname; ?></span> <span class="family-name"><?php echo $instructor_lastname; ?></span></span></li>

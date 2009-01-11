@@ -13,3 +13,5 @@
 
 #spschedule .assignment-title {font-weight:bold;display:inline;}
 .assignment-description {text-indent:0;}
+
+#courseinformation {display:block; float:left !important; width: 48% !important;}
