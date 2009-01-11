@@ -3,8 +3,8 @@
 Plugin Name: ScholarPress Courseware
 Plugin URI: http://scholarpress.net/courseware/
 Description: All-in-one course management for WordPress
-Version: 1.1alpha
-Author: Jeremy Boggs, Dave Lester, Zac Gordon
+Version: 1.0.3alpha
+Author: Jeremy Boggs, Dave Lester, and Zac Gordon
 Author URI: http://scholarpress.net/
 */
 
@@ -25,7 +25,7 @@ Author URI: http://scholarpress.net/
 */
 
 // Plugin Version
-$spcourseware_version = "1.1alpha";
+$spcourseware_version = "1.0.3";
 
 // Misc functions
 //Adapted from PHP.net: http://us.php.net/manual/en/function.nl2br.php#73479
@@ -76,7 +76,7 @@ function setAdminOptions($course_title, $course_number, $course_section, $course
 }
 
 // Install the courseware
-function courseware_install () {
+function courseware_install() {
 
 	global $wpdb, $user_level, $spcourseware_version;
 
@@ -606,9 +606,101 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 	<form name="readingform" id="readingform" class="wrap" method="post" action="">
 		<input type="hidden" name="updateaction" value="<?php echo $mode?>">
 		<input type="hidden" name="assignmentID" value="<?php echo $assignmentID?>">
+		<div id="poststuff" class="metabox-holder">
+    	
+		<div id="side-info-column" class="inner-sidebar">
+		<div id="datetimediv" class="postbox">
+			<h3 class='hndle'><span>Type of Assignment</span></h3>
+                <div class="inside withlabels biblio_options">
+                    <p>Select the type of assignment from the list below.</p>							
+                    <p>
+                    <label for="assignment_reading">
+                    <input type="radio" id="assignment_reading" name="assignment_type" class="input" value="reading" 
+                    <?php if ( empty($data) || $data->assignments_type=='reading' ) echo "checked" ?>/>
+                    Reading</label>
+                    </p>
+
+                    <p>
+                    <label for="assignment_writing">
+                    <input id="assignment_writing" type="radio" name="assignment_type" name="assignment_type" class="input" value="writing" 
+                    <?php if ( !empty($data) && $data->assignments_type=='writing' ) echo "checked" ?>/>  
+                    Writing</label>
+                    </p>
+                    
+                    <p>
+                    <label for="assignment_presentation">
+                    <input type="radio" id="assignment_presentation" name="assignment_type" class="input" value="presentation" 
+                    <?php if ( !empty($data) && $data->assignments_type=='presentation' ) echo "checked" ?>/>  
+                    Presentation</label>
+                    </p>
+                    
+                    <p>
+                    <label for="assignment_group">
+                    <input type="radio" id="assignment_group" name="assignment_type" class="input" value="groupwork" 
+                    <?php if ( !empty($data) && $data->assignments_type=='groupwork' ) echo "checked" ?>/> 
+                    Group Work </label>
+                    </p>
+            
+                    <p>
+                    <label for="assignment_research">
+                    <input type="radio" id="assignment_research" name="assignment_type" class="input" value="research" 
+                    <?php if ( !empty($data) && $data->assignments_type=='research' ) echo "checked" ?>/>  
+                    Research</label>
+                    </p>
+
+                    <p>
+                    <label for="assignment_discussion">
+                    <input type="radio" id="assignment_discussion" name="assignment_type" class="input" value="discussion" 
+                    <?php if ( !empty($data) && $data->assignments_type=='discussion' ) echo "checked" ?>/> 
+                    Discussion</label>	
+                    </p>
+                    
+                    <p>
+                    <label for="assignment_creative">
+                    <input type="radio" id="assignment_creative" name="assignment_type" class="input" value="creative" 
+                    <?php if ( !empty($data) && $data->assignments_type=='creative' ) echo "checked" ?>/>  
+                    Creative</label>		
+                    </p>
+				</div>
+		</div>
+        
+
+			<div id="datetimediv" class="postbox">
+			<h3 class='hndle'><span>Due Date</span></h3>
+				<div class="inside">
+					<p><label for="assignment_scheduleID"><?php _e('Date Due'); ?></label></p>
+					<select name="assignment_scheduleID" id="assignment_scheduleID">
+						<option value=""></option>
+						<?php 
+							// Get schedule events from DB
+							$SQL = 'SELECT * from '.$wpdb->prefix.'schedule ORDER BY schedule_date, schedule_timestart';
+							$dates = $wpdb->get_results($SQL, OBJECT);
+							foreach ($dates as $date) {
+						?>
+						<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_scheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
+						<?php } ?>
+					</select>
+					<p><label for="assignment_assignedScheduleID"><?php _e('Date Assigned (optional)'); ?></label></p>
+					<select name="assignment_assignedScheduleID" id="assignment_assignedScheduleID">
+						<option value=""></option>
+						<?php 
+							// Get schedule events from DB
+							$SQL = 'SELECT * from '.$wpdb->prefix.'schedule ORDER BY schedule_date, schedule_timestart';
+							$dates = $wpdb->get_results($SQL, OBJECT);
+							foreach ($dates as $date) {
+						?>
+						<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_assignedScheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
+						<?php } ?>
+					</select>
+				</div>
+
+			</div>
+	</div><!-- End side info column-->
+		
 		<!-- Start Main Body -->
-		<div id="post-body">
-			<div id="poststuff" class="metabox-holder">
+		<div id="post-body" class="has-sidebar">
+		    <div id="post-body-content" class="has-sidebar-content">
+			
     			<div id="normal-sortables" class="meta-box-sortables">
 
 					<div id="titlediv">
@@ -654,108 +746,18 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 				</fieldset>
 						</div> <?php // closes inside ?>
 					</div> <?php // closes postbox ?>
-
+                </div>
 			</div> <?php // closes normal-sortables ?>
-		</div>	<?php // closes post-body-content ?>
 		</div> <?php // closes post-body ?>
 		
 		<!-- Beginning of side info column -->
-		<div id="poststuff" class="metabox-holder">
-			<div id="side-info-column" class="inner-sidebar">
-			<div id="datetimediv" class="postbox" >
-				<h3 class='hndle'><span>Type of Assignment</span></h3>
-                    <div class="inside withlabels biblio_options">
-                        <p>Select the type of assignment from the list below.</p>							
-                        <p>
-                        <label for="assignment_reading">
-                        <input type="radio" id="assignment_reading" name="assignment_type" class="input" value="reading" 
-                        <?php if ( empty($data) || $data->assignments_type=='reading' ) echo "checked" ?>/>
-                        Reading</label>
-                        </p>
-
-                        <p>
-                        <label for="assignment_writing">
-                        <input id="assignment_writing" type="radio" name="assignment_type" name="assignment_type" class="input" value="writing" 
-                        <?php if ( !empty($data) && $data->assignments_type=='writing' ) echo "checked" ?>/>  
-                        Writing</label>
-                        </p>
-                        
-                        <p>
-                        <label for="assignment_presentation">
-                        <input type="radio" id="assignment_presentation" name="assignment_type" class="input" value="presentation" 
-                        <?php if ( !empty($data) && $data->assignments_type=='presentation' ) echo "checked" ?>/>  
-                        Presentation</label>
-                        </p>
-                        
-                        <p>
-                        <label for="assignment_group">
-                        <input type="radio" id="assignment_group" name="assignment_type" class="input" value="groupwork" 
-                        <?php if ( !empty($data) && $data->assignments_type=='groupwork' ) echo "checked" ?>/> 
-                        Group Work </label>
-                        </p>
-                
-                        <p>
-                        <label for="assignment_research">
-                        <input type="radio" id="assignment_research" name="assignment_type" class="input" value="research" 
-                        <?php if ( !empty($data) && $data->assignments_type=='research' ) echo "checked" ?>/>  
-                        Research</label>
-                        </p>
-
-                        <p>
-                        <label for="assignment_discussion">
-                        <input type="radio" id="assignment_discussion" name="assignment_type" class="input" value="discussion" 
-                        <?php if ( !empty($data) && $data->assignments_type=='discussion' ) echo "checked" ?>/> 
-                        Discussion</label>	
-                        </p>
-                        
-                        <p>
-                        <label for="assignment_creative">
-                        <input type="radio" id="assignment_creative" name="assignment_type" class="input" value="creative" 
-                        <?php if ( !empty($data) && $data->assignments_type=='creative' ) echo "checked" ?>/>  
-                        Creative</label>		
-                        </p>
-					</div>
-			</div>
-            
-    
-    			<div id="datetimediv" class="postbox" >
-				<h3 class='hndle'><span>Due Date</span></h3>
-					<div class="inside">
-						<p><label for="assignment_scheduleID"><?php _e('Date Due'); ?></label></p>
-						<select name="assignment_scheduleID" id="assignment_scheduleID">
-							<option value=""></option>
-							<?php 
-								// Get schedule events from DB
-								$SQL = 'SELECT * from '.$wpdb->prefix.'schedule ORDER BY schedule_date, schedule_timestart';
-								$dates = $wpdb->get_results($SQL, OBJECT);
-								foreach ($dates as $date) {
-							?>
-							<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_scheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
-							<?php } ?>
-						</select>
-						<p><label for="assignment_assignedScheduleID"><?php _e('Date Assigned (optional)'); ?></label></p>
-						<select name="assignment_assignedScheduleID" id="assignment_assignedScheduleID">
-							<option value=""></option>
-							<?php 
-								// Get schedule events from DB
-								$SQL = 'SELECT * from '.$wpdb->prefix.'schedule ORDER BY schedule_date, schedule_timestart';
-								$dates = $wpdb->get_results($SQL, OBJECT);
-								foreach ($dates as $date) {
-							?>
-							<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_assignedScheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
-							<?php } ?>
-						</select>
-					</div>
-
-				</div>
-			</div>
-		</div><!-- End side info column-->	
+			
 		<div class="clear">				
 		</div>
 		<p class="submit">
 			<input type="submit" name="save" class="button-primary" value="Save Assignment &raquo;" />
 		</p>
-		
+		</div>
 	</form>
 	<?php
 }
