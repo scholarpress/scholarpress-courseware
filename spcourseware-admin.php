@@ -1013,14 +1013,17 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 					</div>
 
 				</div>
-				</div>
-    			
+			</div>
+
     				<p class="submit">
     					<input type="submit" name="save" class="button-primary" value="Publish Schedule Entry &raquo;" />
     				</p>
-
+        </div>
+	</div>
 	</div>
 	</form>
+	<div class="clear"></div>
+	
 	<?php
 }
 

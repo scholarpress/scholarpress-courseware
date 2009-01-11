@@ -158,7 +158,7 @@ function bibliography_displaylist()
 	if ( !empty($biblios) )
 	{
 		?>
-			<table width="100%" cellpadding="3" cellspacing="3" class="widefat post">
+			<table width="100%" cellpadding="3" cellspacing="3" class="widefat post" style="margin-bottom:2em;">
 			<thead>
 			<tr>
 				<th scope="col"><?php _e('ID') ?></th>
@@ -401,6 +401,7 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 </div>
 						<p class="submit clear"><input type="submit" name="save" class="button-primary" value="Save Entry &raquo;" /></p>
 	</form>
+	<div class="clear"></div>
 	<?php
 }
 
