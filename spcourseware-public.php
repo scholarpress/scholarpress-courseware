@@ -42,11 +42,11 @@ function courseinfo_printfull() {
 		    <?php endif; ?>
 		</p>
 		<?php if(!empty($course_location)): ?>
-		<div class="location"><?php echo $course_location; ?></div>
+		<p class="location"><?php echo $course_location; ?></p>
 		<?php endif; ?>
 		
 		
-		<div class="timedays">
+		<p class="timedays">
 		<?php if(!empty($course_timedays)): ?>
 		    <span class="days"><?php echo $course_timedays; ?></span>
 		<?php endif; ?>
@@ -56,7 +56,7 @@ function courseinfo_printfull() {
 	            &ndash;<?php echo date('g:i a',$endtime); ?>
 	        <?php endif; ?>
 		<?php endif; ?>
-		</div>
+		</p>
 		
 		<ul class="vcard instructor">
 			<li><span class="fn n"><span class="given-name"><?php echo $instructor_firstname; ?></span> <span class="family-name"><?php echo $instructor_lastname; ?></span></span></li>
