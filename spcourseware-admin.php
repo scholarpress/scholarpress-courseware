@@ -306,9 +306,13 @@ function courseware_admin_menu()
 
 function courseware_admin_style() 
 {
+    global $wp_version;
+	
     $url = WP_PLUGIN_URL;
     $url = $url . '/scholarpress-courseware/spadmin.css';
+    if ($wp_version < 2.7) {
 	echo '<link rel="stylesheet" type="text/css" href="' . $url . '" />';
+}
 }
 
 function courseware_admin_scripts() 
@@ -1043,7 +1047,6 @@ function courseinfo_manage()
 	
 	<div id="dashb" class="wrap">
 	    <h2>Course Information Management</h2>
-    	
 	<form name="courseinfoform" id="courseinfoform" class="wrap" method="post" action="">
 
 		<input type="hidden" name="updateinfo" value="<?php echo $mode?>" />
