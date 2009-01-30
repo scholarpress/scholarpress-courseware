@@ -18,6 +18,9 @@ ScholarPress Courseware enables you to manage a class with a WordPress blog. The
 
 Documentation for use can be found at http://scholarpress.net/courseware/.
 
+== Credits ==
+Special thanks to Chaabin, whose BibTex WordPress plugin was the inspiration and baseline for the addition of BibTeX import functionality into Courseware.  http://www.chaaban.info/wordpress-plugin/bibtex/
+
 == Version History ==
 
 = Version 1.0 =

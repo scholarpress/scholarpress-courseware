@@ -1,6 +1,11 @@
 <?php
 define('SP_BIBLIOGRAPHY_PAGE', '<spbibliography />');
 
+if (!class_exists('BibTeX'))
+{
+    require("bibtex/BibTexParser.php");  
+}
+
 // Handles the bibliography management page
 function bibliography_manage()
 {
@@ -146,6 +151,137 @@ function bibliography_manage()
 	}
 	?>
 	</div><?php
+}
+
+// Handles the import bibliographic sources page
+function spcourseware_insertSources()
+{
+    ?>
+	<div class="wrap">
+	<?php
+    if ((isset($_POST['action']))
+         &&($_POST['action'] == 'submitted')
+          &&(isset($_POST['info']))){
+
+      $upload_path = get_settings('upload_path');
+      //$root = "$pathtofile/plugins/scholarpress-courseware/bibtex";
+
+      // echo $upload_path;
+      // exit;
+
+      // Dave's hacked path
+      $root = "/home/.newie/dlester/labs.davelester.org/wpbib/wp-content/plugins/scholarpress-courseware/bibtex";
+      
+      $filename2  = fopen ("$root/file.txt","w");
+      $filename = "$root/file.txt";
+
+      $somecontent = @strip_tags($_POST['info']);
+
+      // remove " and ' from the bibtex code to avoid mysql errors .
+         $remove = array("\"","'","\\");
+         $somecontent = str_replace($remove,"", $somecontent);
+
+      if (is_writable($filename)) {
+
+         if (!$handle = fopen($filename, 'a')) {
+              echo "Error In the File : ($filename)";
+              exit;
+         }
+
+         if (fwrite($handle, $somecontent) === FALSE) {
+             echo "Sorry...i can't Write to the File";
+             exit;
+         }
+
+         spcourseware_insertBibTeX("$root/file.txt");
+         fclose($filename2);
+
+      } else {
+         echo "$filename Is not writable: Error In The File ...";
+    }
+
+    } else { ?>
+	<h2><?php _e('Import Bibliographic Sources'); ?></h2>
+    <p>Paste your BibTeX contents in the textarea below and submit.  Note that you'll have to make the 'file.txt' file in your plugin's /bibtex/ folder writable by your server before being able to continue.</p>
+    <p>Using <a href="http://zotero.org">Zotero</a>, you can click the cog to access your preferences, and access an option for domain-specific settings listed beneath the Export tab.  Selecting BibTeX from the drop-down menu as the default output format.  You can then drag and drop citations from your Zotero collection into the textarea of Courseware.  After clicking BibTeX sources.. you're good to go!</p>
+    <form method="POST" action="">
+        <textarea  rows="20" name="info" cols="98"></textarea><br />
+    	<input type="submit" name="save" class="button-primary" value="Import BibTeX Sources &raquo;" />
+    	<input type="hidden" name="action" value="submitted" />
+      </form>
+    <?php } ?>
+    </div><?php
+}
+
+// The magic that actually uses the BibTeX parser.  Adapted from the BibTeX WordPress plugin under GPL
+function spcourseware_insertBibTeX($file) {
+
+	global $wpdb;
+
+    $test = new BibTeX($file);
+    $test->parse();
+
+    $Arr = (array)$test; // cast in Array
+    $total =  $Arr['count'] ;
+    $i = 0;
+
+    do {
+
+    $abstract       = @est_null($Arr['items']['abstract'][$i]);
+    $year           = @est_null($Arr['items']['year'][$i]);
+    $group          = @est_null($Arr['items']['group'][$i]);
+    $publisher      = @est_null($Arr['items']['publisher'][$i]);
+    $page_start     = @est_null($Arr['items']['page-start'][$i]);
+    $page_end       = @est_null($Arr['items']['page-end'][$i]);
+    $pages          = @est_null($Arr['items']['pages'][$i]);
+    $address        = @est_null($Arr['items']['address'][$i]);
+    $url            = @est_null($Arr['items']['url'][$i]);
+    $volume         = @est_null($Arr['items']['volume'][$i]);
+    $chapter        = @est_null($Arr['items']['chapter'][$i]);
+    $journal        = @est_null($Arr['items']['journal'][$i]);
+    $author         = @est_null($Arr['items']['author'][$i]);
+    $raw            = @est_null($Arr['items']['raw'][$i]);
+    $title          = @est_null($Arr['items']['title'][$i]);
+    $booktitle      = @est_null($Arr['items']['booktitle'][$i]);
+    $folder         = @est_null($Arr['items']['folder'][$i]);
+    $type           = @est_null($Arr['items']['type'][$i]);
+    $linebegin      = @est_null($Arr['items']['linebegin'][$i]);
+    $lineend        = @est_null($Arr['items']['lineend'][$i]);
+
+    $key = find_key($raw, "{" , ",");
+    $entry_type = find_key ($raw , "@" , "{" );
+
+    // Even if mysql take care of thisissue because it's set to NOT NULL ...
+    if($title == "")
+    {
+        echo " <br><font color = red>An Error Occured : Wrong Format : title cannot be Null  </font><br /><br /> ";
+    } else 
+    {
+        $names = explode(" ", $author, 2);
+        if ($names[1]){
+        $lastname = $names[1];
+        $firstname = $names[0];
+        }else{
+        $lastname = $names[0];
+        $firstname = "";
+    }
+
+    $res=mysql_query("INSERT INTO " . $wpdb->prefix . "bibliography (description,  date , publisher , pages , pub_location ,url , volume , journal ,author_last , author_first, title )VALUES ('$abstract', '$year' , '$publisher' , '$pages' , '$address' ,'$url' , '$volume' , '$journal' ,'$lastname' , '$firstname' ,'$title' )");
+
+    //Test and show If The Insertion Went perfect ...
+    if($res != 1 ) {
+
+    echo "<br /><font color = red>An error occurred : " . mysql_error() . "  </font>     $key <br /><br />  " ; }
+      else
+         { 
+         echo "<br /><font color = blue> Insertion is Perfect for the Key  : </font> $key  <br /><br /> "; 
+         }
+    }
+
+    $i++ ;
+    } while ($i < $total);
+
+    echo " <a href=\"javascript:history.go(-1)\"> Click here to go Back</a>" ;
 }
 
 // Displays the list of bibliography entries
@@ -300,6 +436,14 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
                         Audio</label>
                         </p>
                       </div>
+			</div>
+			
+			<div id="import-bibliography" class="postbox" >
+			<h3 class='hndle'><span>Import Bibliographic Sources</span></h3>
+				<div class="inside import-bibliography">
+					<p>You can import BibTeX format citations, including those generated using <a href="http://zotero.org">Zotero</a>.  Instructions are provided.</p><br />
+					<p><a href="?page=importsources" class="button">Import Sources</a></p><br />
+				</div>
 			</div>
 		</div><!-- End side info column-->
 		

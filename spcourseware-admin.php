@@ -297,8 +297,8 @@ function courseware_admin_menu()
 	add_submenu_page('scholarpress-courseware','SP Courseware | Bibliography', 'Bibliography', 8, 'bibliography', 'bibliography_manage');
 	add_submenu_page('scholarpress-courseware','SP Courseware | Assignments', 'Assignments', 8, 'assignments', 'assignments_manage');
 	add_submenu_page('scholarpress-courseware','SP Courseware | Course Information', 'Course Information', 8, 'courseinfo', 'courseinfo_manage');
+	add_submenu_page('scholarpress-courseware','SP Courseware | Import Bibliographic Sources', 'Import Bibliographic Sources', 8, 'importsources', 'spcourseware_insertSources');
 }
-
 
 /* ======== Backend management pages ========*/
 
