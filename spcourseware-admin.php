@@ -27,6 +27,9 @@ Author URI: http://scholarpress.net/
 // Plugin Version
 $spcourseware_version = "1.0.3";
 
+// Courseware Path
+$spcourseware_path = ABSPATH . PLUGINDIR . DIRECTORY_SEPARATOR . 'scholarpress-courseware/';
+
 // Misc functions
 //Adapted from PHP.net: http://us.php.net/manual/en/function.nl2br.php#73479
 function nls2p($str)
@@ -297,7 +300,7 @@ function courseware_admin_menu()
 	add_submenu_page('scholarpress-courseware','SP Courseware | Bibliography', 'Bibliography', 8, 'bibliography', 'bibliography_manage');
 	add_submenu_page('scholarpress-courseware','SP Courseware | Assignments', 'Assignments', 8, 'assignments', 'assignments_manage');
 	add_submenu_page('scholarpress-courseware','SP Courseware | Course Information', 'Course Information', 8, 'courseinfo', 'courseinfo_manage');
-	add_submenu_page('scholarpress-courseware','SP Courseware | Import Bibliographic Sources', 'Import Bibliographic Sources', 8, 'importsources', 'spcourseware_insertSources');
+	add_submenu_page('scholarpress-courseware','SP Courseware | Import Bibliographic Sources', 'Import Bibliographic Sources', 8, 'importsources', 'sp_courseware_insert_sources');
 }
 
 /* ======== Backend management pages ========*/
@@ -1046,6 +1049,7 @@ function courseinfo_manage()
 	
 	<div id="dashb" class="wrap">
 	    <h2>Course Information Management</h2>
+	    
 	<form name="courseinfoform" id="courseinfoform" class="wrap" method="post" action="">
 
 		<input type="hidden" name="updateinfo" value="<?php echo $mode?>" />

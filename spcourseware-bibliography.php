@@ -6,6 +6,39 @@ if (!class_exists('BibTeX'))
     require("bibtex/BibTexParser.php");  
 }
 
+function sp_courseware_bibliography_create_entry($entry)
+{
+    global $wpdb;
+	
+	$author_last = !empty($_REQUEST['biblio_author_last']) ? $_REQUEST['biblio_author_last'] : '';
+	$author_first = !empty($_REQUEST['biblio_author_first']) ? $_REQUEST['biblio_author_first'] : '';
+	$author_two_last = !empty($_REQUEST['biblio_author_two_last']) ? $_REQUEST['biblio_author_two_last'] : '';
+	$author_two_first = !empty($_REQUEST['biblio_author_two_first']) ? $_REQUEST['biblio_author_two_first'] : '';
+	$title = !empty($_REQUEST['biblio_title']) ? $_REQUEST['biblio_title'] : '';
+	$short_title = !empty($_REQUEST['biblio_short_title']) ? $_REQUEST['biblio_short_title'] : '';
+	$journal = !empty($_REQUEST['biblio_journal']) ? $_REQUEST['biblio_journal'] : '';
+	$volume_title = !empty($_REQUEST['biblio_volume_title']) ? $_REQUEST['biblio_volume_title'] : '';
+	$volume_editors = !empty($_REQUEST['biblio_volume_editors']) ? $_REQUEST['biblio_volume_editors'] : '';
+	$website_title = !empty($_REQUEST['biblio_website_title']) ? $_REQUEST['biblio_website_title'] : '';
+	$pub_location = !empty($_REQUEST['biblio_pub_location']) ? $_REQUEST['biblio_pub_location'] : '';
+	$publisher = !empty($_REQUEST['biblio_publisher']) ? $_REQUEST['biblio_publisher'] : '';
+	$date = !empty($_REQUEST['biblio_date']) ? $_REQUEST['biblio_date'] : '';
+	$dateaccessed = !empty($_REQUEST['biblio_dateaccessed']) ? $_REQUEST['biblio_dateaccessed'] : '';
+	$url = !empty($_REQUEST['biblio_url']) ? $_REQUEST['biblio_url'] : '';
+	$volume = !empty($_REQUEST['biblio_volume']) ? $_REQUEST['biblio_volume'] : '';
+	$issue = !empty($_REQUEST['biblio_issue']) ? $_REQUEST['biblio_issue'] : '';
+	$pages = !empty($_REQUEST['biblio_pages']) ? $_REQUEST['biblio_pages'] : '';
+	$description = !empty($_REQUEST['biblio_description']) ? $_REQUEST['biblio_description'] : '';
+	$type = !empty($_REQUEST['biblio_type']) ? $_REQUEST['biblio_type'] : '';
+	
+	
+	
+	$sql = "UPDATE " . $wpdb->prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "', dateaccessed = '" . $dateaccessed . "', url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "' WHERE entryID = '" . $entryID . "'";
+	
+	$sql = "INSERT INTO " . $wpdb->prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "',  dateaccessed = '" . $dateaccessed . "',url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "'";
+	
+}
+
 // Handles the bibliography management page
 function bibliography_manage()
 {
@@ -153,9 +186,24 @@ function bibliography_manage()
 	</div><?php
 }
 
+function sp_courseware_insert_sources_form()
+{ ?>
+    <h2><?php _e('Import Bibliographic Sources'); ?></h2>
+    <p>Paste your BibTeX contents in the textarea below and submit.  Note that you'll have to make the 'file.txt' file in your plugin's /bibtex/ folder writable by your server before being able to continue.</p>
+    <p>Using <a href="http://zotero.org">Zotero</a>, you can click the cog to access your preferences, and access an option for domain-specific settings listed beneath the Export tab.  Selecting BibTeX from the drop-down menu as the default output format.  You can then drag and drop citations from your Zotero collection into the textarea of Courseware.  After clicking BibTeX sources.. you're good to go!</p>
+    <form method="POST" action="">
+        <textarea  rows="20" name="info" cols="98"></textarea><br />
+    	<input type="submit" name="save" class="button-primary" value="Import BibTeX Sources &raquo;" />
+    	<input type="hidden" name="action" value="submitted" />
+      </form>
+<?php 
+}
+
 // Handles the import bibliographic sources page
-function spcourseware_insertSources()
+function sp_courseware_insert_sources()
 {
+    global $spcourseware_path;
+    
     ?>
 	<div class="wrap">
 	<?php
@@ -163,15 +211,9 @@ function spcourseware_insertSources()
          &&($_POST['action'] == 'submitted')
           &&(isset($_POST['info']))){
 
-      $upload_path = get_settings('upload_path');
-      //$root = "$pathtofile/plugins/scholarpress-courseware/bibtex";
-
-      // echo $upload_path;
-      // exit;
-
-      // Dave's hacked path
-      $root = "/home/.newie/dlester/labs.davelester.org/wpbib/wp-content/plugins/scholarpress-courseware/bibtex";
-      
+      // BibTeX path, using spcourseware_path global.
+      $root = "$spcourseware_path/bibtex";
+     
       $filename2  = fopen ("$root/file.txt","w");
       $filename = "$root/file.txt";
 
@@ -193,28 +235,37 @@ function spcourseware_insertSources()
              exit;
          }
 
-         spcourseware_insertBibTeX("$root/file.txt");
+         sp_courseware_insert_BibTeX("$root/file.txt");
          fclose($filename2);
 
       } else {
          echo "$filename Is not writable: Error In The File ...";
     }
 
-    } else { ?>
-	<h2><?php _e('Import Bibliographic Sources'); ?></h2>
-    <p>Paste your BibTeX contents in the textarea below and submit.  Note that you'll have to make the 'file.txt' file in your plugin's /bibtex/ folder writable by your server before being able to continue.</p>
-    <p>Using <a href="http://zotero.org">Zotero</a>, you can click the cog to access your preferences, and access an option for domain-specific settings listed beneath the Export tab.  Selecting BibTeX from the drop-down menu as the default output format.  You can then drag and drop citations from your Zotero collection into the textarea of Courseware.  After clicking BibTeX sources.. you're good to go!</p>
-    <form method="POST" action="">
-        <textarea  rows="20" name="info" cols="98"></textarea><br />
-    	<input type="submit" name="save" class="button-primary" value="Import BibTeX Sources &raquo;" />
-    	<input type="hidden" name="action" value="submitted" />
-      </form>
-    <?php } ?>
-    </div><?php
-}
+    } else {  
+        
+        echo sp_courseware_insert_sources_form();
+    } ?>
+    </div>
+<?php }
 
+function find_key ($bib , $x , $y) {
+
+$find_x  = $x ;
+$find_y  = $y ;
+
+$pos_x = strpos($bib,  $find_x);
+$pos_y = strpos($bib , $find_y);
+
+
+$key = substr($bib, $pos_x+1 ,($pos_y - $pos_x)-1);
+$key = trim($key);
+
+return $key ;
+
+}
 // The magic that actually uses the BibTeX parser.  Adapted from the BibTeX WordPress plugin under GPL
-function spcourseware_insertBibTeX($file) {
+function sp_courseware_insert_BibTeX($file) {
 
 	global $wpdb;
 
@@ -222,66 +273,73 @@ function spcourseware_insertBibTeX($file) {
     $test->parse();
 
     $Arr = (array)$test; // cast in Array
-    $total =  $Arr['count'] ;
+    $total =  $Arr['count'] + 1;
+    
     $i = 0;
 
     do {
+            
+        $abstract       = @$Arr['items']['abstract'][$i];
+        $year           = @$Arr['items']['year'][$i];
+        $group          = @$Arr['items']['group'][$i];
+        $publisher      = @$Arr['items']['publisher'][$i];
+        $page_start     = @$Arr['items']['page-start'][$i];
+        $page_end       = @$Arr['items']['page-end'][$i];
+        $pages          = @$Arr['items']['pages'][$i];
+        $address        = @$Arr['items']['address'][$i];
+        $url            = @$Arr['items']['url'][$i];
+        $volume         = @$Arr['items']['volume'][$i];
+        $chapter        = @$Arr['items']['chapter'][$i];
+        $journal        = @$Arr['items']['journal'][$i];
+        $author         = @$Arr['items']['author'][$i];
+        $raw            = @$Arr['items']['raw'][$i];
+        $title          = @$Arr['items']['title'][$i];
+        $booktitle      = @$Arr['items']['booktitle'][$i];
+        $folder         = @$Arr['items']['folder'][$i];
+        $type           = @$Arr['items']['type'][$i];
+        $linebegin      = @$Arr['items']['linebegin'][$i];
+        $lineend        = @$Arr['items']['lineend'][$i];
 
-    $abstract       = @est_null($Arr['items']['abstract'][$i]);
-    $year           = @est_null($Arr['items']['year'][$i]);
-    $group          = @est_null($Arr['items']['group'][$i]);
-    $publisher      = @est_null($Arr['items']['publisher'][$i]);
-    $page_start     = @est_null($Arr['items']['page-start'][$i]);
-    $page_end       = @est_null($Arr['items']['page-end'][$i]);
-    $pages          = @est_null($Arr['items']['pages'][$i]);
-    $address        = @est_null($Arr['items']['address'][$i]);
-    $url            = @est_null($Arr['items']['url'][$i]);
-    $volume         = @est_null($Arr['items']['volume'][$i]);
-    $chapter        = @est_null($Arr['items']['chapter'][$i]);
-    $journal        = @est_null($Arr['items']['journal'][$i]);
-    $author         = @est_null($Arr['items']['author'][$i]);
-    $raw            = @est_null($Arr['items']['raw'][$i]);
-    $title          = @est_null($Arr['items']['title'][$i]);
-    $booktitle      = @est_null($Arr['items']['booktitle'][$i]);
-    $folder         = @est_null($Arr['items']['folder'][$i]);
-    $type           = @est_null($Arr['items']['type'][$i]);
-    $linebegin      = @est_null($Arr['items']['linebegin'][$i]);
-    $lineend        = @est_null($Arr['items']['lineend'][$i]);
+        $key = find_key($raw, "{" , ",");
+        $entry_type = find_key ($raw , "@" , "{" );
 
-    $key = find_key($raw, "{" , ",");
-    $entry_type = find_key ($raw , "@" , "{" );
-
-    // Even if mysql take care of thisissue because it's set to NOT NULL ...
-    if($title == "")
-    {
-        echo " <br><font color = red>An Error Occured : Wrong Format : title cannot be Null  </font><br /><br /> ";
-    } else 
-    {
         $names = explode(" ", $author, 2);
-        if ($names[1]){
-        $lastname = $names[1];
-        $firstname = $names[0];
-        }else{
-        $lastname = $names[0];
-        $firstname = "";
-    }
+        
+        if ($names[1]) {
+            $author_last = $names[1];
+            $author_first = $names[0];
+        } else {
+            $author_last = $names[0];
+            $author_first = "";
+        }
+        
+        if($entry_type == 'book') {
+            $type = 'monograph';
+        }
+        elseif($entry_type == 'phdthesis' || $entry_type == 'mastersthesis') {
+            $type = 'unpublished';
+        }
+        elseif($entry_type == 'inbook' || $entry_type == 'incollection') {
+            $type = 'volumechapter';
+        }
+        else {
+            $type = $entry_type;
+        }
+           
+        $sql = "INSERT INTO " . $wpdb->prefix . "bibliography (description,  date , publisher , pages , pub_location ,url , volume , journal ,author_last , author_first, title, type ) VALUES ('$abstract', '$year' , '$publisher' , '$pages' , '$address' ,'$url' , '$volume' , '$journal' ,'$author_last' , '$author_first' ,'$title', '$type' )";
+        $wpdb->query($sql);
 
-    $res=mysql_query("INSERT INTO " . $wpdb->prefix . "bibliography (description,  date , publisher , pages , pub_location ,url , volume , journal ,author_last , author_first, title )VALUES ('$abstract', '$year' , '$publisher' , '$pages' , '$address' ,'$url' , '$volume' , '$journal' ,'$lastname' , '$firstname' ,'$title' )");
+        $html .= '<li>'.$author_first. ' '.$author_last.', <em>'.$title.'</em></li>';
+        $i++;
+        
+    } while($i < $total);
+    echo '<h2>Done!</h2>';
+    echo '<p>You have successfully added the following entries to your bibliography:</p>';
+    echo '<ul>';
+    echo $html;
+    echo '</ul>';
 
-    //Test and show If The Insertion Went perfect ...
-    if($res != 1 ) {
-
-    echo "<br /><font color = red>An error occurred : " . mysql_error() . "  </font>     $key <br /><br />  " ; }
-      else
-         { 
-         echo "<br /><font color = blue> Insertion is Perfect for the Key  : </font> $key  <br /><br /> "; 
-         }
-    }
-
-    $i++ ;
-    } while ($i < $total);
-
-    echo " <a href=\"javascript:history.go(-1)\"> Click here to go Back</a>" ;
+    echo sp_courseware_insert_sources_form();
 }
 
 // Displays the list of bibliography entries

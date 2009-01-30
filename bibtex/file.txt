@@ -1,6 +1,0 @@
-
-@misc{_cnn.com_????,
-	title = {{CNN.com} - Breaking News, {U.S.,} World, Weather, Entertainment & Video News},
-	url = {http://www.cnn.com/},
-	howpublished = {http://www.cnn.com/}
-}
