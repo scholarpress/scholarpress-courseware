@@ -187,10 +187,21 @@ function bibliography_manage()
 }
 
 function sp_courseware_insert_sources_form()
-{ ?>
+{
+    global $spcourseware_path;
+    
+    // BibTeX path, using spcourseware_path global.
+    $bibtexFilePath = "$spcourseware_path/bibtex/file.txt";
+?>
     <h2><?php _e('Import Bibliographic Sources'); ?></h2>
-    <p>Paste your BibTeX contents in the textarea below and submit.  Note that you'll have to make the 'file.txt' file in your plugin's /bibtex/ folder writable by your server before being able to continue.</p>
-    <p>Using <a href="http://zotero.org">Zotero</a>, you can click the cog to access your preferences, and access an option for domain-specific settings listed beneath the Export tab.  Selecting BibTeX from the drop-down menu as the default output format.  You can then drag and drop citations from your Zotero collection into the textarea of Courseware.  After clicking BibTeX sources.. you're good to go!</p>
+    <p>Paste your BibTeX contents in the textarea below and submit.
+        
+        <?php if (!is_writable($bibtexFilePath)) {
+            echo "<strong>NOTE: you'll have to make the 'file.txt' file in ScholarPress Courseware' /bibtex/ folder writable by your server before being able to continue.</strong>";
+        } ?>
+        
+        </p>
+    <p>Using <a href="http://zotero.org">Zotero</a>, you can click the cog to access your preferences, and access an option for domain-specific settings listed beneath the Export tab.  Selecting BibTeX from the drop-down menu as the default output format.  Drag and drop citations from your Zotero collection into the textarea of Courseware.  After clicking BibTeX sources.. you're good to go!</p>
     <form method="POST" action="">
         <textarea  rows="20" name="info" cols="98"></textarea><br />
     	<input type="submit" name="save" class="button-primary" value="Import BibTeX Sources &raquo;" />
