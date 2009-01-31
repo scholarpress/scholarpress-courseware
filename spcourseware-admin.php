@@ -4,7 +4,7 @@ Plugin Name: ScholarPress Courseware
 Plugin URI: http://scholarpress.net/courseware/
 Description: All-in-one course management for WordPress
 Version: 1.0.3
-Author: Jeremy Boggs, Dave Lester, and Zac Gordon
+Author: Jeremy Boggs, Dave Lester, Zac Gordon, and Sean Takats
 Author URI: http://scholarpress.net/
 */
 
@@ -30,6 +30,29 @@ $spcourseware_version = "1.0.3";
 // Courseware Path
 $spcourseware_path = ABSPATH . PLUGINDIR . DIRECTORY_SEPARATOR . 'scholarpress-courseware/';
 
+// Include necessary files
+include_once 'spcourseware-public.php';
+include_once 'spcourseware-bibliography.php';
+include_once 'spcourseware-schedule.php';
+
+if (isset($_GET['activate']) && $_GET['activate'] == 'true')
+{
+	add_action('init', 'courseware_install');
+}
+
+// Insert sinks into the plugin hook list for 'admin_menu'
+add_action('admin_menu', 'courseware_admin_menu');
+
+// Filter the bibliography and projects pages
+add_filter('the_content', 'bib_page', 10);
+add_filter('the_content', 'project_page',10);
+
+// Page Delimiters 
+define('SP_BIBLIOGRAPHY_PAGE', '<spbibliography />');
+define('SP_SCHEDULE_PAGE', '<spschedule />');
+define('SP_PROJECTS_PAGE', '<spprojects />');
+define('SP_COURSEINFO_PAGE', '<spcourseinfo />');
+
 // Misc functions
 //Adapted from PHP.net: http://us.php.net/manual/en/function.nl2br.php#73479
 function nls2p($str)
@@ -38,16 +61,6 @@ function nls2p($str)
         . preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
         . '</p>');
 }
-
-include_once 'spcourseware-public.php';
-include_once 'spcourseware-bibliography.php';
-include_once 'spcourseware-schedule.php';
-
-// Page Delimiters 
-define('SP_BIBLIOGRAPHY_PAGE', '<spbibliography />');
-define('SP_SCHEDULE_PAGE', '<spschedule />');
-define('SP_PROJECTS_PAGE', '<spprojects />');
-define('SP_COURSEINFO_PAGE', '<spcourseinfo />');
 
 function getAdminOptions() {
 	$spcoursewareOptions = get_option('SpCoursewareAdminOptions');
@@ -1114,17 +1127,3 @@ function courseinfo_manage()
 	</form>
 	<?php
 }
-
-if (isset($_GET['activate']) && $_GET['activate'] == 'true')
-{
-	add_action('init', 'courseware_install');
-}
-
-// Insert sinks into the plugin hook list for 'admin_menu'
-add_action('admin_menu', 'courseware_admin_menu');
-
-/* ======== End hook stuff up ========*/
-/* ======== Hook stuff up ========*/
-
-add_filter('the_content', 'bib_page', 10);
-add_filter('the_content', 'project_page',10);

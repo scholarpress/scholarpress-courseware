@@ -1,5 +1,4 @@
 <?php 
-
 // Page Delimiters 
 define('SP_PROJECTS_PAGE', '<spprojects />');
 define('SP_COURSEINFO_PAGE', '<spcourseinfo />');
@@ -7,7 +6,8 @@ define('SP_COURSEINFO_PAGE', '<spcourseinfo />');
 /* ======== Begin template printing functions ========*/
 
 // Print Full Project
-function courseinfo_printfull() {
+function courseinfo_printfull() 
+{
 	global $wpdb;
 	
 	$courseinfo = getAdminOptions();
@@ -140,7 +140,8 @@ function assign_specific($id, $full="small")
 // Print all schedule entries onto a page, sorted by type
 
 // Print Full Project
-function project_printfull($projectID) {
+function project_printfull($projectID) 
+{
 	global $wpdb;
 	$table_name = $wpdb->prefix . "projects";	
 	$sql = "select * from " . $table_name . " where projectID=".$projectID;

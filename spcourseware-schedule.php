@@ -4,6 +4,8 @@ include_once 'spcourseware-bibliography.php';
 
 define('SP_SCHEDULE_PAGE', '<spschedule />');
 
+add_filter('the_content', 'schedule_page', 10);
+
 /* == Queries == */
 function sp_courseware_get_schedule_entries()
 {
@@ -153,7 +155,8 @@ function schedule_printfull($scheduleID, $title='h3', $full='full',$date_first=t
 <?php 
 }
 
-function schedule_upcoming($num='4',$title='h3') {
+function schedule_upcoming($num='4',$title='h3') 
+{
     $upcoming = sp_courseware_schedule_get_upcoming_entries($num);
 	if (count($upcoming) > 0) {
 		foreach ($upcoming as $schedule) {
@@ -192,8 +195,4 @@ if ( $start !== false )
 	$data = substr_replace($data, $contents, $start, strlen(SP_SCHEDULE_PAGE));
 	}
 	return $data;	
-} 
-
-add_filter('the_content', 'schedule_page', 10);
-
-?>
+}

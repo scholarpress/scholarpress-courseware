@@ -249,24 +249,24 @@ function sp_courseware_insert_sources()
     </div>
 <?php }
 
-function find_key ($bib , $x , $y) {
+function sp_courseware_find_key ($bib , $x , $y) 
+{
+    $find_x  = $x ;
+    $find_y  = $y ;
 
-$find_x  = $x ;
-$find_y  = $y ;
-
-$pos_x = strpos($bib,  $find_x);
-$pos_y = strpos($bib , $find_y);
+    $pos_x = strpos($bib,  $find_x);
+    $pos_y = strpos($bib , $find_y);
 
 
-$key = substr($bib, $pos_x+1 ,($pos_y - $pos_x)-1);
-$key = trim($key);
+    $key = substr($bib, $pos_x+1 ,($pos_y - $pos_x)-1);
+    $key = trim($key);
 
-return $key ;
-
+    return $key ;
 }
-// The magic that actually uses the BibTeX parser.  Adapted from the BibTeX WordPress plugin under GPL
-function sp_courseware_insert_BibTeX($file) {
 
+// The magic that actually uses the BibTeX parser.  Adapted from the BibTeX WordPress plugin under GPL
+function sp_courseware_insert_BibTeX($file) 
+{
 	global $wpdb;
 
     $test = new BibTeX($file);
@@ -300,8 +300,8 @@ function sp_courseware_insert_BibTeX($file) {
         $linebegin      = @$Arr['items']['linebegin'][$i];
         $lineend        = @$Arr['items']['lineend'][$i];
 
-        $key = find_key($raw, "{" , ",");
-        $entry_type = find_key ($raw , "@" , "{" );
+        $key = sp_courseware_find_key($raw, "{" , ",");
+        $entry_type = sp_courseware_find_key ($raw , "@" , "{" );
 
         $names = explode(" ", $author, 2);
         
@@ -608,44 +608,46 @@ function bibliography_editform($mode='add_biblio', $entryID=false)
 }
 
 // Print small biblio entry (eg title and link only, for use in sidebar)
-function bib_printsmall($bibliosmall) { ?>
-<p class="hcite <?php echo $bibliosmall->type; ?>">
-<?php if(!empty($bibliosmall->author_last)) { ?><span class="creator fn"><span class="family-name"><?php echo ($bibliosmall->author_last); ?></span></span><?php if( !empty($bibliosmall->author_two_last)) { ?> and <span class="creator fn"><span class="family-name"><?php echo ($bibliosmall->author_two_last); ?></span></span><?php } ?>, <? } if(!empty($bibliosmall->url)) { ?><a href="<?php echo $bibliosmall->url; ?>"><?php } ?><?php if(!empty($bibliosmall->short_title)){ ?> <span class="title"><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?>&#8220;<?php } ?><?php echo ($bibliosmall->short_title); ?><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?></span>.&#8221;<?php } else{ ?>.<?php } ?><?php } elseif(!empty($bibliosmall->title)){ ?> <span class="title"><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?>&#8220;<?php } ?><?php echo ($bibliosmall->title); ?><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?></span>.&#8221;<?php } else { ?>.<?php } } if(!empty($bibliosmall->url)){?></a><?php } ?>
-</p>
-<?php }
+function bib_printsmall($bibliosmall) 
+{ ?>
+    <p class="hcite <?php echo $bibliosmall->type; ?>">
+    <?php if(!empty($bibliosmall->author_last)) { ?><span class="creator fn"><span class="family-name"><?php echo ($bibliosmall->author_last); ?></span></span><?php if( !empty($bibliosmall->author_two_last)) { ?> and <span class="creator fn"><span class="family-name"><?php echo ($bibliosmall->author_two_last); ?></span></span><?php } ?>, <? } if(!empty($bibliosmall->url)) { ?><a href="<?php echo $bibliosmall->url; ?>"><?php } ?><?php if(!empty($bibliosmall->short_title)){ ?> <span class="title"><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?>&#8220;<?php } ?><?php echo ($bibliosmall->short_title); ?><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?></span>.&#8221;<?php } else{ ?>.<?php } ?><?php } elseif(!empty($bibliosmall->title)){ ?> <span class="title"><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?>&#8220;<?php } ?><?php echo ($bibliosmall->title); ?><?php if($bibliosmall->type != 'monograph' && $bibliosmall->type !='website') { ?></span>.&#8221;<?php } else { ?>.<?php } } if(!empty($bibliosmall->url)){?></a><?php } ?>
+    </p>
+    <?php 
+}
 
 // Print full biblio entry 
-function bib_printfull($bibliofull,$bibid=false,$description=false) { ?>
+function bib_printfull($bibliofull,$bibid=false,$description=false) 
+{ ?>
+    <div class="hcite <?php echo $bibliofull->type; ?>"<?php if($bibid==true){?> id="bib-entry-<?php echo $bibliofull->entryID; ?>"<?php } ?>>
+    <p><?php if( !empty($bibliofull->author_last)): ?><span class="creator fn"><span class="family-name"><?php echo ($bibliofull->author_last); ?></span>, <span class="given-name"><?php echo ($bibliofull->author_first); ?></span><?php if( !empty($bibliofull->author_two_last)): ?> and <span class="given-name"><?php echo ($bibliofull->author_two_first); ?></span> <span class="family-name"><?php echo ($bibliofull->author_two_last); ?></span><?php endif; ?>. <?php endif; ?><?php if($bibliofull->type != 'monograph' && $bibliofull->type !='website'){ ?>&#8220;<?php } if(!empty($bibliofull->url)){ ?><a href="<?php echo($bibliofull->url); ?>"><?php } ?><span class="title"><?php echo nl2br($bibliofull->title); ?></span><?php if ( !empty($bibliofull->url)){ ?></a><?php } ?>.<?php if($bibliofull->type != 'monograph' && $bibliofull->type !='website') { ?>&#8221;<?php } ?>
 	
-<div class="hcite <?php echo $bibliofull->type; ?>"<?php if($bibid==true){?> id="bib-entry-<?php echo $bibliofull->entryID; ?>"<?php } ?>>
-<p><?php if( !empty($bibliofull->author_last)): ?><span class="creator fn"><span class="family-name"><?php echo ($bibliofull->author_last); ?></span>, <span class="given-name"><?php echo ($bibliofull->author_first); ?></span><?php if( !empty($bibliofull->author_two_last)): ?> and <span class="given-name"><?php echo ($bibliofull->author_two_first); ?></span> <span class="family-name"><?php echo ($bibliofull->author_two_last); ?></span><?php endif; ?>. <?php endif; ?><?php if($bibliofull->type != 'monograph' && $bibliofull->type !='website'){ ?>&#8220;<?php } if(!empty($bibliofull->url)){ ?><a href="<?php echo($bibliofull->url); ?>"><?php } ?><span class="title"><?php echo nl2br($bibliofull->title); ?></span><?php if ( !empty($bibliofull->url)){ ?></a><?php } ?>.<?php if($bibliofull->type != 'monograph' && $bibliofull->type !='website') { ?>&#8221;<?php } ?>
-	
-<?php if ($bibliofull->type == 'monograph'): ?>
-<?php if ( !empty($bibliofull->pub_location)) { ?><span class="location"><?php echo nl2br($bibliofull->pub_location); ?></span>:<?php } ?><?php if (!empty($bibliofull->publisher)) { ?> <span><?php echo nl2br($bibliofull->publisher); ?></span>,<?php } ?> <?php if( !empty($bibliofull->date)) { ?><span class="date"><?php echo ($bibliofull->date); ?></span>.<?php } ?>
+    <?php if ($bibliofull->type == 'monograph'): ?>
+    <?php if ( !empty($bibliofull->pub_location)) { ?><span class="location"><?php echo nl2br($bibliofull->pub_location); ?></span>:<?php } ?><?php if (!empty($bibliofull->publisher)) { ?> <span><?php echo nl2br($bibliofull->publisher); ?></span>,<?php } ?> <?php if( !empty($bibliofull->date)) { ?><span class="date"><?php echo ($bibliofull->date); ?></span>.<?php } ?>
 
-<?php elseif ($bibliofull->type == 'volumechapter'): ?>
-<?php if(!empty($bibliofull->volume_title)) { ?><span class="volume-title"><?php echo nl2br($bibliofull->volume_title); ?></span>. <?php } if(!empty($bibliofull->volume_editors)) { ?><span class="volume-editors"><?php echo $bibliofull->volume_editors; ?>, ed.</span> <?php } if ( !empty($bibliofull->pub_location)) { ?><span class="location"><?php echo nl2br($bibliofull->pub_location); ?></span>:<?php } ?><?php if (!empty($bibliofull->publisher)) { ?> <span><?php echo nl2br($bibliofull->publisher); ?></span>,<?php } ?> <?php if( !empty($bibliofull->date)) { ?><span class="date"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>.
+    <?php elseif ($bibliofull->type == 'volumechapter'): ?>
+    <?php if(!empty($bibliofull->volume_title)) { ?><span class="volume-title"><?php echo nl2br($bibliofull->volume_title); ?></span>. <?php } if(!empty($bibliofull->volume_editors)) { ?><span class="volume-editors"><?php echo $bibliofull->volume_editors; ?>, ed.</span> <?php } if ( !empty($bibliofull->pub_location)) { ?><span class="location"><?php echo nl2br($bibliofull->pub_location); ?></span>:<?php } ?><?php if (!empty($bibliofull->publisher)) { ?> <span><?php echo nl2br($bibliofull->publisher); ?></span>,<?php } ?> <?php if( !empty($bibliofull->date)) { ?><span class="date"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>.
 
-<?php elseif ($bibliofull->type == 'article'): ?>
-<span class="journal"><?php echo nl2br($bibliofull->journal); ?></span> <?php if ( !empty($bibliofull->volume) || !empty($bibliofull->issue)) { ?><span class="volume"><?php echo nl2br($bibliofull->volume); ?></span>, no. <span class="issue"><?php echo nl2br($bibliofull->issue); ?></span><?php } ?> <?php if( !empty($bibliofull->date)) { ?>(<span class="date"><?php echo ($bibliofull->date); ?></span>)<?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>. 
+    <?php elseif ($bibliofull->type == 'article'): ?>
+    <span class="journal"><?php echo nl2br($bibliofull->journal); ?></span> <?php if ( !empty($bibliofull->volume) || !empty($bibliofull->issue)) { ?><span class="volume"><?php echo nl2br($bibliofull->volume); ?></span>, no. <span class="issue"><?php echo nl2br($bibliofull->issue); ?></span><?php } ?> <?php if( !empty($bibliofull->date)) { ?>(<span class="date"><?php echo ($bibliofull->date); ?></span>)<?php } ?><?php if ( !empty($bibliofull->pages)) { ?>: <span class="pages"><?php echo ($bibliofull->pages); ?></span><?php } ?>. 
 
-<?php elseif ($bibliofull->type == 'website'): ?>
-<?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if( !empty($bibliofull->dateaccessed)) { ?>. (Accessed <span class="date-accesed"><?php echo ($bibliofull->dateaccessed); ?></span>)<?php } if(!empty($bibliofull->date) || !empty($bibliofull->dateaccessed)) { ?>.<?php } ?> 
+    <?php elseif ($bibliofull->type == 'website'): ?>
+    <?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if( !empty($bibliofull->dateaccessed)) { ?>. (Accessed <span class="date-accesed"><?php echo ($bibliofull->dateaccessed); ?></span>)<?php } if(!empty($bibliofull->date) || !empty($bibliofull->dateaccessed)) { ?>.<?php } ?> 
 
-<?php elseif ($bibliofull->type == 'webpage'): ?>
-<?php if(!empty($bibliofull->website_title)) { ?><span class="website-title"><?php echo $bibliofull->website_title; ?></span>. <?php } ?><?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if( !empty($bibliofull->dateaccessed)) { ?>. (Accessed <span class="date-accesed"><?php echo ($bibliofull->dateaccessed); ?></span>)<?php } if(!empty($bibliofull->date) || !empty($bibliofull->dateaccessed)) { ?>.<?php } ?>
+    <?php elseif ($bibliofull->type == 'webpage'): ?>
+    <?php if(!empty($bibliofull->website_title)) { ?><span class="website-title"><?php echo $bibliofull->website_title; ?></span>. <?php } ?><?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span><?php } ?><?php if( !empty($bibliofull->dateaccessed)) { ?>. (Accessed <span class="date-accesed"><?php echo ($bibliofull->dateaccessed); ?></span>)<?php } if(!empty($bibliofull->date) || !empty($bibliofull->dateaccessed)) { ?>.<?php } ?>
 
-<?php elseif($bibliofull->type == 'unpublished'): ?>
-<?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?>.</span><?php } ?> 
+    <?php elseif($bibliofull->type == 'unpublished'): ?>
+    <?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?>.</span><?php } ?> 
 
-<?php else: ?>
-<?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span>.<?php } ?>
-<?php endif;  ?></p>
-<?php if ( $description==true && !empty($bibliofull->description) ) { ?>
-	<p class="description"><?php echo nl2br($bibliofull->description);?></p>
-<?php } ?>
-</div>
-	<?php
+    <?php else: ?>
+    <?php if( !empty($bibliofull->date)) { ?><span class="date-published"><?php echo ($bibliofull->date); ?></span>.<?php } ?>
+    <?php endif;  ?></p>
+    <?php if ( $description==true && !empty($bibliofull->description) ) { ?>
+    	<p class="description"><?php echo nl2br($bibliofull->description);?></p>
+    <?php } ?>
+    </div>
+    <?php
 }
 
 
