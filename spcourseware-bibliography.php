@@ -358,7 +358,7 @@ function bibliography_displaylist()
 {
 	global $wpdb;
 	
-	$biblios = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "bibliography ORDER BY entryID DESC");
+	$biblios = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "bibliography ORDER BY author_last ASC");
 	
 	if ( !empty($biblios) )
 	{
@@ -366,7 +366,6 @@ function bibliography_displaylist()
 			<table width="100%" cellpadding="3" cellspacing="3" class="widefat post" style="margin-bottom:2em;">
 			<thead>
 			<tr>
-				<th scope="col"><?php _e('ID') ?></th>
 				<th scope="col"><?php _e('Last') ?></th>
 				<th scope="col"><?php _e('First') ?></th>
 				<th scope="col"><?php _e('Title') ?></th>
@@ -383,8 +382,7 @@ function bibliography_displaylist()
 			?>
 		    <tbody>
 			<tr class="<?php echo $class; ?>">
-				<th scope="row"><?php echo $biblio->entryID; ?></th>
-				<td><?php echo $biblio->author_last ?></td>
+				<th><?php echo $biblio->author_last ?></th>
 				<td><?php echo $biblio->author_first ?></td>
 				<td><?php echo $biblio->title ?></td>
 				<td><?php echo $biblio->type; ?></td>
