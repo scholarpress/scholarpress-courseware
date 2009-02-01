@@ -188,7 +188,7 @@ if ( $start !== false )
 			?></div><?php
 		}
 	else {
-		echo '<p>There are no schedule entries!</p>';
+		echo '<p>No upcoming scheduled events have been set.</p>';
 	}
 	$contents = ob_get_contents();
 	ob_end_clean();
