@@ -112,10 +112,10 @@ function courseware_install() {
 	$schedule2unit_table_name = $wpdb->prefix . "schedule2unit";
 	 
 	// First-Run-Only parameters: Check if assignments table exists:
-	if($wpdb->get_var("show tables like '$assignments_table_name'") != $assignments_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$assignments_table_name'") != $assignments_table_name) 
 	{
 		// It doesn't exist, create the table
-		$sql = "CREATE TABLE `" . $assignments_table_name . "` (
+		$sql = "CREATE TABLE " . $assignments_table_name . " (
 	     	 `assignmentID` INT(11) NOT NULL AUTO_INCREMENT,
 			 `assignments_title` TEXT NOT NULL,
 			 `assignments_scheduleID` INT NOT NULL,
@@ -133,10 +133,10 @@ function courseware_install() {
 	}
 	
 	// First-Run-Only parameters: Check if bibliography table exists:
-	if($wpdb->get_var("show tables like '$bib_table_name'") != $bib_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$bib_table_name'") != $bib_table_name) 
 	{
 		 // It doesn't exist, create the table
-		$sql = "CREATE TABLE `" . $bib_table_name . "` (
+		$sql = "CREATE TABLE " . $bib_table_name . " (
 	     	 `entryID` INT(11) NOT NULL AUTO_INCREMENT,
 	    	 `author_last` TEXT NOT NULL,
 	     	 `author_first` TEXT NOT NULL,
@@ -166,10 +166,10 @@ function courseware_install() {
 	}
 	
 	// First-Run-Only parameters: Check if schedule table exists:
-	if($wpdb->get_var("show tables like '$schedule_table_name'") != $schedule_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$schedule_table_name'") != $schedule_table_name) 
 	{
 		// It doesn't exist, create the table
-		$sql = "CREATE TABLE `" . $schedule_table_name . "` (
+		$sql = "CREATE TABLE " . $schedule_table_name . " (
 	     	 `scheduleID` INT(11) NOT NULL AUTO_INCREMENT,
 			 `schedule_title` tinytext NOT NULL,
 			 `schedule_date` DATE NOT NULL,
@@ -184,10 +184,10 @@ function courseware_install() {
 	}
 	
 	// First-Run-Only parameters: Check if table exists:
-	if($wpdb->get_var("show tables like '$projects_table_name'") != $projects_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$projects_table_name'") != $projects_table_name) 
 	{
 		 // It doesn't exist, create the table
-	   $sql = "CREATE TABLE `" . $projects_table_name . "` (
+	   $sql = "CREATE TABLE " . $projects_table_name . " (
 	     	 `projectID` INT(11) NOT NULL AUTO_INCREMENT,
 			 `title` TEXT NOT NULL,
 			`date` DATE NOT NULL,
@@ -200,10 +200,10 @@ function courseware_install() {
 	}
 	
 	// First-Run-Only parameters: Check if table exists:
-	if($wpdb->get_var("show tables like '$assignment2project_table_name'") != $assignment2project_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$assignment2project_table_name'") != $assignment2project_table_name) 
 	{
 		 // It doesn't exist, create the table
-	   $sql = "CREATE TABLE `" . $assignment2project_table_name . "` (
+	   $sql = "CREATE TABLE " . $assignment2project_table_name . " (
 	     	 `assignment2projectID` INT(11) NOT NULL AUTO_INCREMENT,
 			 `assignmentID` INT NOT NULL,
 			 `projectID` INT NOT NULL,
@@ -216,10 +216,10 @@ function courseware_install() {
 	}
 	
 	// First-Run-Only parameters: Check if table exists:
-	if($wpdb->get_var("show tables like '$units_table_name'") != $units_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$units_table_name'") != $units_table_name) 
 	{
 		 // It doesn't exist, create the table
-	   $sql = "CREATE TABLE `" . $units_table_name . "` (
+	   $sql = "CREATE TABLE " . $units_table_name . " (
 	     	 `unitID` INT(11) NOT NULL AUTO_INCREMENT,
 			 `title` TEXT NOT NULL,
 			 `description` TEXT NOT NULL,
@@ -231,10 +231,10 @@ function courseware_install() {
 	}
 	
 	// First-Run-Only parameters: Check if table exists:
-	if($wpdb->get_var("show tables like '$schedule2unit_table_name'") != $schedule2unit_table_name) 
+	if($wpdb->get_var("SHOW TABLES LIKE '$schedule2unit_table_name'") != $schedule2unit_table_name) 
 	{
 		 // It doesn't exist, create the table
-	   $sql = "CREATE TABLE `" . $schedule2unit_table_name . "` (
+	   $sql = "CREATE TABLE " . $schedule2unit_table_name . " (
 	     	 `schedule2unitID` INT(11) NOT NULL AUTO_INCREMENT,
 			 `scheduleID` INT NOT NULL,
 			 `unitID` INT NOT NULL,
@@ -362,14 +362,15 @@ function spcourseware_manage() {
         <div id="icon-index" class="icon32"><br /></div>
         <h2>SP Courseware</h2>
         <div id="dashboard-widgets-wrap">
-            <div id='dashboard-widgets' class='metabox-holder'>
-                <div id="post-body" class="has-sidebar">
-                    <div id="dashboard-widgets-main-content" class="has-sidebar-content">
-                        <div id="normal-sortables" class="meta-box-sortables">
+            <div id='dashboard-widgets' class='metabox-holder has-right-sidebar'>
+                <div id="post-body" class="has-sidebar has-right-sidebar">
+                    <div id="dashboard-widgets-main-content" class="has-sidebar-content has-right-sidebar">
+                        <div id="normal-sortables" class="meta-box-sortables has-right-sidebar">
                             <div id="dashboard_upcoming_schedule" class="postbox">
                                 <div class='handlediv'><br /></div>
-                                <h3 class='handle'><span>Upcoming Schedule</span></h3>
+                                <h3 class='handle'><span>Welcome!</span></h3>
                                 <div class="inside" style="padding:12px;">
+                                    <h4>Course Schedule</h4>
                                      <?php $entries = sp_courseware_schedule_get_upcoming_entries(1); if(!empty($entries)): ?>
                                     <p>Your next schedule entry is:</p>
                                     <?php foreach ($entries as $entry): ?>
@@ -396,24 +397,19 @@ function spcourseware_manage() {
                                     <?php endif; ?>
                                     <p><a href="?page=schedule" class="button">Edit Schedule Entries</a></p>
                                 </div> <?php // Closes class="inside" ?>
+                                
+                                <div class="inside" style="padding:0 12px;">
+                                    <h4>Course Information</h4>
+                                    
+                                    <?php courseinfo_printfull(); ?>
+                                    <p><a href="?page=courseinfo" class="button">Edit Course Information</a></p>
+                                    <br />
+                                </div> <?php // Closes class="inside" ?>
                             </div> <?php // Closes class="postbox" ?>
                         </div> <?php // Closes class="meta-box-sortables" ?>
                     </div> <?php // Closes doasbhard-widgets-main-content ?>
                 </div>  <?php // Closes post-body with has-sidebar class ?>
                 
-                <?php // Include the side-info-column inside the #dashboard-widgets div ?>
-                <div id='side-info-column' class='inner-sidebar'>
-                    <div id='side-sortables' class='meta-box-sortables'>
-                        <div id="dashboard_course_info" class="postbox with_labels">
-                            <div class='handlediv'><br /></div>
-                            <h3 class='hndle'><span>Course Information</span></h3>
-                            <div class="inside" style="padding:0 12px;">
-                                <?php courseinfo_printfull(); ?>
-                                <p><a href="?page=courseinfo" class="button">Edit Course Information</a></p>
-                            </div> <?php // Closes class="inside" ?>
-                        </div> <?php // Closes class="postbox" ?>
-                    </div> <?php // Closes #side-sortables ?>
-                </div> <?php // Closes #side-info-column ?>
             </div> <?php // Closes #dashboard-widgets ?>
             <div class="clear">
             </div>
@@ -624,7 +620,7 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 	<form name="readingform" id="readingform" class="wrap" method="post" action="">
 		<input type="hidden" name="updateaction" value="<?php echo $mode?>">
 		<input type="hidden" name="assignmentID" value="<?php echo $assignmentID?>">
-		<div id="poststuff" class="metabox-holder">
+		<div id="poststuff" class="metabox-holder has-right-sidebar">
     	
 		<div id="side-info-column" class="inner-sidebar">
 		<div id="datetimediv" class="postbox">
@@ -979,7 +975,7 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 
     <!-- Beginning of Add Schedule Entry -->
 	<form name="scheduleform" id="scheduleform" class="wrap" method="post" action="">
-	<div id="poststuff" class="metabox-holder">
+	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<div id="side-info-column" class="inner-sidebar">
 			<div id="datetimediv" class="postbox">
 				<h3 class='hndle'><span>Date &amp; Time</span></h3>

@@ -21,8 +21,7 @@ function sp_courseware_get_schedule_by_id($id)
     global $wpdb;
 	$schedule_table_name = $wpdb->prefix . "schedule";
 	$sql = "select * from " . $schedule_table_name . " where scheduleID=".$id;
-	$result = $wpdb->get_row($sql, OBJECT);
-	return $result;
+	return $wpdb->get_row($sql, OBJECT);
 }
 
 function sp_courseware_schedule_get_upcoming_entries($num=4)
