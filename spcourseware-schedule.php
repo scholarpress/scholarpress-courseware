@@ -44,13 +44,13 @@ function schedule_printsmall($scheduleID,$title="h4")
 	?>
 	<li class="vevent">
 		<div class="date">
-			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
-				<?php echo date('F d, Y, g:i a', $startTime); ?>
-			</abbr>
+			<span class="dtstart">
+			    <abbr class="value" title="<?php echo date('Y-m-d', $startTime); ?>"><?php echo date('F d, Y', $startTime); ?></abbr>, <span class="value"><?php echo date('g:i a', $startTime); ?></span>
+			</span>
 			&ndash;
-			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
-				<?php echo date('g:i a', $endTime); ?>
-			</abbr>
+			<span class="dtend">
+			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i a', $endTime); ?></span>
+			</span>
 		</div>
 <<?php echo $title; ?> class="summary"><?php echo nl2br($result->schedule_title); ?></<?php echo $title; ?>>	
 
@@ -72,27 +72,27 @@ function schedule_printfull($scheduleID, $title='h3', $full='full',$date_first=t
 	
 	<div class="vevent">
 		<?php if($date_first==true): ?>
-		<div class="date">
-			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
-				<?php echo date('F d, Y, g:i a', $startTime); ?>
-			</abbr>
-			&ndash;
-			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
-				<?php echo date('g:i a', $endTime); ?>
-			</abbr>
-		</div>
+    		<div class="date">
+    			<span class="dtstart">
+    			    <abbr class="value" title="<?php echo date('Y-m-d', $startTime); ?>"><?php echo date('F d, Y', $startTime); ?></abbr>, <span class="value"><?php echo date('g:i a', $startTime); ?></span>
+    			</span>
+    			&ndash;
+    			<span class="dtend">
+    			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i a', $endTime); ?></span>
+    			</span>
+    		</div>
 		<?php endif; ?>
 		<h3 class="summary"><?php echo $result->schedule_title; ?></h3>
 		<?php if($date_first==false): ?>
-		<div class="date">
-			<abbr class="dtstart" title="<?php echo date('Y-m-d\TH:i:s\Z', $startTime); ?>">
-				<?php echo date('F d, Y, g:i a', $startTime); ?>
-			</abbr>
-			&ndash;
-			<abbr class="dtend" title="<?php echo date('Y-m-d\T-H:i:s\Z', $endTime); ?>">
-				<?php echo date('g:i a', $endTime); ?>
-			</abbr>
-		</div>
+			<div class="date">
+    			<span class="dtstart">
+    			    <abbr class="value" title="<?php echo date('Y-m-d', $startTime); ?>"><?php echo date('F d, Y', $startTime); ?></abbr>, <span class="value"><?php echo date('g:i a', $startTime); ?></span>
+    			</span>
+    			&ndash;
+    			<span class="dtend">
+    			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i a', $endTime); ?></span>
+    			</span>
+    		</div>
 		<?php endif; ?>
 				<div class="description"> 
 				<?php if ($result->schedule_description): ?>
