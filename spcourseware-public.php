@@ -10,9 +10,8 @@ function courseinfo_printfull()
 {
 	global $wpdb;
 	
-	$courseinfo = getAdminOptions();
-//	$spcoursewareAdminOptions = get_option('SpCoursewareAdminOptions');
-//	print_r($spcoursewareAdminOptions);
+	$courseinfo = spcourseware_get_admin_options();
+
 	$course_title = $courseinfo['course_title'];
 	$course_description = $courseinfo['course_description'];
 	$course_location = $courseinfo['course_location'];
@@ -21,7 +20,6 @@ function courseinfo_printfull()
 	$course_timestart = $courseinfo['course_timestart'];
 	$course_timeend = $courseinfo['course_timeend'];
 	$course_timedays = $courseinfo['course_timedays'];
-	
 	
 	$instructor_firstname = $courseinfo['instructor_firstname'];
 	$instructor_lastname = $courseinfo['instructor_lastname'];
@@ -115,7 +113,7 @@ function assign_schedulefull($assignmentfull)
 	<?php }
 		else { ?>
 			<div class="assignment-title"><?php echo $assignmentfull['assignments_title']; ?></div>
-			<div class="assignment-description"><?php echo nls2p($assignmentfull['assignments_description']); ?></div>
+			<div class="assignment-description"><?php echo spcourseware_nls2p($assignmentfull['assignments_description']); ?></div>
 		<?php } 
 }
 

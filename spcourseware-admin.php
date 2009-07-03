@@ -55,14 +55,14 @@ define('SP_COURSEINFO_PAGE', '<spcourseinfo />');
 
 // Misc functions
 //Adapted from PHP.net: http://us.php.net/manual/en/function.nl2br.php#73479
-function nls2p($str)
+function spcourseware_nls2p($str)
 {
   return str_replace('<p></p>', '', '<p>'
         . preg_replace('#([\r\n]\s*?[\r\n]){2,}#', '</p>$0<p>', $str)
         . '</p>');
 }
 
-function getAdminOptions() {
+function spcourseware_get_admin_options() {
 	$spcoursewareOptions = get_option('SpCoursewareAdminOptions');
 	if (!empty($spcoursewareOptions)) {
 		foreach ($spcoursewareOptions as $key => $option)
@@ -71,7 +71,7 @@ function getAdminOptions() {
 	return $spcoursewareAdminOptions;
 }
 
-function setAdminOptions($course_title, $course_number, $course_section, $course_timestart, $course_timeend, $course_location, $course_timedays, $instructor_firstname, $instructor_lastname, $instructor_email, $instructor_telephone, $instructor_office, $course_description, $instructor_hours) 
+function spcourseware_set_admin_options($course_title, $course_number, $course_section, $course_timestart, $course_timeend, $course_location, $course_timedays, $instructor_firstname, $instructor_lastname, $instructor_email, $instructor_telephone, $instructor_office, $course_description, $instructor_hours) 
 {
 		$spcoursewareAdminOptions = array('course_title' => $course_title,
 		'course_number' => $course_number,
@@ -87,8 +87,15 @@ function setAdminOptions($course_title, $course_number, $course_section, $course
 		'instructor_office' => $instructor_office,
 		'course_description' => $course_description,
 		'instructor_hours' => $instructor_hours);
-		
-	update_option('SpCoursewareAdminOptions', $spcoursewareAdminOptions);
+    $courseware_admin_options = 'SpCoursewareAdminOptions';
+    
+	if (get_option($courseware_admin_options) ) {
+    	update_option($courseware_admin_options, $spcoursewareAdminOptions);
+    } else {
+        $deprecated=' ';
+        $autoload='no';
+        add_option($courseware_admin_options, $spcoursewareAdminOptions, $deprecated, $autoload);
+    }
 }
 
 // Install the courseware
@@ -98,10 +105,20 @@ function courseware_install() {
 
 	// Check user-level
 	get_currentuserinfo();
-	if ($user_level < 8) { return; }
+	if ($user_level < 8) { 
+	    return;
+	}
 	
-	add_option("spcourseware_version", $spcourseware_version);
-	
+    $courseware_option_name = 'spcourseware_version'; 
+    
+    if ( get_option($courseware_option_name) ) {
+        update_option($courseware_option_name, $spcourseware_version);
+    } else {
+        $deprecated=' ';
+        $autoload='no';
+        add_option($courseware_option_name, $spcourseware_version, $deprecated, $autoload);
+    }
+		
 	// table names
 	$assignments_table_name = $wpdb->prefix . "assignments";
 	$bib_table_name = $wpdb->prefix . "bibliography";
@@ -248,9 +265,11 @@ function courseware_install() {
 	
 	// Add course info stuff to the options table. You know, for course information.
 	$spcoursewareOptions = get_option('SpCoursewareAdminOptions');
+	
 	if(empty($spcoursewareOptions)) {
-	setAdminOptions(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	    spcourseware_set_admin_options(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
+	
 	/// POPULATE DB WITH BIBLIOGRAPHY, SCHEDULE, PROJECTS, PAGES IF NOT ALREADY CREATED
 	$now = time();
 	$now_gmt = time();
@@ -391,7 +410,7 @@ function spcourseware_manage() {
                                         <h4><?php echo $entry->schedule_title; ?></h4>
 
                                         
-                                        <?php echo nls2p($entry->schedule_description); ?>
+                                        <?php echo spcourseware_nls2p($entry->schedule_description); ?>
                                     <?php endforeach; else: ?>
                                     <p>You have no upcoming schedule entries. <a href="?page=schedule">Want to add one?</a></p>
                                     <?php endif; ?>
@@ -969,7 +988,7 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 		}	
 	}
 	
-	getAdminOptions();
+	spcourseware_get_admin_options();
     
 	?>
 
@@ -992,7 +1011,7 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 							});
 							</script>							
 
-							<?php $spcoursewareAdminOptions = getAdminOptions(); ?>
+							<?php $spcoursewareAdminOptions = spcourseware_get_admin_options(); ?>
 							<p><label for="schedule_timestart"><?php _e('TimeStart'); ?> (24:00:00)</label></p>
 							<input type="text" name="schedule_timestart" class="date"  value="<?php if ( !empty($data) ) {echo htmlspecialchars($data->schedule_timestart);} else {echo $spcoursewareAdminOptions['course_timestart'];} ?>" />
 							<p><label for="schedule_timestop"><?php _e('TimeStop'); ?> (24:00:00)</label></p>
@@ -1046,13 +1065,13 @@ function courseinfo_manage()
 	$data = false;
 
 	if ($_POST['save']) {
-		setAdminOptions($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $_REQUEST['course_timestart'], $_REQUEST['course_timeend'], $_REQUEST['course_location'], $_REQUEST['course_timedays'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'],  $_REQUEST['course_description'], $_REQUEST['instructor_hours']);
+		spcourseware_set_admin_options($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $_REQUEST['course_timestart'], $_REQUEST['course_timeend'], $_REQUEST['course_location'], $_REQUEST['course_timedays'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'],  $_REQUEST['course_description'], $_REQUEST['instructor_hours']);
 	
 		echo '<div class="updated"><p>Course information saved successfully.</p></div>';
 	
 	}
 
-	$spcoursewareAdminOptions = getAdminOptions();
+	$spcoursewareAdminOptions = spcourseware_get_admin_options();
 
 	?>
 	
