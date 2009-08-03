@@ -87,6 +87,7 @@ function spcourseware_set_admin_options($course_title, $course_number, $course_s
 		'instructor_office' => $instructor_office,
 		'course_description' => $course_description,
 		'instructor_hours' => $instructor_hours);
+    
     $courseware_admin_options = 'SpCoursewareAdminOptions';
     
 	if (get_option($courseware_admin_options) ) {
@@ -799,10 +800,21 @@ function assignments_editform($mode='add_assignment', $assignmentID=false)
 function schedule_manage()
 {
 	global $wpdb;
+    $spcoursewareAdminOptions = spcourseware_get_admin_options();
 
+    $defaultStart = !empty($spcoursewareAdminOptions['course_timestart']) ? $spcoursewareAdminOptions['course_timestart'] : date('H:i:s');
+    $defaultStop = !empty($spcoursewareAdminOptions['course_timeend']) ? $spcoursewareAdminOptions['course_timeend'] : date('H:i:s');
+    
+    
 	$updateaction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 	$scheduleID = !empty($_REQUEST['scheduleID']) ? $_REQUEST['scheduleID'] : '';
+	$title = !empty($_REQUEST['schedule_title']) ? $_REQUEST['schedule_title'] : '';
+	$date = !empty($_REQUEST['schedule_date']) ? $_REQUEST['schedule_date'] : date('Y-m-d');
+	$description = !empty($_REQUEST['schedule_description']) ? $_REQUEST['schedule_description'] : '';	
+	$timestart = !empty($_REQUEST['schedule_timestart']) ? date('H:i:s', strtotime($_REQUEST['schedule_timestart'])) : $defaultStart;
+	$timestop = !empty($_REQUEST['schedule_timestop']) ? date('H:i:s', strtotime($_REQUEST['schedule_timestop'])) : $defaultStop;	
 	
+    
 	if (isset($_REQUEST['action']) ):
 		if ($_REQUEST['action'] == 'delete_schedule') 
 		{
@@ -822,7 +834,7 @@ function schedule_manage()
 				}
 				else
 				{
-					?><div class="error"><p><strong>Failure:</strong></p></div><?php
+					?><div class="error"><p><strong>Failure:</strong> Could not delete <?php echo $scheduleID; ?>.</p></div><?php
 				}
 			}
 		} // end delete_schedule block
@@ -830,15 +842,10 @@ function schedule_manage()
 	
 	if ( $updateaction == 'update_schedule' )
 	{
-		$title = !empty($_REQUEST['schedule_title']) ? $_REQUEST['schedule_title'] : '';
-		$date = !empty($_REQUEST['schedule_date']) ? $_REQUEST['schedule_date'] : '';
-		$description = !empty($_REQUEST['schedule_description']) ? $_REQUEST['schedule_description'] : '';
-		$timestart = !empty($_REQUEST['schedule_timestart']) ? $_REQUEST['schedule_timestart'] : '';
-		$timestop = !empty($_REQUEST['schedule_timestop']) ? $_REQUEST['schedule_timestop'] : '';
 		
 		if ( empty($scheduleID) )
 		{
-			?><div class="error"><p><strong>Failure:</strong> No schedule ID given. Can't save nothing. Giving up...</p></div><?php
+			?><div class="error"><p><strong>Failure:</strong> No schedule ID given.</p></div><?php
 		}
 		else
 		{
@@ -848,7 +855,7 @@ function schedule_manage()
 			$check = $wpdb->get_results($sql);
 			if ( empty($check) || empty($check[0]->scheduleID) )
 			{
-				?><div class="error"><p><strong>Failure:</strong> The Evil Monkey Overlord wouldn't let me update your entry. Try again?</p></div><?php
+				?><div class="error"><p><strong>Failure:</strong> Try again?</p></div><?php
 			}
 			else
 			{
@@ -858,12 +865,6 @@ function schedule_manage()
 	} // end update_schedule block
 	elseif ( $updateaction == 'add_schedule' )
 	{
-		$title = !empty($_REQUEST['schedule_title']) ? $_REQUEST['schedule_title'] : '';
-		$date = !empty($_REQUEST['schedule_date']) ? $_REQUEST['schedule_date'] : '';
-		$description = !empty($_REQUEST['schedule_description']) ? $_REQUEST['schedule_description'] : '';
-		$timestart = !empty($_REQUEST['schedule_timestart']) ? $_REQUEST['schedule_timestart'] : '';
-		$timestop = !empty($_REQUEST['schedule_timestop']) ? $_REQUEST['schedule_timestop'] : '';
-		
 		$sql = "INSERT INTO " . $wpdb->prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'";
 		$wpdb->get_results($sql);
 		$sqlres = "SELECT scheduleID FROM " . $wpdb->prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'";
@@ -871,7 +872,7 @@ function schedule_manage()
 
 		if ( empty($check) || empty($check[0]->scheduleID) )
 		{
-			?><div class="error"><p><strong>Failure:</strong> Try again? <?php echo $sqlres; ?></p></div><?php
+			?><div class="error"><p><strong>Failure:</strong> Try again? <?php if(empty($_REQUEST['schedule_date'])) echo 'Date for schedule entry is required.'; else echo $sqlres; ?></p></div><?php
 		}
 		else
 		{
@@ -903,8 +904,7 @@ function schedule_manage()
 		<?php schedule_editform(); ?>
 	
 		<h2><?php _e('Manage Schedule'); ?></h2>
-		<?php
-			schedule_displaylist();
+		<?php schedule_displaylist();
 	}
 	?>
 	</div><?php
@@ -1012,10 +1012,11 @@ function schedule_editform($mode='add_schedule', $scheduleID=false)
 							</script>							
 
 							<?php $spcoursewareAdminOptions = spcourseware_get_admin_options(); ?>
-							<p><label for="schedule_timestart"><?php _e('TimeStart'); ?> (24:00:00)</label></p>
-							<input type="text" name="schedule_timestart" class="date"  value="<?php if ( !empty($data) ) {echo htmlspecialchars($data->schedule_timestart);} else {echo $spcoursewareAdminOptions['course_timestart'];} ?>" />
-							<p><label for="schedule_timestop"><?php _e('TimeStop'); ?> (24:00:00)</label></p>
-							<input type="text" name="schedule_timestop" class="date"  value="<?php if ( !empty($data) ){ echo htmlspecialchars($data->schedule_timestop); } else {echo $spcoursewareAdminOptions['course_timeend'];} ?>" />													
+							<p><label for="schedule_timestart"><?php _e('TimeStart'); ?> (12:00pm)</label></p>
+							<?php ?><input type="text" name="schedule_timestart" class="date"  value="<?php if ( !empty($data) ) {echo date('g:ia',strtotime($data->schedule_timestart));} else {echo date('g:ia', strtotime($spcoursewareAdminOptions['course_timestart']));} ?>" /> <?php ?>
+							
+							<p><label for="schedule_timestop"><?php _e('TimeStop'); ?> (1:00pm)</label></p>
+							<input type="text" name="schedule_timestop" class="date"  value="<?php if ( !empty($data) ){ echo date('g:ia', strtotime($data->schedule_timestop));} else {echo date('g:ia', strtotime($spcoursewareAdminOptions['course_timeend']));} ?>" />													
 
 				</div>
 			</div>
@@ -1065,7 +1066,11 @@ function courseinfo_manage()
 	$data = false;
 
 	if ($_POST['save']) {
-		spcourseware_set_admin_options($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $_REQUEST['course_timestart'], $_REQUEST['course_timeend'], $_REQUEST['course_location'], $_REQUEST['course_timedays'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'],  $_REQUEST['course_description'], $_REQUEST['instructor_hours']);
+	    
+	    $courseTimeStart = !empty($_REQUEST['course_timestart']) ? date('H:i:s', strtotime($_REQUEST['course_timestart'])) : '';
+        $courseTimeEnd = !empty($_REQUEST['course_timeend']) ? date('H:i:s', strtotime($_REQUEST['course_timeend'])) : '';
+        
+		spcourseware_set_admin_options($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $courseTimeStart, $courseTimeEnd, $_REQUEST['course_location'], $_REQUEST['course_timedays'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'],  $_REQUEST['course_description'], $_REQUEST['instructor_hours']);
 	
 		echo '<div class="updated"><p>Course information saved successfully.</p></div>';
 	
@@ -1097,10 +1102,11 @@ function courseinfo_manage()
 							<input type="text" name="course_section" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_section']; ?>" />
 						<p><label for="course_timedays"><?php _e('Course Days'); ?></label></p>
 							<input type="text" name="course_timedays" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_timedays']; ?>" />
-						<p><label for="course_timestart"><?php _e('Course Time Start (24:00:00)'); ?></label></p>
-							<input type="text" name="course_timestart" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_timestart']; ?>" />
-						<p><label for="course_timeend"><?php _e('Course Time End (24:00:00)'); ?></label></p>
-							<input type="text" name="course_timeend" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_timeend']; ?>" />
+						<p><label for="course_timestart"><?php _e('Course Time Start (e.g. 11:00am)'); ?></label></p>
+							<input type="text" name="course_timestart" class="input" size="45" value="<?php echo date('g:ia', strtotime($spcoursewareAdminOptions['course_timestart'])); ?>" />
+
+						<p><label for="course_timeend"><?php _e('Course Time End (e.g. 12:00pm)'); ?></label></p>
+							<input type="text" name="course_timeend" class="input" size="45" value="<?php echo date('g:ia', strtotime($spcoursewareAdminOptions['course_timeend'])); ?>" />
 						<p><label for="course_location"><?php _e('Course Location'); ?></label></p>
 							<input type="text" name="course_location" class="input" size="45" value="<?php echo $spcoursewareAdminOptions['course_location']; ?>" />
 						<p><label for="course_description"><?php _e('Course Description'); ?></label></p>

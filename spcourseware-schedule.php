@@ -86,11 +86,11 @@ function schedule_printfull($scheduleID, $title='h3', $full='full',$date_first=t
 		<?php if($date_first==false): ?>
 			<div class="date">
     			<span class="dtstart">
-    			    <abbr class="value" title="<?php echo date('Y-m-d', $startTime); ?>"><?php echo date('F d, Y', $startTime); ?></abbr>, <span class="value"><?php echo date('g:i a', $startTime); ?></span>
+    			    <abbr class="value" title="<?php echo date('Y-m-d', $startTime); ?>"><?php echo date('F d, Y', $startTime); ?></abbr>, <span class="value"><?php echo date('g:i', $startTime); ?></span><?php echo date('a', $startTime); ?>
     			</span>
     			&ndash;
     			<span class="dtend">
-    			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i a', $endTime); ?></span>
+    			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i', $endTime); ?></span><?php echo date('a', $endTime); ?>
     			</span>
     		</div>
 		<?php endif; ?>
