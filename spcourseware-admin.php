@@ -3,7 +3,7 @@
 Plugin Name: ScholarPress Courseware
 Plugin URI: http://scholarpress.net/courseware/
 Description: All-in-one course management for WordPress
-Version: 1.1
+Version: 1.1.1
 Author: Jeremy Boggs, Dave Lester, Zac Gordon, and Sean Takats
 Author URI: http://scholarpress.net/
 */
@@ -25,7 +25,7 @@ Author URI: http://scholarpress.net/
 */
 
 // Plugin Version
-$spcourseware_version = "1.1";
+$spcourseware_version = "1.1.1";
 
 // Courseware Path
 $spcourseware_path = ABSPATH . PLUGINDIR . DIRECTORY_SEPARATOR . 'scholarpress-courseware/';
