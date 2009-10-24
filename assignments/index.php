@@ -44,24 +44,34 @@ function spcourseware_assignments_manage() {
             	<thead>
             	<tr>
                 	<th scope="col" class="manage-column column-title">Title</th>
-                	<th scope="col" class="manage-column column-date">Date</th>
-                	<th scope="col" class="manage-column">Type</th>
                 	<th scope="col"class="manage-column column-description">Description</th>
+                	
+                	<th scope="col" class="manage-column column-date">Date</th>
             	</tr>
             	</thead>
             	<tfoot>
                 	<tr>
                     	<th scope="col" class="manage-column column-title">Title</th>
-                    	<th scope="col" class="manage-column column-date">Date</th>
-                    	<th scope="col" class="manage-column">Type</th>
                     	<th scope="col"class="manage-column column-description">Description</th>
+                    	
+                    	<th scope="col" class="manage-column column-date">Date</th>
                 	</tr>
             	</tfoot>
             	<tbody>
             <?php foreach($assignments as $assignment): ?>
                 <tr valign="center">
                     <th scope="row">
-                        <strong><a class="row-title" href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=update_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>"><?php echo $assignment->assignments_title; ?></a></strong>
+                        <?php
+                        if($assignment->assignments_type == 'reading') {
+                            $bibEntry = spcourseware_get_bibliography_entry_by_id($assignment->assignments_bibliographyID);
+                            $title = $bibEntry->title;
+                        } else {
+                            $title = $assignment->assignments_title;
+                        }
+                        
+                        ?>
+                        <strong><?php echo ucwords($assignment->assignments_type); ?>: 
+                        <a class="row-title" href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=update_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>"><?php echo $title; ?></a></strong>
                         <br />
                         <div class="row-actions">
                             <span class='edit'><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=update_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>" class="edit"><?php echo __('Edit'); ?></a> | </span>
@@ -69,14 +79,12 @@ function spcourseware_assignments_manage() {
                         </div>
                     </th>
                     <td>
-                        <?php echo $assignment->assignment ?>
-                    </td>
-                    <td>
-                        <?php echo $assignment->assignments_type; ?>
-                    </td>
-                    <td>
                         <?php echo $assignment->assignments_description; ?>
                     </td>
+                    <td>                        
+                    <?php $schedule = spcourseware_get_schedule_entry_by_id($assignment->assignments_scheduleID); $scheduleDate = strtotime($schedule->schedule_date); echo date('F j, Y', $scheduleDate); ?>
+                    </td>
+
                 </tr>
             <?php endforeach; ?>
                 </tbody>
