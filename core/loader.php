@@ -142,16 +142,18 @@ function spcourseware_admin_menu()
 // create nav in admin panel
 add_action('admin_menu', 'spcourseware_admin_menu');
 
-function courseware_admin_scripts() 
+function spcourseware_admin_scripts() 
 {
+    if($_GET['page'] == 'schedule') {
     $url = WP_PLUGIN_URL;
 	$datepicker_url = $url . '/scholarpress-courseware/core/includes/datepicker/';
 	echo '<script src="'.$datepicker_url.'jquery.ui.all.js" type="text/javascript" charset="utf-8"></script>';
 	echo '<link rel="stylesheet" type="text/css" href="'.$datepicker_url.'base.css" />';
 	echo '<link rel="stylesheet" type="text/css" href="'.$datepicker_url.'datepicker.css" />';
+    }
 }
 
-add_action('admin_head', 'courseware_admin_scripts');
+add_action('admin_head', 'spcourseware_admin_scripts');
 
 
 ?>
