@@ -12,7 +12,7 @@ function spcourseware_courseinfo_manage() {
     	    $courseTimeStart = !empty($_REQUEST['course_timestart']) ? date('H:i:s', strtotime($_REQUEST['course_timestart'])) : '';
             $courseTimeEnd = !empty($_REQUEST['course_timeend']) ? date('H:i:s', strtotime($_REQUEST['course_timeend'])) : '';
 
-    		spcourseware_courseinfo_set_fields($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $courseTimeStart, $courseTimeEnd, $_REQUEST['course_location'], $_REQUEST['course_timedays'], $_REQUEST['course_description'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'], $_REQUEST['instructor_hours']);
+    		spcourseware_courseinfo_set_fields($_REQUEST['course_title'], $_REQUEST['course_number'], $_REQUEST['course_section'], $courseTimeStart, $courseTimeEnd, $_REQUEST['course_location'], $_REQUEST['course_days'], $_REQUEST['course_description'], $_REQUEST['instructor_firstname'], $_REQUEST['instructor_lastname'], $_REQUEST['instructor_email'], $_REQUEST['instructor_telephone'], $_REQUEST['instructor_office'], $_REQUEST['instructor_hours']);
 
     		echo '<div class="updated"><p>Course information saved successfully.</p></div>';
 
