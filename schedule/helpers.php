@@ -202,11 +202,10 @@ function spcourseware_schedule_edit_form($mode='add_schedule', $id=false)
 }
 
 // Print small reading entry (eg title and link only, for use in sidebar)
-function spcourseware_schedule_short($id,$wrapper="li",$title="h4", $description=false)
+function spcourseware_schedule_short($entry,$wrapper="li",$title="h4", $description=false)
 { 
-    $result = spcourseware_get_schedule_entry_by_id($id);
-	$startTime = strtotime($result->schedule_date.' '.$result->schedule_timestart);
-	$endTime = strtotime($result->schedule_date.' '.$result->schedule_timestop);
+	$startTime = strtotime($entry->schedule_date.' '.$entry->schedule_timestart);
+	$endTime = strtotime($entry->schedule_date.' '.$entry->schedule_timestop);
 	?>
 	<<?php echo $wrapper; ?> class="vevent">
 		<div class="date">
@@ -218,11 +217,25 @@ function spcourseware_schedule_short($id,$wrapper="li",$title="h4", $description
 			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i a', $endTime); ?></span>
 			</span>
 		</div>
-<<?php echo $title; ?> class="summary"><?php echo nl2br($result->schedule_title); ?></<?php echo $title; ?>>	
+<<?php echo $title; ?> class="summary"><?php echo nl2br($entry->schedule_title); ?></<?php echo $title; ?>>	
 
-    <?php if($description == true && $scheduleDescription = $result->schedule_description) echo $scheduleDescription; ?>
+    <?php if($description == true && $scheduleDescription = $entry->schedule_description) echo $scheduleDescription; ?>
 
 	</<?php echo $wrapper; ?>> <?php
 }
 
+
+function spcourseware_schedule_printfull()
+{
+    $scheduleEntries = spcourseware_get_schedule_entries();
+    if($scheduleEntries) {
+        $html = '<ul>';
+        
+        foreach($scheduleEntries as $entry) {
+            $html .= spcourseware_schedule_short($entry);
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+}
 ?>

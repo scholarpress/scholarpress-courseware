@@ -19,5 +19,5 @@ function spcourseware_schedule_shortcode($atts, $content=null, $code="")
         return spcourseware_schedule_short($entry->id);
     }
     
-    return spcourseware_courseinfo_printfull();
+    return spcourseware_schedule_printfull();
 }
