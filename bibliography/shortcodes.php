@@ -13,15 +13,20 @@ function spcourseware_bibliography_shortcode($atts, $content=null, $code="")
             $atts
         )
     );
+    $html = '';
     
     if($id != null) {
         $entry = spcourseware_get_bibliography_entry_by_id($id);
-        return spcourseware_bibliography_full($entry);
-    }
-    $html .= '';
-    $entries =  spcourseware_get_bibliography_entries();
-    foreach($entries as $entry) {
-        $html .= spcourseware_bibliography_full($entry);
+        $html = spcourseware_bibliography_full($entry);
+    } else {
+        $entries =  spcourseware_get_bibliography_entries();
+        if($entries) {
+            foreach($entries as $entry) {
+                $html .= spcourseware_bibliography_full($entry);
+            }
+        } else {
+            $html .= '<p>You have no bibliography entries!</p>';
+        }
     }
     return $html;
 }

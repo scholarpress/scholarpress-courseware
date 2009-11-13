@@ -235,7 +235,10 @@ function spcourseware_schedule_printfull()
             $html .= spcourseware_schedule_short($entry);
         }
         $html .= '</ul>';
-        return $html;
+    } else {
+        $html = '<p>You have no schedule entries!</p>';
     }
+    
+    return $html;
 }
 ?>

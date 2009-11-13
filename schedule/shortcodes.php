@@ -8,7 +8,8 @@ function spcourseware_schedule_shortcode($atts, $content=null, $code="")
     extract(
         shortcode_atts( 
             array(
-                'date' => null
+                'date'  => null,
+                'id'    => null
             ), 
             $atts
         )
