@@ -5,7 +5,6 @@ this file includes the rest of the core, as well as other courseware
 components (bibliography, schedule) by including the contents of their folders
 */
 
-require_once('routes.php');
 require_once('helpers.php');
 
 // Assignments includes
@@ -119,11 +118,64 @@ function spcourseware_install()
         dbDelta($sql);
     }
     
+    // Create Schedule and Bibliography pages, and include the shortcodes as content.
+    	$now = time();
+    	$now_gmt = time();
+    	$parent_id = 1; // Uncategorized default
+    	$post_modified = $now;
+    	$post_modified_gmt = $now_gmt;
+
+    	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='Bibliography'", OBJECT))
+    	{
+
+    		$bibliography_title = "Bibliography";
+    		$bibliography_content = "[spbibliography]";
+    		$bibliography_excerpt = "";
+    		$bibliography_status = "publish";
+    		$bibliography_name = "bibliography";
+
+    		wp_insert_post(array(
+    		'post_author'		=> '1',
+    		'post_date'			=> $post_dt,
+    		'post_date_gmt'		=> $post_dt,
+    		'post_modified'		=> $post_modified_gmt,
+    		'post_modified_gmt'	=> $post_modified_gmt,
+    		'post_title'		=> $bibliography_title,
+    		'post_content'		=> $bibliography_content,
+    		'post_excerpt'		=> $bibliography_excerpt,
+    		'post_status'		=> $bibliography_status,
+    		'post_name'			=> $bibliography_name,
+    		'post_type' 		=> 'page')			
+    		);
+    	}
+
+    	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='Schedule'", OBJECT)) 
+    	{
+    		$schedule_title = "Schedule";
+    		$schedule_content = "[spschedule]";
+    		$schedule_excerpt = "";
+    		$schedule_status = "publish";
+    		$schedule_name = "schedule";
+    		wp_insert_post(array(
+    		'post_author'		=> '1',
+    		'post_date'		=> $post_dt,
+    		'post_date_gmt'		=> $post_dt,
+    		'post_modified'		=> $post_modified_gmt,
+    		'post_modified_gmt'	=> $post_modified_gmt,
+    		'post_title'		=> $schedule_title,
+    		'post_content'		=> $schedule_content,
+    		'post_excerpt'		=> $schedule_excerpt,
+    		'post_status'		=> $schedule_status,
+    		'post_name'		=> $schedule_name,
+    		'post_type' => 'page')			
+    		);
+    	}
+    
+    
 }
 
 if (isset($_GET['activate']) && $_GET['activate'] == 'true')
 {
-
     add_action('init', 'spcourseware_install');
 }
 
@@ -134,9 +186,7 @@ function spcourseware_admin_menu()
     add_submenu_page('scholarpress-courseware','Course Information | ScholarPress Courseware', 'Course Information', 8, 'courseinfo', 'spcourseware_courseinfo_manage');
     add_submenu_page('scholarpress-courseware','Schedule | ScholarPress Courseware', 'Schedule', 8, 'schedule', 'spcourseware_schedule_manage');
     add_submenu_page('scholarpress-courseware','Bibliography | ScholarPress Courseware', 'Bibliography', 8, 'bibliography', 'spcourseware_bibliography_manage');
-    add_submenu_page('scholarpress-courseware','Assignments | ScholarPress Courseware', 'Assignments', 8, 'assignments', 'spcourseware_assignments_manage');
-    // add_submenu_page('scholarpress-courseware','ScholarPress Courseware | Configure', 'Configure', 8, 'configure', 'spcourseware_configure');
-    
+    add_submenu_page('scholarpress-courseware','Assignments | ScholarPress Courseware', 'Assignments', 8, 'assignments', 'spcourseware_assignments_manage');    
 }
 
 // create nav in admin panel
@@ -154,6 +204,3 @@ function spcourseware_admin_scripts()
 }
 
 add_action('admin_head', 'spcourseware_admin_scripts');
-
-
-?>
