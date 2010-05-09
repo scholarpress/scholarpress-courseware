@@ -1,0 +1,531 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ScholarPress\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-05-09 19:42+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Stas Sușcov <stas@softwareliber.ro>\n"
+"Language-Team: ScholarPress.Net <contact@scholarpress.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../bibliography/template.php:4
+#: ../bibliography/index.php:26
+#: ../bibliography/index.php:37
+msgid "Bibliography"
+msgstr ""
+
+#: ../bibliography/shortcodes.php:28
+msgid "You have no bibliography entries!"
+msgstr ""
+
+#: ../bibliography/helpers.php:77
+#: ../bibliography/helpers.php:117
+#, php-format
+msgid "Bibliography %1$d updated successfully."
+msgstr ""
+
+#: ../bibliography/helpers.php:109
+msgid "<strong>Failure:</strong> No bibliography ID given."
+msgstr ""
+
+#: ../bibliography/helpers.php:126
+msgid "View Bibliography"
+msgstr ""
+
+#: ../bibliography/helpers.php:127
+#: ../bibliography/helpers.php:137
+msgid "Add an Bibliography Entry"
+msgstr ""
+
+#: ../bibliography/helpers.php:142
+#, php-format
+msgid "Bibliography ID %s1d is not a valid integer."
+msgstr ""
+
+#: ../bibliography/helpers.php:146
+msgid "Update Bibliography Entry #"
+msgstr ""
+
+#: ../bibliography/helpers.php:148
+msgid "I couldn't find a quote linked up with that identifier. Giving up..."
+msgstr ""
+
+#: ../bibliography/helpers.php:278
+msgid "Type of Bibliography Item"
+msgstr ""
+
+#: ../bibliography/helpers.php:281
+msgid "Choose a type"
+msgstr ""
+
+#: ../bibliography/helpers.php:282
+msgid "Book"
+msgstr ""
+
+#: ../bibliography/helpers.php:283
+msgid "Article"
+msgstr ""
+
+#: ../bibliography/helpers.php:284
+msgid "Volume Chapter"
+msgstr ""
+
+#: ../bibliography/helpers.php:285
+msgid "Unpublished"
+msgstr ""
+
+#: ../bibliography/helpers.php:286
+msgid "Website"
+msgstr ""
+
+#: ../bibliography/helpers.php:287
+msgid "Webpage"
+msgstr ""
+
+#: ../bibliography/helpers.php:288
+msgid "Video"
+msgstr ""
+
+#: ../bibliography/helpers.php:289
+msgid "Audio"
+msgstr ""
+
+#: ../bibliography/helpers.php:296
+msgid "Author(s)"
+msgstr ""
+
+#: ../bibliography/helpers.php:298
+msgid "Author Last Name"
+msgstr ""
+
+#: ../bibliography/helpers.php:300
+msgid "Author First Name"
+msgstr ""
+
+#: ../bibliography/helpers.php:302
+msgid "Author Two Last Name"
+msgstr ""
+
+#: ../bibliography/helpers.php:304
+msgid "Author Two First Name"
+msgstr ""
+
+#: ../bibliography/helpers.php:309
+msgid "Publish Information"
+msgstr ""
+
+#: ../bibliography/helpers.php:312
+#: ../assignments/index.php:46
+#: ../assignments/index.php:54
+msgid "Title"
+msgstr ""
+
+#: ../bibliography/helpers.php:316
+msgid "Short Title"
+msgstr ""
+
+#: ../bibliography/helpers.php:320
+msgid "Journal Title"
+msgstr ""
+
+#: ../bibliography/helpers.php:325
+msgid "Volume Title"
+msgstr ""
+
+#: ../bibliography/helpers.php:330
+msgid "Volume Editor(s)"
+msgstr ""
+
+#: ../bibliography/helpers.php:335
+msgid "Place of Publication"
+msgstr ""
+
+#: ../bibliography/helpers.php:339
+msgid "Publisher"
+msgstr ""
+
+#: ../bibliography/helpers.php:343
+msgid "Website Title"
+msgstr ""
+
+#: ../bibliography/helpers.php:350
+msgid "Additional Information"
+msgstr ""
+
+#: ../bibliography/helpers.php:353
+msgid "Date Published"
+msgstr ""
+
+#: ../bibliography/helpers.php:357
+msgid "Date Accessed"
+msgstr ""
+
+#: ../bibliography/helpers.php:361
+msgid "URL"
+msgstr ""
+
+#: ../bibliography/helpers.php:365
+msgid "Volume"
+msgstr ""
+
+#: ../bibliography/helpers.php:369
+msgid "Issue"
+msgstr ""
+
+#: ../bibliography/helpers.php:373
+msgid "Pages"
+msgstr ""
+
+#: ../bibliography/helpers.php:377
+#: ../assignments/helpers.php:216
+#: ../assignments/index.php:47
+#: ../assignments/index.php:55
+msgid "Description"
+msgstr ""
+
+#: ../bibliography/helpers.php:383
+msgid "Save Entry &raquo;"
+msgstr ""
+
+#: ../bibliography/index.php:16
+msgid "<strong>Failure:</strong> No schedule ID given."
+msgstr ""
+
+#: ../bibliography/index.php:26
+#: ../assignments/index.php:23
+#: ../courseinfo/index.php:26
+msgid "ScholarPress Courseware"
+msgstr ""
+
+#: ../bibliography/index.php:47
+#: ../bibliography/index.php:55
+msgid " Title"
+msgstr ""
+
+#: ../bibliography/index.php:48
+#: ../bibliography/index.php:56
+msgid "Author Name"
+msgstr ""
+
+#: ../bibliography/index.php:49
+#: ../bibliography/index.php:57
+msgid "Type"
+msgstr ""
+
+#: ../bibliography/index.php:65
+msgid "Edit &#8220;Development Blog&#8221;"
+msgstr ""
+
+#: ../bibliography/index.php:68
+#: ../assignments/index.php:77
+msgid "Edit"
+msgstr ""
+
+#: ../bibliography/index.php:69
+msgid ""
+"You are about to delete this link 'Development Blog'\n"
+"  'Cancel' to stop, 'OK' to delete."
+msgstr ""
+
+#: ../bibliography/index.php:69
+#: ../assignments/index.php:78
+msgid "Delete"
+msgstr ""
+
+#: ../bibliography/index.php:80
+msgid "No bibliography entries."
+msgstr ""
+
+#: ../assignments/helpers.php:65
+#: ../assignments/helpers.php:92
+#, php-format
+msgid "Assignment #%1$d updated successfully."
+msgstr ""
+
+#: ../assignments/helpers.php:82
+msgid "<strong>Failure:</strong> No Assignment given."
+msgstr ""
+
+#: ../assignments/helpers.php:100
+msgid "View Assignments"
+msgstr ""
+
+#: ../assignments/helpers.php:100
+msgid "Add an Assignment"
+msgstr ""
+
+#: ../assignments/helpers.php:109
+msgid "Add an Assignment Entry"
+msgstr ""
+
+#: ../assignments/helpers.php:114
+#, php-format
+msgid "Assignment entry #%1$d is not a valid integer."
+msgstr ""
+
+#: ../assignments/helpers.php:118
+msgid "Update Assignment Entry #"
+msgstr ""
+
+#: ../assignments/helpers.php:120
+msgid "I couldn't find Assignment #"
+msgstr ""
+
+#: ../assignments/helpers.php:159
+msgid "Type of Assignment"
+msgstr ""
+
+#: ../assignments/helpers.php:163
+msgid "Reading"
+msgstr ""
+
+#: ../assignments/helpers.php:164
+msgid "Writing"
+msgstr ""
+
+#: ../assignments/helpers.php:165
+msgid "Presentation"
+msgstr ""
+
+#: ../assignments/helpers.php:166
+msgid "Group Work"
+msgstr ""
+
+#: ../assignments/helpers.php:167
+msgid "Research"
+msgstr ""
+
+#: ../assignments/helpers.php:168
+msgid "Discussion"
+msgstr ""
+
+#: ../assignments/helpers.php:169
+msgid "Creative"
+msgstr ""
+
+#: ../assignments/helpers.php:181
+msgid "Choose from your Bibliograhy"
+msgstr ""
+
+#: ../assignments/helpers.php:184
+msgid "Select an entry"
+msgstr ""
+
+#: ../assignments/helpers.php:192
+msgid "No Bibliography Entries!"
+msgstr ""
+
+#: ../assignments/helpers.php:195
+msgid "Pages:"
+msgstr ""
+
+#: ../assignments/helpers.php:200
+msgid "Date Due"
+msgstr ""
+
+#: ../assignments/helpers.php:222
+msgid "Save Assignment &raquo;"
+msgstr ""
+
+#: ../assignments/index.php:23
+msgid "Assignments"
+msgstr ""
+
+#: ../assignments/index.php:29
+msgid "No assignment entry specified."
+msgstr ""
+
+#: ../assignments/index.php:38
+msgid "Manage Assignments"
+msgstr ""
+
+#: ../assignments/index.php:49
+#: ../assignments/index.php:57
+msgid "Date"
+msgstr ""
+
+#: ../assignments/index.php:78
+msgid ""
+"You are about to delete this link \"Development Blog\"\\n"
+"  \"Cancel\" to stop, \"OK\" to delete."
+msgstr ""
+
+#: ../courseinfo/template.php:4
+#: ../courseinfo/index.php:26
+msgid "Course Information"
+msgstr ""
+
+#: ../courseinfo/index.php:17
+msgid "Course information saved successfully."
+msgstr ""
+
+#: ../courseinfo/index.php:33
+msgid "Course Title"
+msgstr ""
+
+#: ../courseinfo/index.php:37
+msgid "The title of your course"
+msgstr ""
+
+#: ../courseinfo/index.php:42
+msgid "Course Number"
+msgstr ""
+
+#: ../courseinfo/index.php:46
+msgid "The registrar's number for your course (e.g. HIST 100)"
+msgstr ""
+
+#: ../courseinfo/index.php:51
+msgid "Course Section"
+msgstr ""
+
+#: ../courseinfo/index.php:55
+msgid "The registrar's section number for your course (e.g. 001)"
+msgstr ""
+
+#: ../courseinfo/index.php:59
+msgid "Course Days"
+msgstr ""
+
+#: ../courseinfo/index.php:61
+msgid "The days your course regularly meets"
+msgstr ""
+
+#: ../courseinfo/index.php:64
+msgid "Course Time Start"
+msgstr ""
+
+#: ../courseinfo/index.php:66
+msgid "The time your course regularly starts (e.g. 1:00PM)"
+msgstr ""
+
+#: ../courseinfo/index.php:69
+msgid "Course Time End"
+msgstr ""
+
+#: ../courseinfo/index.php:71
+msgid "The time your course regularly ends (e.g. 2:00PM)"
+msgstr ""
+
+#: ../courseinfo/index.php:74
+msgid "Course Location"
+msgstr ""
+
+#: ../courseinfo/index.php:76
+msgid "The place your course regularly meets (e.g. Building and room number)"
+msgstr ""
+
+#: ../courseinfo/index.php:80
+msgid "Course Description"
+msgstr ""
+
+#: ../courseinfo/index.php:84
+msgid "The description for your course."
+msgstr ""
+
+#: ../courseinfo/index.php:90
+msgid "Save Changes"
+msgstr ""
+
+#: ../schedule/template.php:4
+msgid "Schedule"
+msgstr ""
+
+#: ../schedule/template.php:10
+msgid "Subscribe to vCal file"
+msgstr ""
+
+#: ../schedule/template.php:60
+msgid "No schedule entries."
+msgstr ""
+
+#: ../schedule/helpers.php:75
+#, php-format
+msgid "Schedule entry #%1$d added successfully."
+msgstr ""
+
+#: ../schedule/helpers.php:102
+#, php-format
+msgid "Schedule entry #%1$d updated successfully."
+msgstr ""
+
+#: ../schedule/helpers.php:111
+msgid "View Schedule"
+msgstr ""
+
+#: ../schedule/helpers.php:111
+msgid "Add an Schedule Entry"
+msgstr ""
+
+#: ../schedule/helpers.php:123
+#, php-format
+msgid "Schedule ID %1$d is not a valid integer."
+msgstr ""
+
+#: ../schedule/helpers.php:168
+msgid "Enter in a description of what will go on in this class."
+msgstr ""
+
+#: ../schedule/helpers.php:171
+msgid "Date &amp; Time"
+msgstr ""
+
+#: ../schedule/helpers.php:173
+msgid "Date: Input any date string, or use the date picker"
+msgstr ""
+
+#: ../schedule/helpers.php:185
+msgid "Class Starts"
+msgstr ""
+
+#: ../schedule/helpers.php:188
+msgid "Class Ends"
+msgstr ""
+
+#: ../schedule/helpers.php:196
+msgid "Publish Schedule Entry &raquo;"
+msgstr ""
+
+#: ../schedule/helpers.php:239
+msgid "You have no schedule entries!"
+msgstr ""
+
+#: ../schedule/index.php:21
+msgid "Schedule entry added!"
+msgstr ""
+
+#: ../schedule/index.php:32
+msgid "No schedule entry specified."
+msgstr ""
+
+#: ../schedule/index.php:34
+msgid "Edit Schedule Entry #"
+msgstr ""
+
+#: ../schedule/index.php:38
+msgid "Add Schedule Entry"
+msgstr ""
+
+#: ../schedule/index.php:42
+msgid "Schedule Entries"
+msgstr ""
+
+#: ../core/helpers.php:8
+#: ../core/loader.php:183
+msgid "Dashboard"
+msgstr ""
+
+#: ../core/helpers.php:13
+msgid "Edit Course Information"
+msgstr ""
+
+#: ../core/loader.php:184
+msgid "Courseware"
+msgstr ""
+

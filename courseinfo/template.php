@@ -1,7 +1,7 @@
 <?php get_header(); ?>
 
 <div id="content" class="narrowcolumn">
-	<h2>Course Information</h2>
+	<h2><?php echo __( 'Course Information', SPCOURSEWARE_TD ); ?></h2>
 
     <?php spcourseware_courseinfo_printfull(); ?>
 

@@ -125,10 +125,9 @@ function spcourseware_install()
     	$post_modified = $now;
     	$post_modified_gmt = $now_gmt;
 
-    	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='Bibliography'", OBJECT))
+        $bibliography_title = __( "Bibliography", SPCOURSEWARE_TD);
+    	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='{$bibliography_title}'", OBJECT))
     	{
-
-    		$bibliography_title = "Bibliography";
     		$bibliography_content = "[spbibliography]";
     		$bibliography_excerpt = "";
     		$bibliography_status = "publish";
@@ -149,9 +148,9 @@ function spcourseware_install()
     		);
     	}
 
-    	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='Schedule'", OBJECT)) 
+        $schedule_title = __( "Schedule", SPCOURSEWARE_TD );
+    	if (!$wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title='{$schedule_title}'", OBJECT)) 
     	{
-    		$schedule_title = "Schedule";
     		$schedule_content = "[spschedule]";
     		$schedule_excerpt = "";
     		$schedule_status = "publish";
@@ -181,12 +180,19 @@ if (isset($_GET['activate']) && $_GET['activate'] == 'true')
 
 function spcourseware_admin_menu()
 {
-    add_menu_page('Dashboard','Courseware',8,'scholarpress-courseware','spcourseware_dashboard');
-    add_submenu_page('scholarpress-courseware','Dashboard | ScholarPress Courseware','Dashboard',8,'scholarpress-courseware','spcourseware_dashboard');
-    add_submenu_page('scholarpress-courseware','Course Information | ScholarPress Courseware', 'Course Information', 8, 'courseinfo', 'spcourseware_courseinfo_manage');
-    add_submenu_page('scholarpress-courseware','Schedule | ScholarPress Courseware', 'Schedule', 8, 'schedule', 'spcourseware_schedule_manage');
-    add_submenu_page('scholarpress-courseware','Bibliography | ScholarPress Courseware', 'Bibliography', 8, 'bibliography', 'spcourseware_bibliography_manage');
-    add_submenu_page('scholarpress-courseware','Assignments | ScholarPress Courseware', 'Assignments', 8, 'assignments', 'spcourseware_assignments_manage');    
+    $titles[] = __( "Dashboard", SPCOURSEWARE_TD );
+    $titles[] = __( "Courseware", SPCOURSEWARE_TD );
+    $titles[] = __( "ScholarPress Courseware", SPCOURSEWARE_TD );
+    $titles[] = __( "Course Information", SPCOURSEWARE_TD );
+    $titles[] = __( "Schedule", SPCOURSEWARE_TD );
+    $titles[] = __( "Bibliography", SPCOURSEWARE_TD );
+    $titles[] = __( "Assignments", SPCOURSEWARE_TD );
+    add_menu_page( $titles[0], $titles[1] , 8, 'scholarpress-courseware', 'spcourseware_dashboard');
+    add_submenu_page('scholarpress-courseware', $titles[0].' | '.$titles[2], $titles[1], 8, 'scholarpress-courseware','spcourseware_dashboard');
+    add_submenu_page('scholarpress-courseware', $titles[3].' | '.$titles[2], $titles[3], 8, 'courseinfo', 'spcourseware_courseinfo_manage');
+    add_submenu_page('scholarpress-courseware', $titles[4].' | '.$titles[2], $titles[4], 8, 'schedule', 'spcourseware_schedule_manage');
+    add_submenu_page('scholarpress-courseware', $titles[5].' | '.$titles[2], $titles[5], 8, 'bibliography', 'spcourseware_bibliography_manage');
+    add_submenu_page('scholarpress-courseware', $titles[6].' | '.$titles[2], $titles[6], 8, 'assignments', 'spcourseware_assignments_manage');    
 }
 
 // create nav in admin panel

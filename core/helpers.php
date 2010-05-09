@@ -5,12 +5,12 @@
 function spcourseware_dashboard() {
 	?>
 	<div class="wrap">
-	<h2>Dashbard | ScholarPress Courseware</h2>
+	<h2><?php echo __( "Dashboard", SPCOURSEWARE_TD ); ?> | <?php echo __( "ScholarPress Courseware", SPCOURSEWARE_TD ); ?></h2>
 
 	<div id="courseinfo">
-		<h3>Course Information</h3>
+		<h3><?php echo __( "Course Information", SPCOURSEWARE_TD ); ?></h3>
 		<?php echo spcourseware_courseinfo_printfull(); ?>
-	<a href="?page=courseinfo">Edit Course Information</a>
+	<a href="?page=courseinfo"><?php echo __( "Edit Course Information", SPCOURSEWARE_TD ); ?></a>
 	</div>
 	</div>
 	<br class="clear" />

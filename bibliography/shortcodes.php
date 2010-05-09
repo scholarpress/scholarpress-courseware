@@ -25,7 +25,7 @@ function spcourseware_bibliography_shortcode($atts, $content=null, $code="")
                 $html .= spcourseware_bibliography_full($entry);
             }
         } else {
-            $html .= '<p>You have no bibliography entries!</p>';
+            $html .= '<p>'. __( 'You have no bibliography entries!', SPCOURSEWARE_TD ) .'</p>';
         }
     }
     return $html;

@@ -74,7 +74,7 @@ function spcourseware_add_bibliography_entry()
     
     $check = $wpdb->get_results($sqlCheck);
     if ( !empty($check) || !empty($check[0]->entryID) ) { 
-        echo '<div class="updated"><p>Biblio ' . $entryID . ' updated successfully.</p></div>';
+        echo '<div class="updated"><p>'. sprintf( __( 'Bibliography %1$d updated successfully.', SPCOURSEWARE_TD ), $entryID ).'</p></div>';
     }
     
 }
@@ -106,7 +106,7 @@ function spcourseware_update_bibliography_entry($id)
     $type = !empty($_REQUEST['biblio_type']) ? $_REQUEST['biblio_type'] : '';
 
     if ( empty($id) ) {
-    	echo '<div class="error"><p><strong>Failure:</strong> No bibliography ID given.</p></div>';
+    	echo '<div class="error"><p>'. __( '<strong>Failure:</strong> No bibliography ID given.', SPCOURSEWARE_TD ).'</p></div>';
     } else {
         $sql = "UPDATE " . $wpdb->prefix . "bibliography SET author_last = '" . $author_last . "', author_first = '" . $author_first . "', author_two_last = '" . $author_two_last . "', author_two_first = '" . $author_two_first . "', title = '" . $title . "', short_title = '" . $short_title . "', journal = '" . $journal . "', volume_title = '" . $volume_title . "', volume_editors = '" . $volume_editors . "', website_title = '" . $website_title . "', pub_location = '" . $pub_location . "', publisher = '" . $publisher . "', date = '" . $date . "', dateaccessed = '" . $dateaccessed . "', url = '" . $url . "', volume = '" . $volume ."', issue = '" . $issue . "', pages = '" . $pages . "', description = '" . $description . "', type = '" . $type . "' WHERE entryID = '" . $id . "'";
         $wpdb->query($sql);
@@ -114,7 +114,7 @@ function spcourseware_update_bibliography_entry($id)
         $sqlCheck = "SELECT entryID FROM " . $wpdb->prefix . "bibliography WHERE author_last = '" . $author_last . "' and author_first = '" . $author_first . "' and author_two_last = '" . $author_two_last . "' and author_two_first = '" . $author_two_first . "' and title = '" . $title . "' and short_title = '" . $short_title . "' and journal = '" . $journal . "' and volume_title = '" . $volume_title . "' and volume_editors = '" . $volume_editors . "' and website_title = '" . $website_title . "' and pub_location = '" . $pub_location . "' and publisher = '" . $publisher . "' and date = '" . $date . "' and dateaccessed = '" . $dateaccessed . "' and url = '" . $url . "' and volume = '" . $volume ."' and issue = '" . $issue . "' and pages = '" . $pages . "' and description = '" . $description . "' and type = '" . $type . "' LIMIT 1";
         $check = $wpdb->get_results($sqlCheck);
         if ( !empty($check) || !empty($check[0]->id) ) { 
-            echo '<div class="updated"><p>Biblio ' . $id . ' updated successfully.</p></div>';
+            echo '<div class="updated"><p>'. sprintf( __( 'Bibliography %1$d updated successfully.', SPCOURSEWARE_TD ), $id ) .'</p></div>';
         }
     }
 }
@@ -122,7 +122,10 @@ function spcourseware_update_bibliography_entry($id)
 function spcourseware_bibliography_navigation()
 {
     ?>
-        <p><a href="admin.php?page=<?php echo $_GET['page']; ?>">View Bibliography</a> | <a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=add_biblio">Add an Bibliography Entry</a></p>
+        <p>
+			<a href="admin.php?page=<?php echo $_GET['page']; ?>"><?php echo __( 'View Bibliography', SPCOURSEWARE_TD ); ?></a> |
+			<a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=add_biblio"><?php echo __( 'Add an Bibliography Entry', SPCOURSEWARE_TD ); ?></a>
+		</p>
 <?php
 }
 
@@ -131,18 +134,18 @@ function spcourseware_bibliography_edit_form($mode='add_biblio', $id=false)
 	$data = false;
 	
 	if($mode == 'add_biblio') {
-	    echo '<h3>Add an Bibliography Entry</h3>';
+	    echo '<h3>'. __( 'Add an Bibliography Entry', SPCOURSEWARE_TD ) .'</h3>';
 	}
 	
 	if ( $id !== false ) {
 		if ( intval($id) != $id ){
-			echo '<div class="error"><p>Bibliography ID '. $id .' is not a valid integer.</p></div>';
+			echo '<div class="error"><p>'. sprintf( __( 'Bibliography ID %s1d is not a valid integer.', SPCOURSEWARE_TD), $id ) .'</p></div>';
 			return;
 		} else {
 			$data = spcourseware_get_bibliography_entry_by_id($id);
-			echo '<h3>Update Bibliography Entry #'.$id.'</h3>';
+			echo '<h3>'. __( 'Update Bibliography Entry #', SPCOURSEWARE_TD) .$id. '</h3>';
 			if ( empty($data) ) {
-				echo "<div class=\"error\"><p>I couldn't find a quote linked up with that identifier. Giving up...</p></div>";
+				echo "<div class=\"error\"><p>". __( "I couldn't find a quote linked up with that identifier. Giving up...", SPCOURSEWARE_TD ) ."</p></div>";
 				return;
 			}
 		}	
@@ -272,113 +275,112 @@ function spcourseware_bibliography_edit_form($mode='add_biblio', $id=false)
     						
     						<tr valign="top">
     						<th>
-                            <label for="biblio_type">Type of Bibliography Item</labgel></th>
+                            <label for="biblio_type"><?php echo __( 'Type of Bibliography Item' ); ?></labgel></th>
                             <td>
                                 <select name="biblio_type" id="biblio_type">
-                                    <option>Choose a type</option>
-                                    <option id="biblio_book" value="monograph"<?php if ( empty($data) || $data->type=='monograph' ) echo ' selected="selected"'; ?>>Book</option>
-                                    <option id="biblio_article" value="article"<?php if ( !empty($data) && $data->type=='article' ) echo ' selected="selected"'; ?>>Article</option>
-                                    <option id="biblio_volume" value="volumechapter"<?php if ( !empty($data) && $data->type=='volumechapter' ) echo ' selected="selected"'; ?>>Volume Chapter</option>
-                                    <option id="biblio_unpublished" value="unpublished"<?php if ( !empty($data) && $data->type=='unpublished' ) echo ' selected="selected"' ?>>Unpublished</option>
-                                    <option id="biblio_website" value="website"<?php if ( !empty($data) && $data->type=='website' ) echo ' selected="selected"'; ?>>
-                            Website</option>
-                                    <option id="biblio_webpage" value="webpage"<?php if ( !empty($data) && $data->type=='webpage' ) echo ' selected="selected"'; ?>>Webpage</option>
-                                    <option id="biblio_video" value="video"<?php if ( !empty($data) && $data->type=='video' ) echo ' selected="selected"'; ?>>Video</option>
-                                    <option id="biblio_audio" value="audio"<?php if ( !empty($data) && $data->type=='audio' ) echo ' selected="selected"'; ?>>Audio</option>
+                                    <option><?php echo __( 'Choose a type', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_book" value="monograph"<?php if ( empty($data) || $data->type=='monograph' ) echo ' selected="selected"'; ?>><?php echo __( 'Book', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_article" value="article"<?php if ( !empty($data) && $data->type=='article' ) echo ' selected="selected"'; ?>><?php echo __( 'Article', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_volume" value="volumechapter"<?php if ( !empty($data) && $data->type=='volumechapter' ) echo ' selected="selected"'; ?>><?php echo __( 'Volume Chapter', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_unpublished" value="unpublished"<?php if ( !empty($data) && $data->type=='unpublished' ) echo ' selected="selected"' ?>><?php echo __( 'Unpublished', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_website" value="website"<?php if ( !empty($data) && $data->type=='website' ) echo ' selected="selected"'; ?>><?php echo __( 'Website', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_webpage" value="webpage"<?php if ( !empty($data) && $data->type=='webpage' ) echo ' selected="selected"'; ?>><?php echo __( 'Webpage', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_video" value="video"<?php if ( !empty($data) && $data->type=='video' ) echo ' selected="selected"'; ?>><?php echo __( 'Video', SPCOURSEWARE_TD ); ?></option>
+                                    <option id="biblio_audio" value="audio"<?php if ( !empty($data) && $data->type=='audio' ) echo ' selected="selected"'; ?>><?php echo __( 'Audio', SPCOURSEWARE_TD ); ?></option>
                             </select>
                             </td>
                             </tr>
                             
                             <tr valign="top">
 
-    						<th scope="row">Author(s)</th>
+    						<th scope="row"><?php echo __( 'Author(s)', SPCOURSEWARE_TD ); ?></th>
     						<td class="inside withlabels">
-    							<p><label for="biblio_author_last"><?php _e('Author Last Name'); ?></label></p>
+    							<p><label for="biblio_author_last"><?php echo __( 'Author Last Name', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_author_last" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_last); ?>" />
-    							<p><label for="biblio_author_first"><?php _e('Author First Name'); ?></label></p>
+    							<p><label for="biblio_author_first"><?php echo __( 'Author First Name', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_author_first" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_first); ?>" />
-    							<p><label for="biblio_author_two_last"><?php _e('Author Two Last Name'); ?></label></p>
+    							<p><label for="biblio_author_two_last"><?php echo __( 'Author Two Last Name', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_author_two_last" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_two_last); ?>" />
-    							<p><label for="biblio_author_two_first"><?php _e('Author Two First Name'); ?></label></p>
+    							<p><label for="biblio_author_two_first"><?php echo __( 'Author Two First Name', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_author_two_first" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->author_two_first); ?>" />
     						</td>
 </tr>
 <tr valign="top">
-    						<th><span>Publish Information</span></th>
+    						<th><span><?php echo __( 'Publish Information', SPCOURSEWARE_TD ); ?></span></th>
     						<td>
     						<fieldset class="small" id="biblio_title_field">
-    							<p><label for="biblio_title"><?php _e('Title'); ?></label></p>
+    							<p><label for="biblio_title"><?php echo __( 'Title', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->title); ?>" />
     						</fieldset>
     						<fieldset class="small" id="biblio_short_title_field">
-    							<p><label for="biblio_short_title"><?php _e('Short Title'); ?></label></p>
+    							<p><label for="biblio_short_title"><?php echo __( 'Short Title', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_short_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->short_title); ?>" />
     						</fieldset>
     						<fieldset class="small" id="biblio_journal_field">
-    							<p><label for="biblio_journal"><?php _e('Journal Title'); ?></label></p>
+    							<p><label for="biblio_journal"><?php echo __( 'Journal Title', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_journal" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->journal); ?>" />
     						</fieldset>
 
     						<fieldset class="small" id="biblio_volume_title_field">
-    							<p><label for="biblio_volume_title"><?php _e('Volume Title'); ?></label></p>
+    							<p><label for="biblio_volume_title"><?php echo __( 'Volume Title', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_volume_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume_title); ?>" />
     						</fieldset>
 
     						<fieldset class="small" id="biblio_volume_editors_field">
-    							<p><label for="biblio_volume_editors"><?php _e('Volume Editor(s)'); ?></label></p>
+    							<p><label for="biblio_volume_editors"><?php echo __( 'Volume Editor(s)', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_volume_editors" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume_editors); ?>" />
     						</fieldset>
 
     						<fieldset class="small" id="biblio_pub_location_field">
-    							<p><label for="biblio_pub_location"><?php _e('Place of Publication'); ?></label></p>
+    							<p><label for="biblio_pub_location"><?php echo __( 'Place of Publication', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_pub_location" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->pub_location); ?>" />
     						</fieldset>
     						<fieldset class="small" id="biblio_publisher_field">
-    							<p><label for="biblio_publisher"><?php _e('Publisher'); ?></label></p>
+    							<p><label for="biblio_publisher"><?php echo __( 'Publisher', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_publisher" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->publisher); ?>" />
     						</fieldset>
     						<fieldset class="small" id="biblio_website_title_field">
-    							<p><label><?php _e('Website Title'); ?></label></p>
+    							<p><label><?php echo __( 'Website Title', SPCOURSEWARE_TD ); ?></label></p>
     							<input type="text" name="biblio_website_title" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->website_title); ?>" />
     						</fieldset>							
     						</td>
     						</tr>
                             <tr valign="top">
 
-    						<th class='hndle'><span>Additional Information</span></th>
+    						<th class='hndle'><span><?php echo __( 'Additional Information', SPCOURSEWARE_TD ); ?></span></th>
     						<td class="inside withlabels">
     							<fieldset class="small" id="biblio_date_field">
-    								<p><label for="biblio_date"><?php _e('Date Published'); ?></label></p>
+    								<p><label for="biblio_date"><?php echo __( 'Date Published', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_date" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->date); ?>" />
     							</fieldset>				
     							<fieldset class="small" id="biblio_dateaccessed_field">
-    								<p><label for="biblio_dateaccessed"><?php _e('Date Accessed'); ?></label></p>
+    								<p><label for="biblio_dateaccessed"><?php echo __( 'Date Accessed', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_dateaccessed" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->dateaccessed); ?>" />
     							</fieldset>				
     							<fieldset class="small" id="biblio_url_field">
-    								<p><label for="biblio_url"><?php _e('URL'); ?></label></p>
+    								<p><label for="biblio_url"><?php echo __( 'URL', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_url" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->url); ?>" />
     							</fieldset>			
     							<fieldset class="small" id="biblio_volume_field">
-    								<p><label for="biblio_volume"><?php _e('Volume'); ?></label></p>
+    								<p><label for="biblio_volume"><?php echo __( 'Volume', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_volume" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->volume); ?>" />
     							</fieldset>
     							<fieldset class="small" id="biblio_issue_field">
-    								<p><label for="biblio_issue"><?php _e('Issue'); ?></label></p>
+    								<p><label for="biblio_issue"><?php echo __( 'Issue', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_issue" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->issue); ?>" />
     							</fieldset>
     							<fieldset class="small" id="biblio_pages_field">
-    								<p><label for="biblio_pages"><?php _e('Pages'); ?></label></p>
+    								<p><label for="biblio_pages"><?php echo __( 'Pages', SPCOURSEWARE_TD ); ?></label></p>
     								<input type="text" name="biblio_pages" class="input" size=45 value="<?php if ( !empty($data) ) echo htmlspecialchars($data->pages); ?>" />
     							</fieldset>
     							<fieldset class="small" id="biblio_description_field">
-    								<p><label for="biblio_description"><?php _e('Description'); ?></label></p>
+    								<p><label for="biblio_description"><?php echo __( 'Description', SPCOURSEWARE_TD ); ?></label></p>
     								<textarea name="biblio_description" class="input" cols=45 rows=7><?php if ( !empty($data) ) echo htmlspecialchars($data->description); ?></textarea>
     							</fieldset>
     						</td>
     					</tr>
     					</table>
-	<p class="submit clear"><input type="submit" name="save" class="button-primary" value="Save Entry &raquo;" /></p>
+		<p class="submit clear"><input type="submit" name="save" class="button-primary" value="<?php echo __( 'Save Entry &raquo;', SPCOURSEWARE_TD ); ?>" /></p>
     	</form>
     	<div class="clear"></div>
     

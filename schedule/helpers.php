@@ -72,7 +72,7 @@ function spcourseware_add_schedule_entry()
 
 	if ( !empty($check) || !empty($check[0]->scheduleID) )
 	{
-		?><div class="updated"><p>Schedule entry #<?php echo $check[0]->scheduleID;?> added successfully.</p></div><?php
+		?><div class="updated"><p><?php echo sprintf( __( 'Schedule entry #%1$d added successfully.', SPCOURSEWARE_TD), $check[0]->scheduleID ); ?></p></div><?php
 	}
 	
 }
@@ -99,7 +99,7 @@ function spcourseware_update_schedule_entry($id)
     	$check = $wpdb->get_results($sql);
     	if ( !empty($check) || !empty($check[0]->scheduleID) )
     	{
-    		?><div class="updated"><p>Schedule entry #<?php echo $id; ?> updated successfully.</p></div><?php
+    		?><div class="updated"><p><?php echo sprintf( __( 'Schedule entry #%1$d updated successfully.', SPCOURSEWARE_TD), $id ); ?></p></div><?php
     	}
     }
 	
@@ -108,7 +108,7 @@ function spcourseware_update_schedule_entry($id)
 function spcourseware_schedule_navigation()
 {
     ?>
-        <p><a href="admin.php?page=<?php echo $_GET['page']; ?>">View Schedule</a> | <a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=add_schedule">Add an Schedule Entry</a></p>
+        <p><a href="admin.php?page=<?php echo $_GET['page']; ?>"><?php echo __( 'View Schedule', SPCOURSEWARE_TD ); ?></a> | <a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=add_schedule"><?php echo __( 'Add an Schedule Entry', SPCOURSEWARE_TD ); ?></a></p>
 <?php
 }
 
@@ -120,12 +120,12 @@ function spcourseware_schedule_edit_form($mode='add_schedule', $id=false)
 	
 	if ( $id !== false ) {
 		if ( intval($id) != $id ){
-			echo '<div class="error"><p>Schedule ID '. $id .' is not a valid integer.</p></div>';
+			echo '<div class="error"><p>'. sprintf( __( 'Schedule ID %1$d is not a valid integer.', SPCOURSEWARE_TD), $id ) .'</p></div>';
 			return;
 		} else {
 			$data = spcourseware_get_schedule_entry_by_id($id);
 			if ( empty($data) ) {
-				echo "<div class=\"error\"><p>I couldn't find a quote linked up with that identifier. Giving up...</p></div>";
+				echo "<div class=\"error\"><p>". __( "I couldn't find a quote linked up with that identifier. Giving up...", SPCOURSEWARE_TD ) ."</p></div>";
 				return;
 			}
 		}	
@@ -156,21 +156,21 @@ function spcourseware_schedule_edit_form($mode='add_schedule', $id=false)
 
 			<table class="form-table">
 				<tr>
-						<th scope="row"><label for="schedule_title"><?php _e('Title'); ?></label></th>
+						<th scope="row"><label for="schedule_title"><?php echo __('Title', SPCOURSEWARE_TD); ?></label></th>
 						<td>
 						<input type="text" id="title" name="schedule_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_title); ?>" />
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="schedule_description">Description</label></th>
+					<th scope="row"><label for="schedule_description"><?php echo __( 'Description', SPCOURSEWARE_TD ); ?></label></th>
 					<td>
 						<textarea name="schedule_description" id="description" cols="45" rows="7"><?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_description); ?></textarea>
-						<p class="description">Enter in a description of what will go on in this class.</p>
+						<p class="description"><?php echo __( 'Enter in a description of what will go on in this class.', SPCOURSEWARE_TD ); ?></p>
 				</tr>
             			<tr valign="top">
-            			    <th scope="row"><span>Date &amp; Time</span></th>
+            			    <th scope="row"><span><?php echo __( 'Date &amp; Time', SPCOURSEWARE_TD ); ?></span></th>
             				<td>
-            							<p><label><?php _e('Date: Input any date string, or use the date picker'); ?></label></p>
+            							<p><label><?php echo __('Date: Input any date string, or use the date picker', SPCOURSEWARE_TD ); ?></label></p>
             							<input type="text" name="schedule_date" id="schedule_date" class="format-y-m-d divider-dash split-date date" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_date); ?>" />			
             							<?php $url = WP_PLUGIN_URL."/scholarpress-courseware/core/includes/datepicker/images/calendar.gif"; ?>		
             							<script type="text/javascript" charset="utf-8">
@@ -182,10 +182,10 @@ function spcourseware_schedule_edit_form($mode='add_schedule', $id=false)
             							});
             							</script>							
 
-            							<p><label for="schedule_timestart"><?php _e('Class Starts'); ?> (e.g. 12:00pm)</label></p>
+            							<p><label for="schedule_timestart"><?php echo __( 'Class Starts', SPCOURSEWARE_TD ); ?> (ex. 12:00pm)</label></p>
             							<?php ?><input type="text" name="schedule_timestart" class="date"  value="<?php if ( !empty($data) ) {echo date('g:ia',strtotime($data->schedule_timestart));} else {echo date('g:ia', strtotime($spcoursewareAdminOptions['course_time_start']));} ?>" /> <?php ?>
 
-            							<p><label for="schedule_timestop"><?php _e('Class Ends'); ?> (e.g. 1:00pm)</label></p>
+            							<p><label for="schedule_timestop"><?php echo __( 'Class Ends', SPCOURSEWARE_TD ); ?> (ex. 1:00pm)</label></p>
             							<input type="text" name="schedule_timestop" class="date"  value="<?php if ( !empty($data) ){ echo date('g:ia', strtotime($data->schedule_timestop));} else {echo date('g:ia', strtotime($spcoursewareAdminOptions['course_time_end']));} ?>" />													
 
             				</td>
@@ -193,7 +193,7 @@ function spcourseware_schedule_edit_form($mode='add_schedule', $id=false)
             		</table><!-- End side info column-->
 
     				<p class="submit">
-    					<input type="submit" name="save" class="button-primary" value="Publish Schedule Entry &raquo;" />
+    					<input type="submit" name="save" class="button-primary" value="<?php echo __( 'Publish Schedule Entry &raquo;', SPCOURSEWARE_TD ); ?>" />
     				</p>
 	</form>
 	<div class="clear"></div>
@@ -236,7 +236,7 @@ function spcourseware_schedule_printfull()
         }
         $html .= '</ul>';
     } else {
-        $html = '<p>You have no schedule entries!</p>';
+        $html = '<p>'. __( 'You have no schedule entries!', SPCOURSEWARE_TD ) .'</p>';
     }
     
     return $html;

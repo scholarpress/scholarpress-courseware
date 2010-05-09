@@ -20,13 +20,13 @@ function spcourseware_assignments_manage() {
     }
 	?>
 	<div class="wrap">
-	<h2>Assignments | ScholarPress Courseware</h2>
+	<h2><?php echo __( 'Assignments', SPCOURSEWARE_TD ); ?> | <?php echo __( 'ScholarPress Courseware', SPCOURSEWARE_TD ); ?></h2>
     <?php spcourseware_assignments_navigation(); ?>
             <?php if($_REQUEST['view'] == 'form'): ?>
 
             <?php if ( $_REQUEST['action'] == 'update_assignment' ): ?>
                 <?php if (empty($assignmentID) ): ?>
-                <div class="error"><p>No assignment entry specified.</p></div>
+                <div class="error"><p><?php echo __( 'No assignment entry specified.', SPCOURSEWARE_TD ); ?></p></div>
                 <?php else: ?>
                 <?php spcourseware_assignment_edit_form('update_assignment', $assignmentID); ?>	
                 <?php endif; ?>
@@ -35,7 +35,7 @@ function spcourseware_assignments_manage() {
             <?php endif; ?>
             <?php else: ?>
 
-    		<h3><?php _e('Manage Assignments'); ?></h3>
+    		<h3><?php echo __( 'Manage Assignments', SPCOURSEWARE_TD ); ?></h3>
             <?php 
             $assignments = spcourseware_get_assignment_entries();
             if($assignments): ?>
@@ -43,18 +43,18 @@ function spcourseware_assignments_manage() {
             <table class="widefat fixed" cellspacing="0">
             	<thead>
             	<tr>
-                	<th scope="col" class="manage-column column-title">Title</th>
-                	<th scope="col"class="manage-column column-description">Description</th>
+                	<th scope="col" class="manage-column column-title"><?php echo __( 'Title', SPCOURSEWARE_TD ); ?></th>
+                	<th scope="col"class="manage-column column-description"><?php echo __( 'Description', SPCOURSEWARE_TD ); ?></th>
                 	
-                	<th scope="col" class="manage-column column-date">Date</th>
+                	<th scope="col" class="manage-column column-date"><?php echo __( 'Date', SPCOURSEWARE_TD ); ?></th>
             	</tr>
             	</thead>
             	<tfoot>
                 	<tr>
-                    	<th scope="col" class="manage-column column-title">Title</th>
-                    	<th scope="col"class="manage-column column-description">Description</th>
+                    	<th scope="col" class="manage-column column-title"><?php echo __( 'Title', SPCOURSEWARE_TD ); ?></th>
+                    	<th scope="col"class="manage-column column-description"><?php echo __( 'Description', SPCOURSEWARE_TD ); ?></th>
                     	
-                    	<th scope="col" class="manage-column column-date">Date</th>
+                    	<th scope="col" class="manage-column column-date"><?php echo __( 'Date', SPCOURSEWARE_TD ); ?></th>
                 	</tr>
             	</tfoot>
             	<tbody>
@@ -74,8 +74,8 @@ function spcourseware_assignments_manage() {
                         <a class="row-title" href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=update_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>"><?php echo $title; ?></a></strong>
                         <br />
                         <div class="row-actions">
-                            <span class='edit'><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=update_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>" class="edit"><?php echo __('Edit'); ?></a> | </span>
-                            <span class='delete'><a class="submitdelete" href="admin.php?page=<?php echo $_GET['page']; ?>&amp;action=delete_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>" onclick="if ( confirm('You are about to delete this link \'Development Blog\'\n  \'Cancel\' to stop, \'OK\' to delete.') ) { return true;}return false;">Delete</a></span>
+                            <span class='edit'><a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=update_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>" class="edit"><?php echo __('Edit', SPCOURSEWARE_TD ); ?></a> | </span>
+                            <span class='delete'><a class="submitdelete" href="admin.php?page=<?php echo $_GET['page']; ?>&amp;action=delete_assignment&amp;assignment_id=<?php echo $assignment->assignmentID;?>" onclick="if ( confirm(<?php echo __('You are about to delete this link "Development Blog"\n  "Cancel" to stop, "OK" to delete.', SPCOURSEWARE_TD ); ?>) ) { return true;}return false;"><?php echo __( 'Delete', SPCOURSEWARE_TD ); ?></a></span>
                         </div>
                     </th>
                     <td>

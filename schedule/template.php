@@ -1,13 +1,13 @@
 <?php get_header(); ?>
 
 <div id="content" class="narrowcolumn">
-	<h2>Schedule</h2>
+	<h2><?php echo __('Schedule', SPCOURSEWARE_TD ); ?></h2>
     <?php 
     $entries = spcourseware_get_schedule_entries(); 
     
     if($entries):?>
     
-    <p><a href="webcal://feeds.technorati.com/events/http://<?php echo $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']; ?>">Subscribe to vCal file</a></p>
+    <p><a href="webcal://feeds.technorati.com/events/http://<?php echo $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']; ?>"><?php echo __( 'Subscribe to vCal file', SPCOURSEWARE_TD ); ?></a></p>
     <div id="classes" class="vcalendar">
     <?php
     foreach($entries as $entry):
@@ -57,7 +57,7 @@
     <?php endforeach;; ?>
 </div>
 <?php else: ?>
-    <p>No schedule entries.</p>
+    <p><?php echo __( 'No schedule entries.', SPCOURSEWARE_TD ); ?></p>
 <?php endif; ?>
 </div>
 <?php get_sidebar(); ?>

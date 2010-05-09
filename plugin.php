@@ -30,6 +30,13 @@ define(SPCOURSEWARE_VERSION_NUMBER, '1.2');
 // define global variable for the plugins path
 define(SPCOURSEWARE_PLUGIN_PATH, ABSPATH . PLUGINDIR . DIRECTORY_SEPARATOR . 'scholarpress-courseware/');
 
+// i18n
+function spcourseware_textdomain() {
+	define( SPCOURSEWARE_TD, 'spcourseware' );
+    load_plugin_textdomain( SPCOURSEWARE_TD, false, dirname( plugin_basename( __FILE__ ) ).'/languages' );
+}
+add_action('init', 'spcourseware_textdomain');
+
 // include the core's magical loader
 require_once 'core/loader.php';
 // and... that's a wrap!

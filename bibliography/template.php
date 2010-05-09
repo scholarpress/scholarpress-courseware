@@ -1,7 +1,7 @@
 <?php get_header(); ?>
 
 <div id="content" class="narrowcolumn">
-	<h2>Bibliography</h2>
+	<h2><?php echo __( 'Bibliography', SPCOURSEWARE_TD ); ?></h2>
 
     <?php 
     
