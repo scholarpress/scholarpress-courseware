@@ -1,5 +1,5 @@
 === SP Courseware ===
-Contributors: davelester, jeremyboggs, stakats, zgordon
+Contributors: clioweb, davelester, jeremyboggs, stakats, sushkov, zgordon
 Tags: education, syllabus, courses, bibliography, course management, assignments
 Requires at least: 2.0.2
 Tested up to: 2.9.2
