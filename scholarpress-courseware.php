@@ -120,22 +120,22 @@ class Scholarpress_Courseware_Loader {
      * Includes other necessary plugin files.
      */
 	function includes() {
+	    
+	    // Helper functions
+	    require(dirname( __FILE__ ).'/scholarpress-courseware-helpers.php');
+        
         // Assignments includes
-        require(dirname( __FILE__ ).'/assignments/helpers.php');
         require(dirname( __FILE__ ).'/assignments/index.php');
 
         // Courseinfo includes
-        require(dirname( __FILE__ ).'/courseinfo/helpers.php');
         require(dirname( __FILE__ ).'/courseinfo/index.php');
         require(dirname( __FILE__ ).'/courseinfo/shortcodes.php');
 
         // Bibliography includes
-        require(dirname( __FILE__ ).'/bibliography/helpers.php');
         require(dirname( __FILE__ ).'/bibliography/index.php');
         require(dirname( __FILE__ ).'/bibliography/shortcodes.php');
 
         // Schedule includes
-        require(dirname( __FILE__ ).'/schedule/helpers.php');
         require(dirname( __FILE__ ).'/schedule/index.php');
         require(dirname( __FILE__ ).'/schedule/shortcodes.php');
 	}

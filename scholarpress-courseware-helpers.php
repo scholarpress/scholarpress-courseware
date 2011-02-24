@@ -1,5 +1,385 @@
 <?php
 
+/**
+ * Returns all the fields for course information as an array.
+ * 
+ * @since 1.2
+ * @return array
+ **/
+function spcourseware_courseinfo_get_fields()
+{
+    $spcoursewareOptions = get_option('SpCoursewareCourseInfo');
+	if (!empty($spcoursewareOptions)) {
+		foreach ($spcoursewareOptions as $key => $value)
+			$spcoursewareAdminOptions[$key] = $value;
+		}
+	return $spcoursewareAdminOptions;
+}
+
+/**
+ * Returns the value of a specific field in the courseinfo array.
+ *
+ * @since 1.0
+ * @uses spcourseware_courseinfo_get_fields()
+ * @return string|null
+ **/
+function spcourseware_courseinfo_get_field($fieldName)
+{
+    $fieldName = str_replace(' ','_',strtolower($fieldName));
+    $fields = spcourseware_courseinfo_get_fields();
+    return $fields[$fieldName];
+}
+
+/**
+ * Returns an HTML-formatted string for course information
+ *
+ * @since 1.0
+ * @uses spcourseware_courseinfo_get_fields()
+ * @return string
+ **/
+function spcourseware_courseinfo_printfull()
+{
+    $courseinfo = spcourseware_courseinfo_get_fields();
+    $course_title = $courseinfo['course_title'];
+    $course_description = $courseinfo['course_description'];
+    $course_location = $courseinfo['course_location'];
+    $course_number = $courseinfo['course_number'];
+    $course_section = $courseinfo['course_section'];
+    $course_time_start = $courseinfo['course_time_start'];
+    $course_time_end = $courseinfo['course_time_end'];
+    $course_days = $courseinfo['course_days'];
+    $instructor_first_name = $courseinfo['instructor_first_name'];
+    $instructor_last_name = $courseinfo['instructor_last_name'];
+    $instructor_telephone = $courseinfo['instructor_telephone'];
+    $instructor_office = $courseinfo['instructor_office'];
+    $instructor_hours = $courseinfo['instructor_hours'];
+    $instructor_email = $courseinfo['instructor_email'];
+    
+    // String to time that junk.
+    $starttime = strtotime($course_time_start);
+    $endtime = strtotime($course_time_end);
+
+?>
+<div class="courseinfo">
+    <p>
+    <?php if(!empty($course_number)): ?>
+        <span class="course-number"><?php echo $course_number; ?></span>
+    <?php endif; ?>
+    <?php if(!empty($course_title)): ?>
+        : <span class="course-title"><?php echo $course_title; ?></span>
+    <?php endif; ?>
+    </p>
+    <?php if(!empty($course_location)): ?>
+        <p class="location"><?php echo $course_location; ?></p>
+    <?php endif; ?>
+
+    <p class="timedays">
+        <?php if(!empty($course_days)): ?>
+            <span class="days"><?php echo $course_days; ?></span>
+        <?php endif; ?>
+        <?php if(!empty($starttime)): ?>
+            <?php echo date('g:i',$starttime); ?><?php if(!empty($endtime)): ?>&ndash;<?php echo date('g:i',$endtime); ?>
+        <?php endif; ?>
+        <?php endif; ?>
+    </p>
+    <ul class="vcard instructor">
+        <li><span class="fn n"><span class="given-name"><?php echo $instructor_first_name; ?></span> <span class="family-name"><?php echo $instructor_last_name; ?></span></span></li>
+        <li><span class="office"><?php echo $instructor_office; ?></span></li>
+        <li><a href="mailto:<?php echo $instructor_email; ?>" class="email"><?php echo $instructor_email; ?></a></li>
+        <li><span class="tel"><?php echo $instructor_telephone; ?></span></li>
+    </ul>
+</div>
+
+<?php
+}
+
+/**
+ * Sets the values for course information.
+ * 
+ * @since 1.2
+ * @uses get_option()
+ * @uses set_option()
+ * @param string $courseTitle
+ * @param string $courseNumber
+ * @param string $courseSection
+ * @param string $courseTimeStart
+ * @param string $courseTimeEnd
+ * @param string $courseLocation
+ * @param string $courseDays
+ * @param string $courseDescription
+ * @param string $instructorFirstName
+ * @param string $instructorLastName
+ * @param string $instructorEmail
+ * @param string $instructorTelephone
+ * @param string $instructorOffice
+ * @param string $instructorHours
+ * @param array $options
+ * @param Item|null Check for this specific item record (current item if null).
+ * @return string|array|null
+ **/
+function spcourseware_courseinfo_set_fields($courseTitle, $courseNumber, $courseSection, $courseTimeStart, $courseTimeEnd, $courseLocation, $courseDays, $courseDescription, $instructorFirstName, $instructorLastName, $instructorEmail, $instructorTelephone, $instructorOffice, $instructorHours) 
+{
+		$spcoursewareCourseInfo = array(
+		    'course_title' => $courseTitle,
+		    'course_number' => $courseNumber,
+		    'course_section' => $courseSection,
+		    'course_time_start' => $courseTimeStart,
+		    'course_time_end' => $courseTimeEnd,
+		    'course_location' => $courseLocation,
+		    'course_days' => $courseDays,
+		    'instructor_first_name' => $instructorFirstName,
+		    'instructor_last_name' => $instructorLastName,
+		    'instructor_email' => $instructorEmail,
+		    'instructor_telephone' => $instructorTelephone,
+		    'instructor_office' => $instructorOffice,
+		    'course_description' => $courseDescription,
+		    'instructor_hours' => $instructorHours
+		);
+    
+    // $spcoursewareCourseInfoOldOptionsName = 'SpCoursewareAdminOptions';
+    
+    $spcoursewareCourseInfoOptionsName = 'SpCoursewareCourseInfo';
+    
+    // if($oldOptions = get_option($spcoursewareCourseInfoOldOptionsName)) {
+    //     add_option($spcoursewareCourseInfoOptionsName, $oldOptions);
+    //     delete_option($spcoursewareCourseInfoOldOptionsName);
+    // } else {
+	    if (get_option($spcoursewareCourseInfoOptionsName) ) {
+    	    update_option($spcoursewareCourseInfoOptionsName, $spcoursewareCourseInfo);
+        } else {
+            $deprecated=' ';
+            $autoload='no';
+            add_option($spcoursewareCourseInfoOptionsName, $spcoursewareCourseInfo, $deprecated, $autoload);
+        }
+    // }
+}
+
+function spcourseware_get_assignment_entries($scheduleID=false, $type=false, $order='assignmentID')
+{
+    global $wpdb;
+	$assignment_table_name = $wpdb->prefix . "assignments";
+	
+	$sql = "SELECT * FROM " . $assignment_table_name;
+	
+	if($scheduleID) {
+	    $sql .= " WHERE assignments_scheduleID=".$scheduleID;
+	    if($type) {
+	        $sql .= " AND assignments_type = CONVERT( _utf8 '$type' USING latin1 )";
+	    }
+	} elseif ($type) {
+        $sql .= " WHERE assignments_type = CONVERT( _utf8 '$type' USING latin1 )";
+    }
+	
+	$sql .= " ORDER BY ".$order;
+	
+    // echo $sql; exit;
+	$results = $wpdb->get_results($sql, OBJECT);
+	return $results;
+}
+
+function spcourseware_get_assignment_types()
+{
+     array('reading','writing','presentation','groupwork','research','discussion', 'creative');
+}
+
+function spcourseware_get_assignment_entry_by_id($id) 
+{
+    global $wpdb;
+	$assignments_table_name = $wpdb->prefix . "assignments";
+	$sql = "SELECT * from " . $assignments_table_name . " where assignmentID=".$id;
+	return $wpdb->get_row($sql, OBJECT);
+}
+
+function spcourseware_delete_assignment_entry($id)
+{
+    global $wpdb;
+    if($id) {
+        $wpdb->query("DELETE FROM " . $wpdb->prefix . "assignments WHERE assignmentID = '" . $id . "'");
+    }
+}
+
+function spcourseware_add_assignment_entry()
+{
+    global $wpdb;
+    
+    // print_r($_REQUEST); exit;
+    $title = !empty($_REQUEST['assignment_title']) ? $_REQUEST['assignment_title'] : '';
+    $scheduleID = !empty($_REQUEST['assignment_scheduleID']) ? $_REQUEST['assignment_scheduleID'] : '';
+    $bibliographyID = !empty($_REQUEST['assignment_bibliographyID']) ? $_REQUEST['assignment_bibliographyID'] : '';
+    $type = !empty($_REQUEST['assignment_type']) ? $_REQUEST['assignment_type'] : '';
+    $pages = !empty($_REQUEST['assignment_pages']) ? $_REQUEST['assignment_pages'] : '';
+    $description = !empty($_REQUEST['assignment_description']) ? $_REQUEST['assignment_description'] : '';
+
+    $sql = "INSERT INTO " . $wpdb->prefix . "assignments SET assignments_title = '" . $title . "', assignments_scheduleID = '" . $scheduleID . "', assignments_bibliographyID = '" . $bibliographyID . "',  assignments_type = '" . $type . "', assignments_pages = '" . $pages . "', assignments_description = '" . $description . "'";
+    $wpdb->query($sql);
+    
+    $sqlCheck = "SELECT assignmentID FROM " . $wpdb->prefix . "assignments WHERE assignments_title = '" . $title . "' and assignments_scheduleID = '" . $scheduleID . "' and assignments_type = '" . $type . "' and assignments_pages = '" . $pages . "' and assignments_description = '" . $description . "'";
+    $check = $wpdb->get_results($sqlCheck);
+    if ( !empty($check) || !empty($check[0]->assignmentID) ) {
+        echo '<div class="updated"><p>'.sprintf( __( 'Assignment #%1$d updated successfully.', SPCOURSEWARE_TD), $check[0]->assignmentID ).'</p></div>';
+    }
+    
+}
+
+function spcourseware_update_assignment_entry($id)
+{
+    global $wpdb;
+    
+    $title = !empty($_REQUEST['assignment_title']) ? $_REQUEST['assignment_title'] : '';
+    $scheduleID = !empty($_REQUEST['assignment_scheduleID']) ? $_REQUEST['assignment_scheduleID'] : '';
+    $bibliographyID = !empty($_REQUEST['assignment_bibliographyID']) ? $_REQUEST['assignment_bibliographyID'] : '';
+    $type = !empty($_REQUEST['assignment_type']) ? $_REQUEST['assignment_type'] : '';
+    $pages = !empty($_REQUEST['assignment_pages']) ? $_REQUEST['assignment_pages'] : '';
+    $description = !empty($_REQUEST['assignment_description']) ? $_REQUEST['assignment_description'] : '';
+
+    if ( empty($id) ) {
+        echo '<div class="error"><p>'. __( '<strong>Failure:</strong> No Assignment given.', SPCOURSEWARE_TD ) .'</p></div>';
+    } else {
+        $sql = "UPDATE " . $wpdb->prefix . "assignments SET assignments_title = '" . $title . "', assignments_scheduleID = '" . $scheduleID . "',  assignments_bibliographyID = '" . $bibliographyID . "', assignments_type = '" . $type . "', assignments_pages = '" . $pages . "', assignments_description = '" . $description . "' WHERE assignmentID = '" . $id . "'";
+        
+        $wpdb->query($sql);
+        
+        $sqlCheck = "SELECT assignmentID FROM " . $wpdb->prefix . "assignments WHERE assignments_title = '" . $title . "' and assignments_scheduleID = '" . $scheduleID . "' and assignments_type = '" . $type . "' and assignments_pages = '" . $pages . "' and assignments_description = '" . $description . "' LIMIT 1";
+        
+        $check = $wpdb->get_results($sqlCheck);
+        if ( !empty($check) || !empty($check[0]->assignmentID) ) {
+            echo '<div class="updated"><p>'. sprintf( __('Assignment #%1$d updated successfully.', SPCOURSEWARE_TD ), $id ) .'</p></div>';
+        }
+    }
+}
+
+function spcourseware_assignments_navigation()
+{
+    ?>
+        <p><a href="admin.php?page=<?php echo $_GET['page']; ?>"><?php echo __( 'View Assignments', SPCOURSEWARE_TD ) ; ?></a> | <a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=add_assignment"><?php echo __( 'Add an Assignment', SPCOURSEWARE_TD ); ?></a></p>
+<?php
+}
+
+function spcourseware_assignment_edit_form($mode='add_assignment', $id=false)
+{
+    $data = false;
+	
+	if($mode == 'add_assignment') {
+	    echo '<h3>'. __( 'Add an Assignment Entry', SPCOURSEWARE_TD ) .'</h3>';
+	}
+	
+	if ( $id !== false ) {
+		if ( intval($id) != $id ){
+			echo '<div class="error"><p>'. sprintf( __( 'Assignment entry #%1$d is not a valid integer.', SPCOURSEWARE_TD ), $id ) .'</p></div>';
+			return;
+		} else {
+			$data = spcourseware_get_assignment_entry_by_id($id);
+			echo '<h3>'. __( 'Update Assignment Entry #', SPCOURSEWARE_TD ) .$id. '</h3>';
+			if ( empty($data) ) {
+				echo '<div class="error"><p>'. __( 'I couldn\'t find Assignment #'. SPCOURSEWARE_TD ) .$id. '</p></div>';
+				return;
+			}
+		}	
+	}
+    ?>
+	<form name="readingform" id="readingform" class="wrap" method="post" action="">
+		<input type="hidden" name="update_action" value="<?php echo $mode; ?>">
+		<input type="hidden" name="assignment_id" value="<?php echo $id; ?>">
+        <script type="text/javascript" charset="utf-8">
+    	jQuery(function($){
+            $('#assignment_title').hide();
+            $('#assignment_bibliography_entry').show();
+            
+            $("#assignment_type option:selected").each(function(){
+                if(this.value == 'reading') {
+                    $('#assignment_title').hide();
+                    $('#assignment_bibliography_entry').show();
+                } else {
+                    $('#assignment_title').show();
+                    $('#assignment_bibliography_entry').hide();
+                }
+            });
+            
+            $("select#assignment_type").change(function () {
+                if(this.value == 'reading') {
+                    $('#assignment_title').hide();
+                    $('#assignment_bibliography_entry').show();
+                } else {
+                    $('#assignment_title').show();
+                    $('#assignment_bibliography_entry').hide();
+                }
+            });
+            
+
+    	});
+    	</script>
+        <table class="form-table">
+			<tr valign="top">
+			    <th scope="row"><label for="assignment_type"><?php echo __('Type of Assignment', SPCOURSEWARE_TD ); ?></label></th>
+
+                <td>
+                    <select name="assignment_type" id="assignment_type">
+                    <option value="reading"<?php if ( empty($data) || $data->assignments_type=='reading' ) echo 'selected="selected"'; ?>><?php echo __( 'Reading', SPCOURSEWARE_TD ); ?></option>
+                    <option value="writing"<?php if ( empty($data) || $data->assignments_type=='writing' ) echo ' selected="selected"'; ?>><?php echo __( 'Writing', SPCOURSEWARE_TD ); ?></option>
+                    <option value="presentation" <?php if ( empty($data) || $data->assignments_type=='presentation' ) echo ' selected="selected"'; ?>><?php echo __( 'Presentation', SPCOURSEWARE_TD ); ?></option>
+                    <option value="groupwork"<?php if ( empty($data) || $data->assignments_type=='groupwork' ) echo ' selected="selected"'; ?>><?php echo __( 'Group Work', SPCOURSEWARE_TD ); ?></option>
+                    <option value="research"<?php if ( empty($data) || $data->assignments_type=='research' ) echo ' selected="selected"'; ?>><?php echo __( 'Research', SPCOURSEWARE_TD ); ?></option>
+                    <option value="discussion"<?php if ( empty($data) || $data->assignments_type=='discussion' ) echo ' selected="selected"'; ?>><?php echo __( 'Discussion', SPCOURSEWARE_TD ); ?></option>	
+                    <option value="creative"<?php if ( empty($data) || $data->assignments_type=='creative' ) echo ' selected="selected"'; ?>><?php echo __( 'Creative', SPCOURSEWARE_TD ); ?></option>		
+                    </select>
+                </td>
+            </tr>
+            
+            <tr valign="top" id="assignment_title">
+			    <th scope="row"><label for="assignment_title"><?php _e('Title'); ?></label></th>
+				
+
+				<td><input type="text" id="title" name="assignment_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_title); ?>" /></td>
+			</tr>
+            <tr valign="top" id="assignment_bibliography_entry">
+				<th scope="row"><label for="assignment_bibliographyID"><?php echo __( 'Choose from your Bibliograhy', SPCOURSEWARE_TD ); ?></label></th>
+				<td>
+                <select name="assignment_bibliographyID">
+						<option value=""><?php echo __( 'Select an entry', SPCOURSEWARE_TD ); ?></option>
+
+						<?php 
+						$bibs = spcourseware_get_bibliography_entries();
+						if($bibs):
+						foreach ($bibs as $bib): ?>
+						<option value="<?php echo $bib->entryID; ?>"<?php if ($bib->entryID==$data->assignments_bibliographyID) echo " selected"; ?>><?php echo $bib->author_last; ?>: <?php echo $bib->title; ?></option>
+						<?php endforeach; else: ?>
+						    <option value=""><?php echo __( 'No Bibliography Entries!', SPCOURSEWARE_TD ); ?></option>
+						    <?php endif;?>
+				</select>
+				<label for="assignment_pages"><?php echo __( 'Pages:', SPCOURSEWARE_TD ); ?></label>
+				<input type="text" name="assignment_pages" size="10" class="input" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_pages); ?>" />	
+				</td>
+			</tr>
+			<tr valign="top">
+					<th><label for="assignment_scheduleID"><?php echo __( 'Date Due', SPCOURSEWARE_TD ); ?></label></th>
+					<td>
+					<select name="assignment_scheduleID" id="assignment_scheduleID">
+						<option value=""></option>
+						<?php 
+                            $dates = spcourseware_get_schedule_entries();
+                            if($dates):
+                            foreach($dates as $date):
+						?>
+						<option value="<?php echo $date->scheduleID; ?>"<?php if ($date->scheduleID==$data->assignments_scheduleID) echo " selected"; ?>><?php echo date('F d, Y', strtotime($date->schedule_date)); ?>: <?php echo $date->schedule_title; ?></option>
+						    <?php endforeach; ?>
+						    <?php endif; ?>
+					</select>
+					</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><label for="assignment_description"><?php echo __( 'Description', SPCOURSEWARE_TD ); ?></label></th>
+						<td><textarea name="assignment_description" class="mceEditor input" rows="10" cols="60"><?php if ( !empty($data) ) echo htmlspecialchars($data->assignments_description); ?></textarea>
+				        </td>
+				    </tr>
+                </table>
+		<p class="submit">
+			<input type="submit" name="save" class="button-primary" value="<?php echo __( 'Save Assignment &raquo;', SPCOURSEWARE_TD ); ?>" />
+		</p>
+	</form>
+
+<?php
+}
+
 function spcourseware_get_bibliography_entries($type=null, $limit=null)
 {
     global $wpdb;
@@ -430,5 +810,261 @@ function spcourseware_bibliography_full($entry,$bibid=false,$description=false)
     <?php
 }
 
+// Add management pages to the administration panel; sink function for 'admin_menu' hook
 
+function spcourseware_dashboard() {
+	?>
+	<div class="wrap">
+	<h2><?php echo __( "Dashboard", SPCOURSEWARE_TD ); ?> | <?php echo __( "ScholarPress Courseware", SPCOURSEWARE_TD ); ?></h2>
+
+	<div id="courseinfo">
+		<h3><?php echo __( "Course Information", SPCOURSEWARE_TD ); ?></h3>
+		<?php echo spcourseware_courseinfo_printfull(); ?>
+	<a href="?page=courseinfo"><?php echo __( "Edit Course Information", SPCOURSEWARE_TD ); ?></a>
+	</div>
+	</div>
+	<br class="clear" />
+	<?php
+}
+
+function spcourseware_get_schedule_entries($limit=null, $recent=false)
+{
+    global $wpdb;
+    $schedule_table_name = $wpdb->prefix . "schedule";
+	
+	$sql = "SELECT * FROM " . $schedule_table_name;
+	
+	if($recent == true) {
+	    $date = date("Y-m-d");
+	    $sql .= " WHERE schedule_date > '$date'";
+	}
+	$sql .= " ORDER BY schedule_date, schedule_timestart";
+	if($limit != null) {
+	    $sql .= " LIMIT ". $limit;
+	}
+	
+	$results = $wpdb->get_results($sql, OBJECT);
+	return $results;
+}
+
+function spcourseware_get_schedule_entries_by_date($date)
+{    
+    global $wpdb;
+    $schedule_table_name = $wpdb->prefix . "schedule";
+	
+	$date = date('Y-m-d', strtotime($date));
+    
+	$sql = "SELECT * FROM " . $schedule_table_name . " WHERE schedule_date = '$date' ORDER BY schedule_date, schedule_timestart";
+	
+	$results = $wpdb->get_results($sql, OBJECT);
+	return $results;
+}
+
+function spcourseware_get_schedule_entry_by_id($id) 
+{
+    global $wpdb;
+	$schedule_table_name = $wpdb->prefix . "schedule";
+	$sql = "SELECT * from " . $schedule_table_name . " where scheduleID=".$id;
+	return $wpdb->get_row($sql, OBJECT);
+}
+
+function spcourseware_delete_schedule_entry($id)
+{
+    global $wpdb;
+    if($id) {
+        $wpdb->query("DELETE FROM " . $wpdb->prefix . "schedule WHERE scheduleID = '" . $id . "'");
+    }
+}
+
+function spcourseware_add_schedule_entry()
+{
+    global $wpdb;
+    
+    $spcoursewareAdminOptions = spcourseware_courseinfo_get_fields();
+
+    $defaultStart = !empty($spcoursewareAdminOptions['course_timestart']) ? $spcoursewareAdminOptions['course_timestart'] : date('H:i:s');
+    $defaultStop = !empty($spcoursewareAdminOptions['course_timeend']) ? $spcoursewareAdminOptions['course_timeend'] : date('H:i:s');
+
+    $title = !empty($_REQUEST['schedule_title']) ? $_REQUEST['schedule_title'] : '';
+    $date = !empty($_REQUEST['schedule_date']) ? date('Y-m-d', strtotime($_REQUEST['schedule_date'])) : date('Y-m-d');
+    $description = !empty($_REQUEST['schedule_description']) ? $_REQUEST['schedule_description'] : '';	
+    $timestart = !empty($_REQUEST['schedule_timestart']) ? date('H:i:s', strtotime($_REQUEST['schedule_timestart'])) : $defaultStart;
+    $timestop = !empty($_REQUEST['schedule_timestop']) ? date('H:i:s', strtotime($_REQUEST['schedule_timestop'])) : $defaultStop;	
+    
+    $sql = "INSERT INTO " . $wpdb->prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'";
+    $wpdb->query($sql);
+    
+    $sqlCheck = "SELECT scheduleID FROM " . $wpdb->prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'";
+	$check = $wpdb->get_results($sqlCheck);
+
+	if ( !empty($check) || !empty($check[0]->scheduleID) )
+	{
+		?><div class="updated"><p><?php echo sprintf( __( 'Schedule entry #%1$d added successfully.', SPCOURSEWARE_TD), $check[0]->scheduleID ); ?></p></div><?php
+	}
+	
+}
+
+function spcourseware_update_schedule_entry($id)
+{
+    global $wpdb;
+    
+    $spcoursewareAdminOptions = spcourseware_courseinfo_get_fields();
+
+    $defaultStart = !empty($spcoursewareAdminOptions['course_timestart']) ? $spcoursewareAdminOptions['course_timestart'] : date('H:i:s');
+    $defaultStop = !empty($spcoursewareAdminOptions['course_timeend']) ? $spcoursewareAdminOptions['course_timeend'] : date('H:i:s');
+
+    $title = !empty($_REQUEST['schedule_title']) ? $_REQUEST['schedule_title'] : '';
+    $date = !empty($_REQUEST['schedule_date']) ? date('Y-m-d', strtotime($_REQUEST['schedule_date'])) : date('Y-m-d');
+    $description = !empty($_REQUEST['schedule_description']) ? $_REQUEST['schedule_description'] : '';	
+    $timestart = !empty($_REQUEST['schedule_timestart']) ? date('H:i:s', strtotime($_REQUEST['schedule_timestart'])) : $defaultStart;
+    $timestop = !empty($_REQUEST['schedule_timestop']) ? date('H:i:s', strtotime($_REQUEST['schedule_timestop'])) : $defaultStop;	
+
+    if($id) {
+        $wpdb->query("UPDATE " . $wpdb->prefix . "schedule SET schedule_title = '" . $title . "', schedule_date = '" . $date . "', schedule_timestart = '" . $timestart . "', schedule_timestop = '" . $timestop . "', schedule_description = '" . $description . "'  WHERE scheduleID = '" . $id . "'");
+        
+        $sql = "SELECT scheduleID FROM " . $wpdb->prefix . "schedule WHERE schedule_title = '" . $title . "' and schedule_date = '" . $date . "' and schedule_description = '" . $description . "'  LIMIT 1";
+    	$check = $wpdb->get_results($sql);
+    	if ( !empty($check) || !empty($check[0]->scheduleID) )
+    	{
+    		?><div class="updated"><p><?php echo sprintf( __( 'Schedule entry #%1$d updated successfully.', SPCOURSEWARE_TD), $id ); ?></p></div><?php
+    	}
+    }
+	
+}
+
+function spcourseware_schedule_navigation()
+{
+    ?>
+        <p><a href="admin.php?page=<?php echo $_GET['page']; ?>"><?php echo __( 'View Schedule', SPCOURSEWARE_TD ); ?></a> | <a href="admin.php?page=<?php echo $_GET['page']; ?>&amp;view=form&amp;action=add_schedule"><?php echo __( 'Add an Schedule Entry', SPCOURSEWARE_TD ); ?></a></p>
+<?php
+}
+
+
+// Displays the add/edit form
+function spcourseware_schedule_edit_form($mode='add_schedule', $id=false)
+{
+	$data = false;
+	
+	if ( $id !== false ) {
+		if ( intval($id) != $id ){
+			echo '<div class="error"><p>'. sprintf( __( 'Schedule ID %1$d is not a valid integer.', SPCOURSEWARE_TD), $id ) .'</p></div>';
+			return;
+		} else {
+			$data = spcourseware_get_schedule_entry_by_id($id);
+			if ( empty($data) ) {
+				echo "<div class=\"error\"><p>". __( "I couldn't find a quote linked up with that identifier. Giving up...", SPCOURSEWARE_TD ) ."</p></div>";
+				return;
+			}
+		}	
+	}    
+	$spcoursewareAdminOptions = spcourseware_courseinfo_get_fields();
+	
+	$action = 'admin.php?page='. $_GET['page'];
+	if($_REQUEST['update_action'] == 'edit_biblio') {
+	    $action .= '&amp;view=form&amp;entry_id='.$_GET['entry_id'];
+	}
+	
 ?>
+<?php $url = WP_PLUGIN_URL."/scholarpress-courseware/datepicker/images/calendar.gif"; ?>		
+							<script type="text/javascript" charset="utf-8">
+							jQuery("#schedule_date").datepicker({ 
+							    dateFormat: jQuery.datepicker.W3C, 
+								showOn: "button", //change to button once button works 
+							    buttonImage: "<?php echo $url;?>",
+							    buttonImageOnly: true 
+							});
+							</script>
+    <!-- Beginning of Add Schedule Entry -->
+	<form name="scheduleform" id="scheduleform" class="wrap" method="post" action="<?php echo $action; ?>">
+
+
+		<input type="hidden" name="update_action" value="<?php echo $mode; ?>">
+		<input type="hidden" name="schedule_id" value="<?php echo $id; ?>">
+
+			<table class="form-table">
+				<tr>
+						<th scope="row"><label for="schedule_title"><?php echo __('Title', SPCOURSEWARE_TD); ?></label></th>
+						<td>
+						<input type="text" id="title" name="schedule_title" class="input" size="45" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_title); ?>" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="schedule_description"><?php echo __( 'Description', SPCOURSEWARE_TD ); ?></label></th>
+					<td>
+						<textarea name="schedule_description" id="description" cols="45" rows="7"><?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_description); ?></textarea>
+						<p class="description"><?php echo __( 'Enter in a description of what will go on in this class.', SPCOURSEWARE_TD ); ?></p>
+				</tr>
+            			<tr valign="top">
+            			    <th scope="row"><span><?php echo __( 'Date &amp; Time', SPCOURSEWARE_TD ); ?></span></th>
+            				<td>
+            							<p><label><?php echo __('Date: Input any date string, or use the date picker', SPCOURSEWARE_TD ); ?></label></p>
+            							<input type="text" name="schedule_date" id="schedule_date" class="format-y-m-d divider-dash split-date date" value="<?php if ( !empty($data) ) echo htmlspecialchars($data->schedule_date); ?>" />			
+            							<?php $url = WP_PLUGIN_URL."/scholarpress-courseware/core/includes/datepicker/images/calendar.gif"; ?>		
+            							<script type="text/javascript" charset="utf-8">
+            							jQuery("#schedule_date").datepicker({ 
+            							    dateFormat: jQuery.datepicker.W3C, 
+            								showOn: "button", //change to button once button works 
+            							    buttonImage: "<?php echo $url;?>",
+            							    buttonImageOnly: true 
+            							});
+            							</script>							
+
+            							<p><label for="schedule_timestart"><?php echo __( 'Class Starts', SPCOURSEWARE_TD ); ?> (ex. 12:00pm)</label></p>
+            							<?php ?><input type="text" name="schedule_timestart" class="date"  value="<?php if ( !empty($data) ) {echo date('g:ia',strtotime($data->schedule_timestart));} else {echo date('g:ia', strtotime($spcoursewareAdminOptions['course_time_start']));} ?>" /> <?php ?>
+
+            							<p><label for="schedule_timestop"><?php echo __( 'Class Ends', SPCOURSEWARE_TD ); ?> (ex. 1:00pm)</label></p>
+            							<input type="text" name="schedule_timestop" class="date"  value="<?php if ( !empty($data) ){ echo date('g:ia', strtotime($data->schedule_timestop));} else {echo date('g:ia', strtotime($spcoursewareAdminOptions['course_time_end']));} ?>" />													
+
+            				</td>
+            			</tr>
+            		</table><!-- End side info column-->
+
+    				<p class="submit">
+    					<input type="submit" name="save" class="button-primary" value="<?php echo __( 'Publish Schedule Entry &raquo;', SPCOURSEWARE_TD ); ?>" />
+    				</p>
+	</form>
+	<div class="clear"></div>
+	
+<?php
+}
+
+// Print small reading entry (eg title and link only, for use in sidebar)
+function spcourseware_schedule_short($entry,$wrapper="li",$title="h4", $description=false)
+{ 
+	$startTime = strtotime($entry->schedule_date.' '.$entry->schedule_timestart);
+	$endTime = strtotime($entry->schedule_date.' '.$entry->schedule_timestop);
+	?>
+	<<?php echo $wrapper; ?> class="vevent">
+		<div class="date">
+			<span class="dtstart">
+			    <abbr class="value" title="<?php echo date('Y-m-d', $startTime); ?>"><?php echo date('F d, Y', $startTime); ?></abbr>, <span class="value"><?php echo date('g:i a', $startTime); ?></span>
+			</span>
+			&ndash;
+			<span class="dtend">
+			    <span class="value-title" title="<?php echo date('Y-m-d', $endTime); ?>"></span><span class="value"><?php echo date('g:i a', $endTime); ?></span>
+			</span>
+		</div>
+<<?php echo $title; ?> class="summary"><?php echo nl2br($entry->schedule_title); ?></<?php echo $title; ?>>	
+
+    <?php if($description == true && $scheduleDescription = $entry->schedule_description) echo $scheduleDescription; ?>
+
+	</<?php echo $wrapper; ?>> <?php
+}
+
+
+function spcourseware_schedule_printfull()
+{
+    $scheduleEntries = spcourseware_get_schedule_entries();
+    if($scheduleEntries) {
+        $html = '<ul>';
+        
+        foreach($scheduleEntries as $entry) {
+            $html .= spcourseware_schedule_short($entry);
+        }
+        $html .= '</ul>';
+    } else {
+        $html = '<p>'. __( 'You have no schedule entries!', SPCOURSEWARE_TD ) .'</p>';
+    }
+    
+    return $html;
+}
