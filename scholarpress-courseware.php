@@ -25,8 +25,11 @@ Author URI: http://scholarpress.net/
 */
 
 // define ScholarPress Courseware Version #
-if ( !defined( 'SPCOURSEWARE_VERSION_NUMBER' ) )
-	define( 'SPCOURSEWARE_VERSION_NUMBER', '2.0' );
+if (!defined('SPCOURSEWARE_VERSION_NUMBER' ))
+	define('SPCOURSEWARE_VERSION_NUMBER', '2.0');
+
+if ( !defined( 'SPCOURSEWARE_TD' ) )
+    define('SPCOURSEWARE_TD', 'spcourseware');
 
 if ( !class_exists( 'Scholarpress_Courseware_Loader' ) ) :
 
@@ -35,6 +38,7 @@ class Scholarpress_Courseware_Loader {
     /**
      * ScholarPress Courseware Loader
      *
+     * @since 2.0
      * @uses add_action()
      * @uses register_activation_hook()
      * @uses register_deactivation_hook()
@@ -43,6 +47,7 @@ class Scholarpress_Courseware_Loader {
 		add_action( 'init', array ( $this, 'init' ) );
 		add_action( 'admin_init', array ( $this, 'admin_init' ) );
 		add_action( 'plugins_loaded', array( $this, 'loaded' ) );
+		add_action('admin_menu', array( $this, 'admin_menu' ));
 		
 		// Activation sequence
 		register_activation_hook( __FILE__, array( $this, 'activation' ) );
@@ -120,24 +125,11 @@ class Scholarpress_Courseware_Loader {
      * Includes other necessary plugin files.
      */
 	function includes() {
-	    
-	    // Helper functions
 	    require(dirname( __FILE__ ).'/scholarpress-courseware-helpers.php');
-        
-        // Assignments includes
-        require(dirname( __FILE__ ).'/assignments/index.php');
-
-        // Courseinfo includes
-        require(dirname( __FILE__ ).'/courseinfo/index.php');
-        require(dirname( __FILE__ ).'/courseinfo/shortcodes.php');
-
-        // Bibliography includes
-        require(dirname( __FILE__ ).'/bibliography/index.php');
-        require(dirname( __FILE__ ).'/bibliography/shortcodes.php');
-
-        // Schedule includes
-        require(dirname( __FILE__ ).'/schedule/index.php');
-        require(dirname( __FILE__ ).'/schedule/shortcodes.php');
+        require(dirname( __FILE__ ).'/modules/courseinfo.php');
+        require(dirname( __FILE__ ).'/modules/assignments.php');
+        require(dirname( __FILE__ ).'/modules/bibliography.php');
+        require(dirname( __FILE__ ).'/modules/schedule.php');
 	}
 
     /**
@@ -152,8 +144,8 @@ class Scholarpress_Courseware_Loader {
 	function textdomain() {
 		$locale = get_locale();
 
-		// First look in wp-content/wordhub-files/languages, where custom language files will not be overwritten by WordHub upgrades. Then check the packaged language file directory.
-		$mofile_custom = WP_CONTENT_DIR . "/scholarpress-courseware-files/languages/wordhub-$locale.mo";
+		// First look in wp-content/wordhub-files/languages, where custom language files will not be overwritten by Courseware upgrades. Then check the packaged language file directory.
+		$mofile_custom = WP_CONTENT_DIR . "/scholarpress-courseware-files/languages/spcourseware-$locale.mo";
 		$mofile_packaged = WP_PLUGIN_DIR . "/scholarpress-courseware/languages/spcourseware-$locale.mo";
 
     	if ( file_exists( $mofile_custom ) ) {
@@ -186,7 +178,7 @@ class Scholarpress_Courseware_Loader {
      * and spcourseware_bibliography.
      */
     function _create_tables() {
-    	global $wpdb, $user_level;
+        global $wpdb, $user_level;
 
         // table names
         $assignments_table_name = $wpdb->prefix . "spcourseware_assignments";
@@ -259,11 +251,27 @@ class Scholarpress_Courseware_Loader {
                  `timestop` TIME NOT NULL,
                  `description` TEXT NOT NULL,
                  PRIMARY KEY (`id`)
-                 )"; 
+                 )";
 
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
         }
+    }
+
+    function admin_menu() {
+        if ( function_exists( 'add_menu_page' ) ) {
+            $dashboard_title = __( "Dashboard", SPCOURSEWARE_TD ) . ' | ' . __( "ScholarPress Courseware", SPCOURSEWARE_TD );
+            $spcoursewarepage = add_menu_page( __( "Dashboard", SPCOURSEWARE_TD ), __( "Courseware", SPCOURSEWARE_TD ) , 'manage_options', 'scholarpress-courseware', array($this, 'admin_display'));
+            add_submenu_page('scholarpress-courseware', $dashboard_title, __( "Dashboard", SPCOURSEWARE_TD ), 'manage_options', 'scholarpress-courseware', array($this, 'admin_display'));
+		}
+    }
+
+    function admin_display() {
+    ?>
+    <div class="wrap">
+    <h2><?php _e( 'Dashboard', SPCOURSEWARE_TD ); ?> | <?php _e( 'ScholarPress Courseware', SPCOURSEWARE_TD ); ?></h2>
+    <br class="clear" />
+    <?php
     }
 }
 
