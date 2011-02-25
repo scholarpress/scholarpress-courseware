@@ -112,7 +112,7 @@ class Scholarpress_Courseware_Loader {
     function deactivation() {}
     
     /**
-     * Deactivation script. Runs when plugin needs upgrading.
+     * Upgrade script. Runs when plugin needs upgrading.
      */
     function upgrade() {} 
     
