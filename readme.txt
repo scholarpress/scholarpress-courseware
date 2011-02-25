@@ -1,5 +1,5 @@
 === SP Courseware ===
-Contributors: clioweb, davelester, jeremyboggs, stakats, sushkov, zgordon
+Contributors: davelester, jeremyboggs, stakats, sushkov, zgordon
 Tags: education, syllabus, courses, bibliography, course management, assignments
 Requires at least: 2.0.2
 Tested up to: 2.9.2
@@ -12,17 +12,12 @@ ScholarPress Courseware enables you to manage a class with a WordPress blog. The
 
 == Installation ==
 1. Unzip the download, and copy the 'scholarpress-courseware' plugin into your WordPress plugins folder, normally located in /wp-content/plugins/. In other words, all files for the plugin should be in wp-content/plugins/scholarpress-courseware/
-
 2. Login to Wordpress Admin and activate the plugin.
-
 3. Using the Courseware menu, fill in the appropriate information for your course information, bibliography, assignments, and schedule.
 
 == Documentation ==
 
-Documentation for use can be found at http://scholarpress.net/courseware/.
-
-== Credits ==
-Special thanks to Chaabin, whose BibTex WordPress plugin was the inspiration and baseline for the addition of BibTeX import functionality into Courseware.  http://www.chaaban.info/wordpress-plugin/bibtex/
+Visit [ScholarPress.net](http://scholarpress.net/courseware/) for documentation.
 
 == Version History ==
 
