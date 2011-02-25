@@ -1,4 +1,4 @@
-=== SP Courseware ===
+=== ScholarPress Courseware ===
 Contributors: davelester, jeremyboggs, stakats, sushkov, zgordon
 Tags: education, syllabus, courses, bibliography, course management, assignments
 Requires at least: 2.0.2
