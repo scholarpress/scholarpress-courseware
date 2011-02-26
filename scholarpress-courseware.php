@@ -271,6 +271,7 @@ class Scholarpress_Courseware_Loader {
     <div class="wrap">
     <h2><?php _e( 'Dashboard', SPCOURSEWARE_TD ); ?> | <?php _e( 'ScholarPress Courseware', SPCOURSEWARE_TD ); ?></h2>
     <br class="clear" />
+    </div>
     <?php
     }
 }
