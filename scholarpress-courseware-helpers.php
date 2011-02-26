@@ -93,67 +93,6 @@ function spcourseware_courseinfo_printfull()
 <?php
 }
 
-/**
- * Sets the values for course information.
- * 
- * @since 1.2
- * @uses get_option()
- * @uses set_option()
- * @param string $courseTitle
- * @param string $courseNumber
- * @param string $courseSection
- * @param string $courseTimeStart
- * @param string $courseTimeEnd
- * @param string $courseLocation
- * @param string $courseDays
- * @param string $courseDescription
- * @param string $instructorFirstName
- * @param string $instructorLastName
- * @param string $instructorEmail
- * @param string $instructorTelephone
- * @param string $instructorOffice
- * @param string $instructorHours
- * @param array $options
- * @param Item|null Check for this specific item record (current item if null).
- * @return string|array|null
- **/
-function spcourseware_courseinfo_set_fields($courseTitle, $courseNumber, $courseSection, $courseTimeStart, $courseTimeEnd, $courseLocation, $courseDays, $courseDescription, $instructorFirstName, $instructorLastName, $instructorEmail, $instructorTelephone, $instructorOffice, $instructorHours) 
-{
-		$spcoursewareCourseInfo = array(
-		    'course_title' => $courseTitle,
-		    'course_number' => $courseNumber,
-		    'course_section' => $courseSection,
-		    'course_time_start' => $courseTimeStart,
-		    'course_time_end' => $courseTimeEnd,
-		    'course_location' => $courseLocation,
-		    'course_days' => $courseDays,
-		    'instructor_first_name' => $instructorFirstName,
-		    'instructor_last_name' => $instructorLastName,
-		    'instructor_email' => $instructorEmail,
-		    'instructor_telephone' => $instructorTelephone,
-		    'instructor_office' => $instructorOffice,
-		    'course_description' => $courseDescription,
-		    'instructor_hours' => $instructorHours
-		);
-    
-    // $spcoursewareCourseInfoOldOptionsName = 'SpCoursewareAdminOptions';
-    
-    $spcoursewareCourseInfoOptionsName = 'SpCoursewareCourseInfo';
-    
-    // if($oldOptions = get_option($spcoursewareCourseInfoOldOptionsName)) {
-    //     add_option($spcoursewareCourseInfoOptionsName, $oldOptions);
-    //     delete_option($spcoursewareCourseInfoOldOptionsName);
-    // } else {
-	    if (get_option($spcoursewareCourseInfoOptionsName) ) {
-    	    update_option($spcoursewareCourseInfoOptionsName, $spcoursewareCourseInfo);
-        } else {
-            $deprecated=' ';
-            $autoload='no';
-            add_option($spcoursewareCourseInfoOptionsName, $spcoursewareCourseInfo, $deprecated, $autoload);
-        }
-    // }
-}
-
 function spcourseware_get_assignment_entries($scheduleID=false, $type=false, $order='assignmentID')
 {
     global $wpdb;
