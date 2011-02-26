@@ -47,7 +47,11 @@ class Scholarpress_Courseware_Loader {
 		add_action( 'init', array ( $this, 'init' ) );
 		add_action( 'admin_init', array ( $this, 'admin_init' ) );
 		add_action( 'plugins_loaded', array( $this, 'loaded' ) );
+		
+		// Admin menu stuff
 		add_action('admin_menu', array( $this, 'admin_menu' ));
+		add_filter( 'custom_menu_order', array( $this, 'custom_menu_order_function' ) );
+		add_filter( 'menu_order', array( $this, 'menu_order_my_function' ) );
 		
 		// Activation sequence
 		register_activation_hook( __FILE__, array( $this, 'activation' ) );
@@ -60,6 +64,9 @@ class Scholarpress_Courseware_Loader {
 		
 		// When Courseware is initialized, add localization files.
 		add_action( 'scholarpress_courseware_init', array( $this, 'textdomain' ) );
+		
+		// When Courseware is loaded, add our custom post types.
+		add_action( 'scholarpress_courseware_init', array( $this, 'register_post_types') );
 	}
 
     /**
@@ -102,13 +109,13 @@ class Scholarpress_Courseware_Loader {
     			foreach ($blogids as $blog_id) {
     			    // Switch to the next blog, and install our plugin tables
     				switch_to_blog($blog_id);
-    				$this->_create_tables();
+    				$this->register_post_types();
     			}
     			switch_to_blog($old_blog);
     			return;
     		}	
     	} 
-    	$this->_create_tables();
+    	$this->register_post_types();
     }
     
     /**
@@ -257,7 +264,106 @@ class Scholarpress_Courseware_Loader {
             dbDelta($sql);
         }
     }
+    
+    /**
+     * Creates post types for schedule, bibliography, and assignments.
+     */
+    function register_post_types() {
+        
+        $assignment_post_def = array(
+            'label'                 => __( 'Assignments', 'spcourseware' ),
+            'singular_label'        => __( 'Assignment', 'spcourseware' ),
+            'description'           => __( 'ScholarPress Courseware Assignments', 'spcourseware' ),
+            'publicly_queryable'    => false,
+            'exclude_from_search'   => false,
+            'show_ui'               => true, // need to hide this.
+            'capability_type'       => 'sp_assignment',
+            'hierarchical'          => true,
+            'rewrite'               => false,
+            'query_var'             => false,
+            'supports'              => array( 'title', 'editor', 'author', 'custom-fields' )
+        );
+        
+        register_post_type( 'sp_assignment', $assignment_post_def );
+        
+         $bibliography_labels = array(
+			'name' => _x('Bibliography', 'bibliography general name'),
+			'singular_name' => _x('Bibliography Entry', 'single bibliography entry'),
+			'add_new' => _x('Add New', 'book'),
+			'add_new_item' => __('Add New Entry'),
+			'edit_item' => __('Edit Entry'),
+			'new_item' => __('New Entry'),
+			'view_item' => __('View Entry'),
+			'search_items' => __('Search Bibliography'),
+			'not_found' =>  __('No entries found'),
+			'not_found_in_trash' => __('No entries found in Trash'),
+			'parent_item_colon' => ''
+		  );
+		
+		$bibliography_post_def = array(
+			'label'                 => __( 'Bibliography', SPCOURSEWARE_TD ),
+			'labels'                => $bibliography_labels,
+			'exclude_from_search'   => true,
+			'publicly_queryable'    => true,
+			'_builtin'              => false,
+			'show_ui'               => true, // todo: hide
+			'capability_type'       => 'bibliography',
+			'hierarchical'          => true,
+            'supports'              => array( 'title', 'editor', 'author', 'custom-fields' ),
+			'rewrite'               => array("slug" => "part") // Permalinks format
+		);
+		
+		register_post_type( 'sp_bibliography', $bibliography_post_def );
+		
+		 $schedule_labels = array(
+			'name' => _x('Schedule', 'schedule general name'),
+			'singular_name' => _x('Schedule Entry', 'single schedule entry'),
+			'add_new' => _x('Add New', 'schedule'),
+			'add_new_item' => __('Add New Schedule Entry'),
+			'edit_item' => __('Edit Schedule Entry'),
+			'new_item' => __('New Schedule Entry'),
+			'view_item' => __('View Schedule Entry'),
+			'search_items' => __('Search Schedule'),
+			'not_found' =>  __('No entries found'),
+			'not_found_in_trash' => __('No entries found in Trash'),
+			'parent_item_colon' => ''
+		  );
+		
+		$schedule_post_def = array(
+			'label'                 => __( 'Schedule', SPCOURSEWARE_TD ),
+			'labels'                => $schedule_labels,
+			'exclude_from_search'   => true,
+			'publicly_queryable'    => true,
+			'_builtin'              => false,
+			'show_ui'               => true, // todo: hide
+			'capability_type'       => 'schedule',
+			'hierarchical'          => true,
+            'supports'              => array( 'title', 'editor', 'author', 'custom-fields' ),
+			'rewrite'               => array("slug" => "schedule") // Permalinks format
+	    );
+		
+		register_post_type( 'sp_schedule', $schedule_post_def );
+    }
 
+    /**
+     * The next two functions are hacks to make WordPress hide the menu items. 
+     * Borrowed from Anthologize...thanks Boone!
+     */
+	function custom_menu_order_function(){
+		return true;
+	}
+
+	function menu_order_my_function( $menu_order ){
+		global $menu;
+		foreach ( $menu as $mkey => $m ) {
+			$key1 = array_search( 'edit.php?post_type=sp_assignment', $m, true );
+			$key2 = array_search( 'edit.php?post_type=sp_bibliography', $m, true );
+            $key3 = array_search( 'edit.php?post_type=sp_schedule', $m, true );
+			if ( $key1 || $key2 || $key3 ) unset( $menu[$mkey] );
+		}
+		return $menu_order;
+	}
+	
     function admin_menu() {
         if ( function_exists( 'add_menu_page' ) ) {
             $dashboard_title = __( "Dashboard", SPCOURSEWARE_TD ) . ' | ' . __( "ScholarPress Courseware", SPCOURSEWARE_TD );
