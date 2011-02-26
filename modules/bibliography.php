@@ -5,7 +5,35 @@ if ( !class_exists( 'Scholarpress_Courseware_Bibliography' ) ) :
 class Scholarpress_Courseware_Bibliography {
     
     function scholarpress_courseware_bibliography() {
+        add_shortcode('spbibliography', array($this,'shortcode'));
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+    }
+    
+    function shortcode($atts, $content=null, $code="") {
+        extract(
+            shortcode_atts( 
+                array(
+                    'id' => null
+                ), 
+                $atts
+            )
+        );
+        $html = '';
+
+        if($id != null) {
+            $entry = spcourseware_get_bibliography_entry_by_id($id);
+            $html = spcourseware_bibliography_full($entry);
+        } else {
+            $entries =  spcourseware_get_bibliography_entries();
+            if($entries) {
+                foreach($entries as $entry) {
+                    $html .= spcourseware_bibliography_full($entry);
+                }
+            } else {
+                $html .= '<p>'. __( 'You have no bibliography entries!', SPCOURSEWARE_TD ) .'</p>';
+            }
+        }
+        return $html;
     }
     
     function admin_menu() {
