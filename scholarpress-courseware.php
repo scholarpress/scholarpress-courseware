@@ -367,7 +367,7 @@ class Scholarpress_Courseware_Loader {
     function admin_menu() {
         if ( function_exists( 'add_menu_page' ) ) {
             $dashboard_title = __( "Dashboard", SPCOURSEWARE_TD ) . ' | ' . __( "ScholarPress Courseware", SPCOURSEWARE_TD );
-            $spcoursewarepage = add_menu_page( __( "Dashboard", SPCOURSEWARE_TD ), __( "Courseware", SPCOURSEWARE_TD ) , 'manage_options', 'scholarpress-courseware', array($this, 'admin_display'));
+            $spcoursewarepage = add_menu_page( __( "Dashboard", SPCOURSEWARE_TD ), __( "Courseware", SPCOURSEWARE_TD ) , 'manage_options', 'scholarpress-courseware', array($this, 'admin_display'), WP_CONTENT_URL .'/plugins/scholarpress-courseware/images/sm-icon-orange.gif');
             add_submenu_page('scholarpress-courseware', $dashboard_title, __( "Dashboard", SPCOURSEWARE_TD ), 'manage_options', 'scholarpress-courseware', array($this, 'admin_display'));
 		}
     }
